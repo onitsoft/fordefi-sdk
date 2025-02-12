@@ -73,15 +73,11 @@ class Fordefi:
     def list_transactions(
         self,
         vault_ids: Optional[list[str]] = None,
-        sub_types: Optional[list[str]] = None,
         direction: Literal["incoming"] | Literal["outgoing"] | None = None,
     ) -> Iterable[Json]:
         path = "/transactions"
 
         params: dict[str, str | list[str]] = {}
-
-        if sub_types:
-            params["sub_types"] = sub_types
 
         if vault_ids:
             params["vault_ids"] = vault_ids
