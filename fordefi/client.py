@@ -140,10 +140,6 @@ class Fordefi:
         return details
 
     @staticmethod
-    def _requires_gas_config(asset_identifier: AssetIdentifier) -> bool:
-        return asset_identifier.type == "APT"
-
-    @staticmethod
     def _serialize_asset_identifier(
         asset_identifier: AssetIdentifier,
     ) -> Json:
