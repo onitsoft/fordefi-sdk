@@ -1,0 +1,298 @@
+interactions:
+- request:
+    body: '{"vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed", "note": "string",
+      "sign_mode": "auto", "type": "black_box_signature", "details": {"format": "hash_binary",
+      "hash_binary": "SGVsbG8="}, "signer_type": "api_signer"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-idempotence-id:
+      - 7ce3ecd6ad3a4563a09481973e3f1247
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA7SUTW/kNgyG/0rgc5RK/vYABQr0sLdeuuihxUKgJHoixCO5kpxkEMx/L/0126TZ
+        3VzqgzHiiOTz0q/0klmTHTLd91C0vGJtww0rOy0YKGyZgILnwgiliyK7zXRASGgkJMrJeV4yIVhe
+        fxbiUOQHwe9EUXPO/6StJ29sb7+xtz5U9R3v+L4XHBxpawrgIuhkvZMGEmSHl2tLdZ5XCywqVSto
+        OtYJQ7C1JmylFFNNgUXVKVMUnKpOEYNM5xEpBUYr5zWFHZzmyOA1DDcJY7LuePPTzW+T8ze/+khd
+        bzN6pyWNWB6RAsEP85oADRW53GagfHiD1fO67vpWsApEy8qqrJgC6JiuhOqKpug6Vb3BGjFE775C
+        vYLAE9iBgo6Cd3oO/uLwWd+DOyKt76aH75CCOVk3gxp8tBpltEdHQmXAvyfSPEPPIeqfHf56WaCu
+        QlqodZ0jCalRsxLJEV1HZshVidD35I68eme+a72vYj6vs/0v5OUH7lidVOWbO+4hrrWJrYch4uUL
+        VRj9YPVZniDp+4U8SoM9TAMVTGFCmsQ0oFwE8e1h77z2J9sSNnhabkbcFQ6Df5rRV5nvCg82Pszz
+        /HKbPa4ku2MFtq0ROWv6hqxRcmQgcs10g0XHSwNI4q6DUwPoB+Wf352cNXgafUKnN3GNxgK1qRmY
+        Ash2dcGAdyVrRTefh17kZbNNUU8hoEvLSZALoSQHnmyMJDTuc5vlSPpAS98p+V00pCngJs/5BSum
+        sH3hEU5yh51cxERBYwMuM6SYn9LRr3u3yS0qJcmU1+L/Fryerz0iV9uvZl1/f+gWgkgocgx0BHZy
+        fLqCPoGdHSp7HySMY/CPMJDaj3So+Dc7jIGOnJ/i99u8JlnDpPdH3d/cnB/ofi39puM24MucA+fB
+        w2ym3z/9EdWn9ufsf3SwwUQXW5xLb1Yg+0aYycLD6tR7qayDcH5NtPxhXcLjfFll/Lls64quKl33
+        2eXyDwAAAP//AwBCClkrygYAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 26 Nov 2024 13:30:15 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 f355844b811a4a5ec94df0918f0fb80c.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - VHfqoIG3B5VJlJGskt1Dx8OQLhpwqOkDdrqDe7geUtJOx8mL39nNQg==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '126'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '199'
+      x-ratelimit-reset:
+      - '45'
+      x-request-id:
+      - bcb5991c-b0ae-9548-968f-e1167f37f7d2
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed", "note": "string",
+      "sign_mode": "auto", "type": "black_box_signature", "details": {"format": "hash_binary",
+      "hash_binary": "SGVsbG8="}, "signer_type": "api_signer"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-idempotence-id:
+      - dbfde74fc7534f90aca9a788cd5ec88e
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA7SUTW8kJxCG/4rVZ+P0d9MjRYqUw95yySqHRCtUQPUYuQc6QNseWfPfU/THbOx4
+        d31JH9BQA1XPW7zwkhmdHbKeK5RFXbK6TkPeFYxzXrG2anXX17weuMpuM+URImoBkfaUeVmzomBl
+        +7koDlV5KMq7uivzPP+Tlp6cNoP5xtrukOd3ZVnsa8HCkZZGDzaAisZZoSFCdni5lpTnNFtgUcpW
+        QtezvtCa1a1qGJdSMtlVWDW91FWVU9Y5oBfxPCFtgcmINKewhVOKjE7BeBMxRGOPNz/d/DZbd/Or
+        C1T1NqMxLtuI5REp4N2Y5gSoKcnlNgPp/BusIW/bfuAFa6DgrG7qhkmAnqmmkH3VVX0vmzdYE/rg
+        7FeoVxB4AjNS0FLwTqXgLxaf1T3YI9L8bn74Dinok7EJVOOjUSiCOVoSKjz+PZPmBJ1CVD87/PWy
+        QF2FcGhVWyIJaVGxGnPN+h45K2WNMAx1r8rmnf6u+b6K+bz29r+Qlx+4Y3US55s77iGsuYltgDHg
+        5QtlmNxo1FmcIKr7hTwIjQPMIyWMfkbqxDyiWATl28feGfYv2zZs8DTdjLgrHEf3lNBXme8K9yY8
+        pH5+uc0eV5LdsQVyrouSdUNH1qhzZFCUiqkOqz6vNSCJuzZOjqAepHt+t3NG42lyEa3axGk5aOzq
+        gZI1FauHPmegyHbQca50g4pz3LqoZu/RxuUmiIVQkANPJgQSGva+JTmCDmipO0e3i4Y4e9zkWbdg
+        hei3E57gJHbY2QaMFNTG49JDirk5Ht26duvcolKQTHFN/m/B6/3aI2K1/WrW9feHXiEIhCImT1dg
+        J8enK+gTmORQMTgvYJq8e4SR1H6kAm+/WWHydOXcHL5f5jXJGia9P6q+vZz5x6tfU7+puDX4kvbA
+        eXSQzPT7pz+C/MR/zv5HB2uM9LCFlHqzAiodIJH5h9Wp90IaC/78mmj5w9iIx/RYZfkznUJDT5Vq
+        h+xy+QcAAP//AwA4K2kGygYAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 26 Nov 2024 13:30:16 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 e78b88048cb2f0beb893089a9fa30352.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - ThC1n-Zjy2WRJj84PLStDbgzQr_cyMDyD2WlXrjL59_P78KiuRu3Ew==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '72'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '198'
+      x-ratelimit-reset:
+      - '44'
+      x-request-id:
+      - 6bf387c0-73ac-9e37-8005-0ce7c71dcbe2
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed", "note": "string",
+      "sign_mode": "auto", "type": "black_box_signature", "details": {"format": "hash_binary",
+      "hash_binary": "SGVsbG8="}, "signer_type": "api_signer"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-idempotence-id:
+      - 4a178661340a42bfb0e78d68959d205d
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA7SUTW/kNgyG/0rgc5TKtvw1QIECPeytly56aLEQKImeCPFIriQnGQTz30t/zTZp
+        djeX+mCMOBT5vPQrvWTWZIcMG12iKAUzNTZMiDxn0BaG8Upok9fClC1kt5kOCAmNhER7Cl4IRolF
+        /TnPD2VxyMVdXjSc8z8p9eSN7e03cpsDF3dc5HsuODhSagrgIuhkvZMGEmSHl2tLdZ5XK6xStYKm
+        Y11uDBO1rlirlGKqKbGsOmXKklPVKWKQ6TwibYHRynlNYQenOTJ4DcNNwpisO978dPPb5PzNrz6m
+        WSe907KNWB6RAsEP85oADRW53GagfHiD1fO67vo2ZxXkLROVqJgC6JiuctWVTdl1qnqDNWKI3n2F
+        egWBJ7ADBR0F7/Qc/MXhs74Hd0Ra300P3yEFc7JuBjX4aDXKaI+OhMqAf0+keYaeQ9Q/O/z1skBd
+        hbRQ67pAElKjZgK5YV2HLSuUQOh70emieme+a72vYj6vs/0v5OUH7lidJPjmjnuIa21i62GIePlC
+        FUY/WH2WJ0j6fiGP0mAP00AFU5iQJjENKBdBfHvYO6/9ybYNGzwtNyPuCofBP83oq8x3hQcbH+Z5
+        frnNHleS3bE5tq3JC9b0DVlDcGSQF5rpBsuOCwNI4q6DUwPoB+Wf352cNXgafUKnN3EC8qat65yV
+        ggMTheqZ4nSIW1O3XdWZgldmm6KeQkCXlpMgF0JJDjzZGElo3Oc2y5H0gZa+U/K7aEhTwE2e8wtW
+        TGH7wiOc5A47uYiJgsYGXGZIMT+lo19zt8ktKiXJlNfi/xa8nq89Ilfbr2Zdf3/oFoJIKHIMdAR2
+        cny6gj6BnR0qex8kjGPwjzCQ2o90KNtvdhgDHTk/xe+3eU2yhknvj7q/uTk/0P1a+k3HbcCXeQ+c
+        Bw+zmX7/9EdUn9qfs//RwQYTXWxxLr1ZAbWJMJOFh9Wp91JZB+H8mmj5w7qEx/myyvizaOuKripd
+        99nl8g8AAAD//wMAOh79YcoGAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 26 Nov 2024 13:30:16 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 e78b88048cb2f0beb893089a9fa30352.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - H5VZgHvfZS-MjwS3hxNWcvipdZLoRpJWmPJra6KbkMdtfrcQhIiOqg==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '54'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '197'
+      x-ratelimit-reset:
+      - '44'
+      x-request-id:
+      - 2cc9b3ee-a31e-96aa-9cd8-bceef80c9008
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed", "note": "string",
+      "sign_mode": "auto", "type": "black_box_signature", "details": {"format": "hash_binary",
+      "hash_binary": "SGVsbG8="}, "signer_type": "api_signer"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-idempotence-id:
+      - 4a178661340a42bfb0e78d68959d205d
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA7SUTW/kNgyG/0rgc5TKtvw1QIECPeytly56aLEQKImeCPFIriQnGQTz30t/zTZp
+        djeX+mCMOBT5vPQrvWTWZIcMG12iKAUzNTZMiDxn0BaG8Upok9fClC1kt5kOCAmNhER7Cl4IRolF
+        /TnPD2VxyMVdXjSc8z8p9eSN7e03cpsDF3dc5HsuODhSagrgIuhkvZMGEmSHl2tLdZ5XK6xStYKm
+        Y11uDBO1rlirlGKqKbGsOmXKklPVKWKQ6TwibYHRynlNYQenOTJ4DcNNwpisO978dPPb5PzNrz6m
+        WSe907KNWB6RAsEP85oADRW53GagfHiD1fO67vo2ZxXkLROVqJgC6JiuctWVTdl1qnqDNWKI3n2F
+        egWBJ7ADBR0F7/Qc/MXhs74Hd0Ra300P3yEFc7JuBjX4aDXKaI+OhMqAf0+keYaeQ9Q/O/z1skBd
+        hbRQ67pAElKjZgK5YV2HLSuUQOh70emieme+a72vYj6vs/0v5OUH7lidJPjmjnuIa21i62GIePlC
+        FUY/WH2WJ0j6fiGP0mAP00AFU5iQJjENKBdBfHvYO6/9ybYNGzwtNyPuCofBP83oq8x3hQcbH+Z5
+        frnNHleS3bE5tq3JC9b0DVlDcGSQF5rpBsuOCwNI4q6DUwPoB+Wf352cNXgafUKnN3EC8qat65yV
+        ggMTheqZ4nSIW1O3XdWZgldmm6KeQkCXlpMgF0JJDjzZGElo3Oc2y5H0gZa+U/K7aEhTwE2e8wtW
+        TGH7wiOc5A47uYiJgsYGXGZIMT+lo19zt8ktKiXJlNfi/xa8nq89Ilfbr2Zdf3/oFoJIKHIMdAR2
+        cny6gj6BnR0qex8kjGPwjzCQ2o90KNtvdhgDHTk/xe+3eU2yhknvj7q/uTk/0P1a+k3HbcCXeQ+c
+        Bw+zmX7/9EdUn9qfs//RwQYTXWxxLr1ZAbWJMJOFh9Wp91JZB+H8mmj5w7qEx/myyvizaOuKripd
+        99nl8g8AAAD//wMAOh79YcoGAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 26 Nov 2024 13:30:16 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 5d25c31f47a198dbf50acf297a389a00.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - Cpk4lMo88KKhb8boreGQECTniv_woqmm4KCyV4lo83JqjwzRVdDqdg==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '128'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '196'
+      x-ratelimit-reset:
+      - '44'
+      x-request-id:
+      - e1b8e35e-4167-937d-b37e-fb73e388ce7c
+    status:
+      code: 200
+      message: OK
+version: 1

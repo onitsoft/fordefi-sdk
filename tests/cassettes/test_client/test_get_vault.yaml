@@ -1,0 +1,68 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults/d656392d-c3c0-4407-a47b-00f2f673145a
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA4xTXW/iMBD8K1Wea7CT2EmQTrrSlpNQ6R0ttDQvkeMPiCB2GjtAqPjv59Cq9KQ+
+        3FPkzezO7Ozum1dwb+BxgkmQ+BywgEEQhjACNIxyAKH0JYkCFGLqXXqsFtQKnlHrcnzohwAh4OMZ
+        8gcwGUDYwwmBEKYOWmpeyOJ7bAAHiPQSjD6wipbCgR71hip68SA2ghphvvDlrTd4e1cqISGJjBHA
+        FMUgxCEGOaUJYBjlSRAFSZJjl9kYUWe2rbq6laiNVmee+0bpi2ttbNeSKGmxcUHlgj3WBX8qsWcr
+        qpbCvXvN2oFc1HaZlNliK1yg1pvTm5eF8o6X3pY2G5sta91Un0qxlJJKykHOIAGh79xNGA1BFAju
+        5ySUEQvOor50/V6M6UY563znAlUZa+paKJud+nq3JdN1JnhhsxPeeANJN0Ycv1HLRV1sqS20yipq
+        V+5X2Q/DPoaoj/qwDx2kavJNwbK1aB1xWdXCGNE18Tguh6t5e6PkrnwSw3Xp99UzmabjZYVIM0a3
+        2vxO7+6e0vX0x79MhZK68+I/yEtqrGvrrOHTQxJLQqgkIEZIgJDEEYiFgIDmNJACBRAn0hXYu1SH
+        7j6EoEk72V29PuRsJJvrepqzxXDEZ2ZmFqxaTWI+Wx3Kubhp/tR8JMMVejbqahe9Um3up8Nkne/X
+        ebojyW1+tydjO5lG1G+XbbpIg5Gwe90ueYvndGK8ozPbqTXCfgr2hbukhGIgIXeHxIjTGkUBINCH
+        USxDEfr4PHQuZDe7bsOYPu2qrpdUFYeTX91ifaywOZ2Gw1HOu9l062WnUREV+HE+ZNZWa7sdv4yu
+        hvjXy3NMVgeyiPXD1jbp+Paw8I5/AQAA//8DAMOVOx/oAwAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 25 Nov 2024 12:48:06 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 923c2d2f00d1c4aa09564e5db1f3c7a8.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - VKnq66vxFhA_TjCu5hed3IG-8O5XdacJUqUE8O96U5MsHJw9tGzq-Q==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '39'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '195'
+      x-ratelimit-reset:
+      - '54'
+      x-request-id:
+      - bff0324a-c703-9972-bfe2-615a1b196612
+    status:
+      code: 200
+      message: OK
+version: 1

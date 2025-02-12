@@ -1,0 +1,83 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults?page=1&size=50
+  response:
+    body:
+      string: !!binary |
+        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
+        /XH3fwAAAP//AwC1zG0juxMAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 25 Nov 2024 12:48:07 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 42bf01bb5b494f9d7ad3dd5810b5a212.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - UjgL9DZgiQM-y-RPm2rzYv1FB6Bjb-T_NVeJF8zDLpvFOOWNAjLkTQ==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '63'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '194'
+      x-ratelimit-reset:
+      - '53'
+      x-request-id:
+      - 79f55b56-97f6-97d2-89b6-476374ec90c4
+    status:
+      code: 200
+      message: OK
+version: 1

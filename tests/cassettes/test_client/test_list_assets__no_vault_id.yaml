@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.fordefi.com/api/v1/assets/owned-assets?page=1&size=50
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA+xW246bMBD9lZWlfYMAuTQXabWquo+tWmn7VlVoMCZrLdgUm+xuo/x7x1wSSCAi
+        q31reLLH4+MZ5vh4tkRLDTFZjS2SwpqRlWcRxf/iYOZaRL4IFvqgFNOKrH5tSZpxWlvIakv0W4qu
+        pJj7xSKxqhkXkTQuPEQHdzGdjOfg2cHUDexpBGN7OWdTez7x4NOcBrMlBIedIROaR5xlzSNSLRW6
+        hEwDj1VjRYDmG3MufQIualc/wYnAKHf7hW058I8Qc8H/5Mwv4mxvtRA7Ma6fjfnmW8NsjvRpnmVM
+        0DdfvSWBjI3jj58dyy2ULxJjsUgQS/pcxsNe01hmVbYZCAVUcyn8PDOQT1qnauU4tdeoiDGGQI2o
+        TJzGBnWP0b3I7PnukACEYcaUGoYFlMpcaKcDJ5NSDwPp2NxMKpJZAgOh9KtwbpVzJq1L0OrsuhCR
+        JLFcyyMgY1IjPCNkES8wioIppwB2qs0jtVljSFz5milt0FYRxIrtdkf8qSp/RJaQUZ6AYfTCIhuW
+        GeIjFXWWM4skyPYQNGBgHHeUx6gUkvoMq7yShjrVgHjj+ZRUdj+KJeiDMeL4t2peFjfihMK5CltR
+        jXcmkQBiEAX8xDUf2ZuKq5hwYYI+LKZMhFysUQXwt+HAaABBoC3Za0dx4TzqBcydMZtNPBeFIYps
+        mNK5PVt4kRfMFu4SFq1wlh0Zuyfpuu/OdV+zB7a5eZSYIjRr9vD4/SvOn3iIIlUV4bRsZ3RM1ZAN
+        IevWp71nU6BKox+yTUugykBvHg7mHoGq4u9RqFbOFysUxqYoiBGXeHOdXvFpuNVXsltgGo5DRKR9
+        /K26p3GuNMvu9j/rrGp0hHWKcaFOlNVyys0dOmHYgpDth2x3sFTVLq/MlTJXyhxTpqptVZuSJ7v6
+        URjYp11V6kq596lUR6M/8D2/kHp9nX6bZ72d/pWj/wdHBzZvrWbyIzruj+w/W732zK2/nn675dDT
+        c//e/QMAAP//AwALk2Cq5g8AAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 25 Nov 2024 12:48:06 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 f13924e40949c7e0a5bd0c7e333695f2.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - qCjTt3KfGk51Au6rThNsF0KzPLtaN2PJM4MjWkpr7UhJhzLJ2uGZkw==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '73'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '197'
+      x-ratelimit-reset:
+      - '55'
+      x-request-id:
+      - 4a55952c-8985-94d2-935a-dc904ae2062f
+    status:
+      code: 200
+      message: OK
+version: 1

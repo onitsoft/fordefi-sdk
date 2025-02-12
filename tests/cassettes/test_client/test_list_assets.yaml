@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.fordefi.com/api/v1/assets/owned-assets?vault_ids=d656392d-c3c0-4407-a47b-00f2f673145a&page=1&size=50
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA+xWwY7TMBD9lZUlbmmTwFbsRkJcekTisEeErKk9bi0SO9hO2VLl3xknTnebZYEV
+        4kRzmkxm3jx7nic+smAD1KwqM9bCFgfD6+9krIqM2W8GJQfvMXhWfTqywWTVkWnJKlaKcoPFChf4
+        piwW10qpBVyLt4vVTanKzeqmuIUbljGJQjdQE8ItVXFaYERIBitYcnJVWwjJozQELjrn0IhDDJ9s
+        7g/NxhJj1nl5Bv667zNmoImga9xf3dkaDFDIKWN99/EDve+0lGhYpSgNM7ZHp5VGWlBwHb0Pa+Sa
+        QkL0u1g9HNoI6ydIiQF0LErEdqDNyeDzyM7orx3yYb9GJ5e4N7SLJ7Ij0av1gzvoPfKnK078599/
+        tuZNbcWXkRHet7V1aR0OjAcRtDW8cxFzF0Lrqzwnbl6AWWqbh/ucEEBKh94/HwZC2M6EGOusDc8H
+        UsDjusq6BsIvy7/y70Xd+YDu3WmzJj6/S59oPcUgedR2a2ep0eWXhCpR6aWwTT5sm8/HbuVj8tLv
+        t0RCex7Qh4g2qIUgU8PHprD+wZO6PR6Zi2QukplLJvU29WbUSdTPMA3T2H00fMa5NI7Ny5S6SO4v
+        p1QSkFH2pf/zF0rvvHQ2SXGmsz67aPS/1ugfXt7OLpPzq1tDqpMQgIhpShnL+BaadNnr//H9k/A3
+        QMQH4FUxPezkHg5Eo02kfB7QopHabOlA0saRMfDo+8/9DwAAAP//AwAXPDLPowsAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 25 Nov 2024 12:48:05 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 5d25c31f47a198dbf50acf297a389a00.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - ceRr4iJdGJnrYlS_7nJv-ZpefEQs1JM8cst3LnSXtETdZsWlucAuQw==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '76'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '198'
+      x-ratelimit-reset:
+      - '55'
+      x-request-id:
+      - 6b1f7875-ff42-9163-afd9-92de7245bc95
+    status:
+      code: 200
+      message: OK
+version: 1

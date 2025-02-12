@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: '{"vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed", "note": "string",
+      "sign_mode": "auto", "type": "black_box_signature", "details": {"format": "hash_binary",
+      "hash_binary": "SGVsbG8="}, "signer_type": "api_signer"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-idempotence-id:
+      - d3f00a83e9eb41c98824ea7efaa22e1a
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA7SUTY/TMBCG/8oq5zU430klThz2xoUVBxCyxvaktTaNg+10t1r1vzNO0sKKgnoh
+        h6ie2jPP+844r4nRySaRnW4qVTWsrLhkRVrmrM2LlKVZxbM8yxuZQ3KfKIcQUAsIdCbjWcHSlGXl
+        Y1pt0nLD63dtXXHOv9LWvdWmMzfuhQG2tDU4GDyoYOwgNARINq+XkvIYVzMsSllJqFvWplqzolIl
+        a6SUTNY55mUrdZ5zyjp5dCIcR6QjMBoR1xQeYB8jvVXQ3wX0wQzbu/d3n6bB3n20PkSd9A7zMWI5
+        IAWc7eOaADUlOd0nGg9GofBmO9B54fDHRKkiYgyh88nm2+uMcMFugBzOMCWPUbECuWZtiw3LZIHQ
+        dUWrsvIK9pLvF/jjgvwn5ekm01u+mr4Dv+Qmtg56j6fvlGG0vVFHsYegdjO5Fxo7mHpKGNyEZMXU
+        o5gF8fVhV17nJ1kPrPC0XPt7Vtj39jmiLzKvCnfGP0U/v98nh4XkPAgpNo1OM1Z3dcOKgiODNFNM
+        1Zi3vNCAJO5inOxBPUn7ctU5o3E/2oCDWsXpvOMcmpxhi/FGqJY1DfmJUJMfkFEjYXVRTc7hEOYB
+        EzOhGNHtjfck1J99i3IENWiuOwV7Fg1hcrjKG+yM5YNbOzzCXpxhp8FjoKA2DmcPKWansLXL3tW5
+        WaUgmeKS/HfB4+jsYXZlDgm1g2GLy7Quv2+6seCJRYyO7sAZHZ8vpM9g4oiKzjqxVISe5N5SoWn/
+        WmF0dOfs5P9d5i3JRe8pJoBjbyE29/PDFy8fmg/Jf5wojQFM72PqtTWotIeI5p6WydkJaQZwx7dE
+        8x9mCLiNH4+EvxRNVdKnQ1Vdcjr9BAAA//8DAKS+G0axBQAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 25 Nov 2024 16:15:25 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 2c1fa76ea6af6e9212cf3e52e166c4ce.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - gvOws3RrztgWxZ_ib8ckakIK48nK_YN7KjO2TVXXLPUEKzBeL6WKDA==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '123'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '198'
+      x-ratelimit-reset:
+      - '36'
+      x-request-id:
+      - 330799e3-c62b-938d-8d3d-9a1583575176
+    status:
+      code: 200
+      message: OK
+version: 1

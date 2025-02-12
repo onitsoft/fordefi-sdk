@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: '{"name": "New Vault", "type": "evm"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '36'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://api.fordefi.com/api/v1/vaults
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAACA4yT207bQBCGXyXyNdv4sLv25i4HU0qCFQKFlhtrTw6GxGvW65CA8u4dB5S0UqVW
+        lmyN/c/MN/+O371SeQMvoIniIVFIBdJHWAuFWIEJYoFkBEeCRkHhnXnSau60yrmDnNAPMQoCFJLb
+        IBzgZODTL5jEvu8/gHRtVFmU/6et+FqDKNOvvTvertxvncTOG7x/MGohqOAxAyilEKaSoEQIgUQc
+        6YgwoaLIh8y20TZ3u7qryOsy7+JTj5WRfNVzunFltez1e1lbmd7YNI6DBu7ukCZdudHwwppVFzvL
+        FRTZn3mbDi9fWtPWRy6ScMYD4NIRDIkZ5ogJFiJfaPARiInAJ4CJLj5H/KglTVuBQwGMzKtcttbq
+        yh2g8w8PcmNzrUqXH/SNN3C21fu/wAJiueGuNFVec/cIn9Z9jPvU7x8uUNStWJUyf9Y7aLuurW4a
+        3U0wJOJ+N24fNubbfLqdux/XM05EUt9HoS0Wpa3mvK6eRoaPou2fjcqqMJ0R/+695o2DmU4IR/+U
+        IiIIBUeax+AfKQiCVcSIJBIXlImESQoFtpAK6u5BaXC1u3odviyEPH9OLysyyl4cfSwW32/T18XX
+        sqnS4Sybzd6m55ZmItWXs7GsZD2c1LfTBE9nT3fp5vqKcqqGz+NEtO1dk5rFZcpubn5m6UV2sWyw
+        zYKF8PZgNdA22h2BQ00JZZygwlfws0jqIx7HEaJ+6MdJgTUOyenA1fHAG2kOW2nsklfl28Gubqk+
+        l1Vv1iDiSnXnArG/JUESxyo5F34ypjiIhzgKJaOjMFVRPAlxIaA5myhv/wsAAP//AwBArSrKxwMA
+        AA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 25 Nov 2024 12:48:06 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 d780d90e1f6b43875e14c416b368d3b6.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - We1koP7CEC3EgXO29-9xa4KC20Js6q0haD9pEqkNN3vSa2LrR8Rydw==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '106'
+      x-ratelimit-limit:
+      - 200, 200;w=60
+      x-ratelimit-remaining:
+      - '196'
+      x-ratelimit-reset:
+      - '54'
+      x-request-id:
+      - b8c7999a-5a9f-9fd4-8eba-92619df0e900
+    status:
+      code: 201
+      message: Created
+version: 1
