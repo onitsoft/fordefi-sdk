@@ -43,6 +43,7 @@ dev-dependencies = [
     "pytest-httpserver>=1.1.1",
     "pytest-cov>=6.0.0",
     "pytest-recording==0.13.2",
+    "uv>=0.5.31",
 ]
 
 [tool.pyright]
