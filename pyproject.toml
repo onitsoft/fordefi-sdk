@@ -50,3 +50,12 @@ dev-dependencies = [
 [tool.pyright]
 venvPath = "."
 venv = ".venv"
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "if TYPE_CHECKING",
+    "if __name__ == \"__main__\":",
+]
