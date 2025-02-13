@@ -13,33 +13,25 @@ interactions:
       User-Agent:
       - python-requests/2.31.0
     method: GET
-    uri: https://api.fordefi.com/api/v1/assets/owned-assets?vault_ids=d656392d-c3c0-4407-a47b-00f2f673145a&page=1&size=50
+    uri: https://api.fordefi.com/api/v1/assets/owned-assets?vault_ids=3c091da6-9f5a-4a2d-adb7-61217329889b&vault_ids=f5f13461-803f-455b-86ff-45e1cf8bc884&page=1&size=50
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAACA+xWwY7TMBD9lZUlbmmTwFbsRkJcekTisEeErKk9bi0SO9hO2VLl3xknTnebZYEV
-        4kRzmkxm3jx7nic+smAD1KwqM9bCFgfD6+9krIqM2W8GJQfvMXhWfTqywWTVkWnJKlaKcoPFChf4
-        piwW10qpBVyLt4vVTanKzeqmuIUbljGJQjdQE8ItVXFaYERIBitYcnJVWwjJozQELjrn0IhDDJ9s
-        7g/NxhJj1nl5Bv667zNmoImga9xf3dkaDFDIKWN99/EDve+0lGhYpSgNM7ZHp5VGWlBwHb0Pa+Sa
-        QkL0u1g9HNoI6ydIiQF0LErEdqDNyeDzyM7orx3yYb9GJ5e4N7SLJ7Ij0av1gzvoPfKnK078599/
-        tuZNbcWXkRHet7V1aR0OjAcRtDW8cxFzF0Lrqzwnbl6AWWqbh/ucEEBKh94/HwZC2M6EGOusDc8H
-        UsDjusq6BsIvy7/y70Xd+YDu3WmzJj6/S59oPcUgedR2a2ep0eWXhCpR6aWwTT5sm8/HbuVj8tLv
-        t0RCex7Qh4g2qIUgU8PHprD+wZO6PR6Zi2QukplLJvU29WbUSdTPMA3T2H00fMa5NI7Ny5S6SO4v
-        p1QSkFH2pf/zF0rvvHQ2SXGmsz67aPS/1ugfXt7OLpPzq1tDqpMQgIhpShnL+BaadNnr//H9k/A3
-        QMQH4FUxPezkHg5Eo02kfB7QopHabOlA0saRMfDo+8/9DwAAAP//AwAXPDLPowsAAA==
+      string: '{"total":1,"page":1,"size":50,"owned_assets":[{"priced_asset":{"type":"asset_price","asset_info":{"id":"084327a1-b40b-4fa2-97e4-731a67cb59ab","asset_identifier":{"type":"aptos","details":{"type":"native","chain":"aptos_mainnet"},"chain":{"chain_type":"aptos","unique_id":"aptos_mainnet","name":"Aptos
+        Mainnet","native_currency_symbol":"APT","native_currency_name":"Aptos Coin","blockchain_explorer":{"transaction_url":"https://explorer.aptoslabs.com/transactions?network=mainnet","address_url":"https://explorer.aptoslabs.com/account/?network=mainnet","root_url":"https://explorer.aptoslabs.com/?network=mainnet","transaction_format_url":"https://explorer.aptoslabs.com/txn/%s/?network=mainnet","address_format_url":"https://explorer.aptoslabs.com/account/%s/?network=mainnet","asset_format_url":"https://explorer.aptoslabs.com/coin/%s/?network=mainnet"},"logo_url":"https://logos.fordefi.com/chains/aptos/mainnet.svg","is_testnet":false,"is_enabled":true}},"name":"Aptos
+        Coin","symbol":"APT","decimals":8,"verified":true,"metadata_uri":"","is_spam":false,"explorer_url":"https://explorer.aptoslabs.com/coin/0x1::aptos_coin::AptosCoin/?network=mainnet"},"price":{"price":"601","price_float":"601","fiat_currency":{"currency_symbol":"usd","decimals":2}}},"balance":"300000","balances":{"mined":"300000","pending_incoming":"0"}}]}'
     headers:
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Mon, 25 Nov 2024 12:48:05 GMT
+      - Thu, 13 Feb 2025 15:27:15 GMT
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 5d25c31f47a198dbf50acf297a389a00.cloudfront.net (CloudFront)
+      - 1.1 42c937f806e6e43029a719b83b9a8612.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - ceRr4iJdGJnrYlS_7nJv-ZpefEQs1JM8cst3LnSXtETdZsWlucAuQw==
+      - Htn2MiEKkgbAFZCh3ibOwhJK5U3XOrEmkCOFLcBHjPK6nhQgu9xaow==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -51,15 +43,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '76'
+      - '101'
       x-ratelimit-limit:
-      - 200, 200;w=60
+      - 300, 300;w=60
       x-ratelimit-remaining:
-      - '198'
+      - '298'
       x-ratelimit-reset:
-      - '55'
+      - '45'
       x-request-id:
-      - 6b1f7875-ff42-9163-afd9-92de7245bc95
+      - e1aea1af-2831-98f6-9463-01801a905444
     status:
       code: 200
       message: OK

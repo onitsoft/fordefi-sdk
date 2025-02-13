@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "New Vault", "type": "evm"}'
+    body: '{"name": "creation-test-vault", "type": "evm"}'
     headers:
       Accept:
       - '*/*'
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '36'
+      - '46'
       Content-Type:
       - application/json
       User-Agent:
@@ -18,32 +18,21 @@ interactions:
     uri: https://api.fordefi.com/api/v1/vaults
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAACA4yT207bQBCGXyXyNdv4sLv25i4HU0qCFQKFlhtrTw6GxGvW65CA8u4dB5S0UqVW
-        lmyN/c/MN/+O371SeQMvoIniIVFIBdJHWAuFWIEJYoFkBEeCRkHhnXnSau60yrmDnNAPMQoCFJLb
-        IBzgZODTL5jEvu8/gHRtVFmU/6et+FqDKNOvvTvertxvncTOG7x/MGohqOAxAyilEKaSoEQIgUQc
-        6YgwoaLIh8y20TZ3u7qryOsy7+JTj5WRfNVzunFltez1e1lbmd7YNI6DBu7ukCZdudHwwppVFzvL
-        FRTZn3mbDi9fWtPWRy6ScMYD4NIRDIkZ5ogJFiJfaPARiInAJ4CJLj5H/KglTVuBQwGMzKtcttbq
-        yh2g8w8PcmNzrUqXH/SNN3C21fu/wAJiueGuNFVec/cIn9Z9jPvU7x8uUNStWJUyf9Y7aLuurW4a
-        3U0wJOJ+N24fNubbfLqdux/XM05EUt9HoS0Wpa3mvK6eRoaPou2fjcqqMJ0R/+695o2DmU4IR/+U
-        IiIIBUeax+AfKQiCVcSIJBIXlImESQoFtpAK6u5BaXC1u3odviyEPH9OLysyyl4cfSwW32/T18XX
-        sqnS4Sybzd6m55ZmItWXs7GsZD2c1LfTBE9nT3fp5vqKcqqGz+NEtO1dk5rFZcpubn5m6UV2sWyw
-        zYKF8PZgNdA22h2BQ00JZZygwlfws0jqIx7HEaJ+6MdJgTUOyenA1fHAG2kOW2nsklfl28Gubqk+
-        l1Vv1iDiSnXnArG/JUESxyo5F34ypjiIhzgKJaOjMFVRPAlxIaA5myhv/wsAAP//AwBArSrKxwMA
-        AA==
+      string: '{"id":"686dc906-324c-47b2-b1a7-5261287ead4b","created_at":"2025-02-13T15:27:16.186000Z","modified_at":"2025-02-13T15:27:16.186000Z","name":"creation-test-vault","created_by":{"id":"7e94b222-22f1-437a-b2a5-8d866d3d4d28","user_type":"api_user","name":"Nuno
+        C / Local Testing","state":"active","role":"trader"},"vault_group":{"id":"58a9a179-e324-494a-9b92-0beebdba75b4","name":"Default","vault_count":2,"can_current_user_create_or_edit_vaults":true},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/60/1/0/0","public_key_compressed":"A5GnkoLZ/bJYyBNExR2KIoCZoXyKxG8svK1obWnTKwXS","derivation_info":{"derivation_path":"m/44/60/1/0/0","master_public_key":{"id":"dd5b12ba-ea74-45f5-a254-58c4f69b89c6","xpub":"xpub661MyMwAqRbcFkEJn5BNqt6hfRUTEwRGisnEALNLLzKFr6NbEeJLCcncpADpTK84KLjVEvQM6a6dAkC8buuVsEoRJE9SSYNEHNHgs4rN1Rb"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"evm","address":"0x7867379eeB4cE505eB19B324dae04e2b1d7A3C72"}'
     headers:
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Mon, 25 Nov 2024 12:48:06 GMT
+      - Thu, 13 Feb 2025 15:27:16 GMT
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 d780d90e1f6b43875e14c416b368d3b6.cloudfront.net (CloudFront)
+      - 1.1 daf51694fe4a175a7249d39be5e22e4c.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - We1koP7CEC3EgXO29-9xa4KC20Js6q0haD9pEqkNN3vSa2LrR8Rydw==
+      - 7Qfli_IDlejqMc8fWrlBKwRNxNdj5r-d_g7h7uBEVhsqWTsG5mrTrQ==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -55,15 +44,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '106'
+      - '100'
       x-ratelimit-limit:
-      - 200, 200;w=60
+      - 300, 300;w=60
       x-ratelimit-remaining:
-      - '196'
+      - '296'
       x-ratelimit-reset:
-      - '54'
+      - '44'
       x-request-id:
-      - b8c7999a-5a9f-9fd4-8eba-92619df0e900
+      - cc3b270b-26ce-921f-a30d-7bfb72363e23
     status:
       code: 201
       message: Created

@@ -17,39 +17,27 @@ interactions:
       User-Agent:
       - python-requests/2.31.0
       x-idempotence-id:
-      - 7ce3ecd6ad3a4563a09481973e3f1247
+      - 7ce3ecd6-ad3a-4563-a094-81973e3f1247
     method: POST
     uri: https://api.fordefi.com/api/v1/transactions
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAACA7SUTW/kNgyG/0rgc5RK/vYABQr0sLdeuuihxUKgJHoixCO5kpxkEMx/L/0126TZ
-        3VzqgzHiiOTz0q/0klmTHTLd91C0vGJtww0rOy0YKGyZgILnwgiliyK7zXRASGgkJMrJeV4yIVhe
-        fxbiUOQHwe9EUXPO/6StJ29sb7+xtz5U9R3v+L4XHBxpawrgIuhkvZMGEmSHl2tLdZ5XCywqVSto
-        OtYJQ7C1JmylFFNNgUXVKVMUnKpOEYNM5xEpBUYr5zWFHZzmyOA1DDcJY7LuePPTzW+T8ze/+khd
-        bzN6pyWNWB6RAsEP85oADRW53GagfHiD1fO67vpWsApEy8qqrJgC6JiuhOqKpug6Vb3BGjFE775C
-        vYLAE9iBgo6Cd3oO/uLwWd+DOyKt76aH75CCOVk3gxp8tBpltEdHQmXAvyfSPEPPIeqfHf56WaCu
-        QlqodZ0jCalRsxLJEV1HZshVidD35I68eme+a72vYj6vs/0v5OUH7lidVOWbO+4hrrWJrYch4uUL
-        VRj9YPVZniDp+4U8SoM9TAMVTGFCmsQ0oFwE8e1h77z2J9sSNnhabkbcFQ6Df5rRV5nvCg82Pszz
-        /HKbPa4ku2MFtq0ROWv6hqxRcmQgcs10g0XHSwNI4q6DUwPoB+Wf352cNXgafUKnN3GNxgK1qRmY
-        Ash2dcGAdyVrRTefh17kZbNNUU8hoEvLSZALoSQHnmyMJDTuc5vlSPpAS98p+V00pCngJs/5BSum
-        sH3hEU5yh51cxERBYwMuM6SYn9LRr3u3yS0qJcmU1+L/Fryerz0iV9uvZl1/f+gWgkgocgx0BHZy
-        fLqCPoGdHSp7HySMY/CPMJDaj3So+Dc7jIGOnJ/i99u8JlnDpPdH3d/cnB/ofi39puM24MucA+fB
-        w2ym3z/9EdWn9ufsf3SwwUQXW5xLb1Yg+0aYycLD6tR7qayDcH5NtPxhXcLjfFll/Lls64quKl33
-        2eXyDwAAAP//AwBCClkrygYAAA==
+      string: '{"id":"cffa3805-870d-49c1-abe8-1a3021d1bc33","created_at":"2024-11-26T11:32:10.136000Z","modified_at":"2024-11-26T11:36:56.090000Z","managed_transaction_data":{"created_by":{"id":"ebb6ba79-91dd-46c5-8bbb-b73e359bd330","user_type":"api_user","name":"local
+        testing / Nuno Costa","state":"deleted","role":"trader"},"aborted_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"device_signing_request":{"signers":[{"user":{"id":"8a6c62e1-56ec-4e0d-99e8-2b4eaff49c25","user_type":"api_signer","name":"Testing","state":"deleted"},"modified_at":"2024-11-26T11:32:10.152000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"idempotence_id":"7ce3ecd6-ad3a-4563-a094-81973e3f1247","has_current_user_vault_permissions":true,"sign_mode":"auto"},"signatures":[],"note":"string","spam_state":"unset","direction":"outgoing","state":"aborted","state_changes":[{"changed_at":"2024-11-26T11:32:10.136000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2024-11-26T11:32:10.150000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"},{"changed_at":"2024-11-26T11:36:56.090000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"approved","new_state":"aborted"}],"type":"black_box_signature","payload":"SGVsbG8=","vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"details":{"type":"ecdsa_stark","hash_binary":"SGVsbG8=","hash_integer":"0x48656c6c6f"}}'
     headers:
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Tue, 26 Nov 2024 13:30:15 GMT
+      - Thu, 13 Feb 2025 15:27:18 GMT
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 f355844b811a4a5ec94df0918f0fb80c.cloudfront.net (CloudFront)
+      - 1.1 2982304f906b538b26d5fd128f6030ec.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - VHfqoIG3B5VJlJGskt1Dx8OQLhpwqOkDdrqDe7geUtJOx8mL39nNQg==
+      - LMIfRcGdwoqCRQ_zgzhJVXpYoWhhe8AsPt_ULhlEX0_YrXXicxMxHQ==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -61,15 +49,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '126'
+      - '68'
       x-ratelimit-limit:
-      - 200, 200;w=60
+      - 300, 300;w=60
       x-ratelimit-remaining:
-      - '199'
+      - '290'
       x-ratelimit-reset:
-      - '45'
+      - '42'
       x-request-id:
-      - bcb5991c-b0ae-9548-968f-e1167f37f7d2
+      - 01b53878-4fdc-9e3a-b8f4-5ebd12552bc6
     status:
       code: 200
       message: OK
@@ -91,39 +79,27 @@ interactions:
       User-Agent:
       - python-requests/2.31.0
       x-idempotence-id:
-      - dbfde74fc7534f90aca9a788cd5ec88e
+      - dbfde74f-c753-4f90-aca9-a788cd5ec88e
     method: POST
     uri: https://api.fordefi.com/api/v1/transactions
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAACA7SUTW8kJxCG/4rVZ+P0d9MjRYqUw95yySqHRCtUQPUYuQc6QNseWfPfU/THbOx4
-        d31JH9BQA1XPW7zwkhmdHbKeK5RFXbK6TkPeFYxzXrG2anXX17weuMpuM+URImoBkfaUeVmzomBl
-        +7koDlV5KMq7uivzPP+Tlp6cNoP5xtrukOd3ZVnsa8HCkZZGDzaAisZZoSFCdni5lpTnNFtgUcpW
-        QtezvtCa1a1qGJdSMtlVWDW91FWVU9Y5oBfxPCFtgcmINKewhVOKjE7BeBMxRGOPNz/d/DZbd/Or
-        C1T1NqMxLtuI5REp4N2Y5gSoKcnlNgPp/BusIW/bfuAFa6DgrG7qhkmAnqmmkH3VVX0vmzdYE/rg
-        7FeoVxB4AjNS0FLwTqXgLxaf1T3YI9L8bn74Dinok7EJVOOjUSiCOVoSKjz+PZPmBJ1CVD87/PWy
-        QF2FcGhVWyIJaVGxGnPN+h45K2WNMAx1r8rmnf6u+b6K+bz29r+Qlx+4Y3US55s77iGsuYltgDHg
-        5QtlmNxo1FmcIKr7hTwIjQPMIyWMfkbqxDyiWATl28feGfYv2zZs8DTdjLgrHEf3lNBXme8K9yY8
-        pH5+uc0eV5LdsQVyrouSdUNH1qhzZFCUiqkOqz6vNSCJuzZOjqAepHt+t3NG42lyEa3axGk5aOzq
-        gZI1FauHPmegyHbQca50g4pz3LqoZu/RxuUmiIVQkANPJgQSGva+JTmCDmipO0e3i4Y4e9zkWbdg
-        hei3E57gJHbY2QaMFNTG49JDirk5Ht26duvcolKQTHFN/m/B6/3aI2K1/WrW9feHXiEIhCImT1dg
-        J8enK+gTmORQMTgvYJq8e4SR1H6kAm+/WWHydOXcHL5f5jXJGia9P6q+vZz5x6tfU7+puDX4kvbA
-        eXSQzPT7pz+C/MR/zv5HB2uM9LCFlHqzAiodIJH5h9Wp90IaC/78mmj5w9iIx/RYZfkznUJDT5Vq
-        h+xy+QcAAP//AwA4K2kGygYAAA==
+      string: '{"id":"98ceb142-4442-4071-8883-636d79484f8c","created_at":"2024-11-26T11:32:12.472000Z","modified_at":"2024-11-26T11:37:00.221000Z","managed_transaction_data":{"created_by":{"id":"ebb6ba79-91dd-46c5-8bbb-b73e359bd330","user_type":"api_user","name":"local
+        testing / Nuno Costa","state":"deleted","role":"trader"},"aborted_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"device_signing_request":{"signers":[{"user":{"id":"8a6c62e1-56ec-4e0d-99e8-2b4eaff49c25","user_type":"api_signer","name":"Testing","state":"deleted"},"modified_at":"2024-11-26T11:32:12.488000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"idempotence_id":"dbfde74f-c753-4f90-aca9-a788cd5ec88e","has_current_user_vault_permissions":true,"sign_mode":"auto"},"signatures":[],"note":"string","spam_state":"unset","direction":"outgoing","state":"aborted","state_changes":[{"changed_at":"2024-11-26T11:32:12.472000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2024-11-26T11:32:12.486000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"},{"changed_at":"2024-11-26T11:37:00.220000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"approved","new_state":"aborted"}],"type":"black_box_signature","payload":"SGVsbG8=","vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"details":{"type":"ecdsa_stark","hash_binary":"SGVsbG8=","hash_integer":"0x48656c6c6f"}}'
     headers:
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Tue, 26 Nov 2024 13:30:16 GMT
+      - Thu, 13 Feb 2025 15:27:18 GMT
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 e78b88048cb2f0beb893089a9fa30352.cloudfront.net (CloudFront)
+      - 1.1 9bc25d3cccecc51547f094bc2aa70ef4.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - ThC1n-Zjy2WRJj84PLStDbgzQr_cyMDyD2WlXrjL59_P78KiuRu3Ew==
+      - 4u_otJ1gnd-HLTKb1yRtqxkBHOrbu_EkMB7vupn_HwmkDSrAXWfrXw==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -135,15 +111,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '72'
+      - '162'
       x-ratelimit-limit:
-      - 200, 200;w=60
+      - 300, 300;w=60
       x-ratelimit-remaining:
-      - '198'
+      - '289'
       x-ratelimit-reset:
-      - '44'
+      - '42'
       x-request-id:
-      - 6bf387c0-73ac-9e37-8005-0ce7c71dcbe2
+      - fd1ea77e-6f58-940d-862c-3e22add56a6a
     status:
       code: 200
       message: OK
@@ -165,39 +141,27 @@ interactions:
       User-Agent:
       - python-requests/2.31.0
       x-idempotence-id:
-      - 4a178661340a42bfb0e78d68959d205d
+      - 4a178661-340a-42bf-b0e7-8d68959d205d
     method: POST
     uri: https://api.fordefi.com/api/v1/transactions
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAACA7SUTW/kNgyG/0rgc5TKtvw1QIECPeytly56aLEQKImeCPFIriQnGQTz30t/zTZp
-        djeX+mCMOBT5vPQrvWTWZIcMG12iKAUzNTZMiDxn0BaG8Upok9fClC1kt5kOCAmNhER7Cl4IRolF
-        /TnPD2VxyMVdXjSc8z8p9eSN7e03cpsDF3dc5HsuODhSagrgIuhkvZMGEmSHl2tLdZ5XK6xStYKm
-        Y11uDBO1rlirlGKqKbGsOmXKklPVKWKQ6TwibYHRynlNYQenOTJ4DcNNwpisO978dPPb5PzNrz6m
-        WSe907KNWB6RAsEP85oADRW53GagfHiD1fO67vo2ZxXkLROVqJgC6JiuctWVTdl1qnqDNWKI3n2F
-        egWBJ7ADBR0F7/Qc/MXhs74Hd0Ra300P3yEFc7JuBjX4aDXKaI+OhMqAf0+keYaeQ9Q/O/z1skBd
-        hbRQ67pAElKjZgK5YV2HLSuUQOh70emieme+a72vYj6vs/0v5OUH7lidJPjmjnuIa21i62GIePlC
-        FUY/WH2WJ0j6fiGP0mAP00AFU5iQJjENKBdBfHvYO6/9ybYNGzwtNyPuCofBP83oq8x3hQcbH+Z5
-        frnNHleS3bE5tq3JC9b0DVlDcGSQF5rpBsuOCwNI4q6DUwPoB+Wf352cNXgafUKnN3EC8qat65yV
-        ggMTheqZ4nSIW1O3XdWZgldmm6KeQkCXlpMgF0JJDjzZGElo3Oc2y5H0gZa+U/K7aEhTwE2e8wtW
-        TGH7wiOc5A47uYiJgsYGXGZIMT+lo19zt8ktKiXJlNfi/xa8nq89Ilfbr2Zdf3/oFoJIKHIMdAR2
-        cny6gj6BnR0qex8kjGPwjzCQ2o90KNtvdhgDHTk/xe+3eU2yhknvj7q/uTk/0P1a+k3HbcCXeQ+c
-        Bw+zmX7/9EdUn9qfs//RwQYTXWxxLr1ZAbWJMJOFh9Wp91JZB+H8mmj5w7qEx/myyvizaOuKripd
-        99nl8g8AAAD//wMAOh79YcoGAAA=
+      string: '{"id":"e7c3e434-d6e7-4411-a82d-054cd164d38a","created_at":"2024-11-26T11:32:14.127000Z","modified_at":"2024-11-26T11:37:04.041000Z","managed_transaction_data":{"created_by":{"id":"ebb6ba79-91dd-46c5-8bbb-b73e359bd330","user_type":"api_user","name":"local
+        testing / Nuno Costa","state":"deleted","role":"trader"},"aborted_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"device_signing_request":{"signers":[{"user":{"id":"8a6c62e1-56ec-4e0d-99e8-2b4eaff49c25","user_type":"api_signer","name":"Testing","state":"deleted"},"modified_at":"2024-11-26T11:32:14.140000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"idempotence_id":"4a178661-340a-42bf-b0e7-8d68959d205d","has_current_user_vault_permissions":true,"sign_mode":"auto"},"signatures":[],"note":"string","spam_state":"unset","direction":"outgoing","state":"aborted","state_changes":[{"changed_at":"2024-11-26T11:32:14.127000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2024-11-26T11:32:14.138000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"},{"changed_at":"2024-11-26T11:37:04.041000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"approved","new_state":"aborted"}],"type":"black_box_signature","payload":"SGVsbG8=","vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"details":{"type":"ecdsa_stark","hash_binary":"SGVsbG8=","hash_integer":"0x48656c6c6f"}}'
     headers:
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Tue, 26 Nov 2024 13:30:16 GMT
+      - Thu, 13 Feb 2025 15:27:18 GMT
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 e78b88048cb2f0beb893089a9fa30352.cloudfront.net (CloudFront)
+      - 1.1 735dd7fa3c296627cd805d04e3e3a3e8.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - H5VZgHvfZS-MjwS3hxNWcvipdZLoRpJWmPJra6KbkMdtfrcQhIiOqg==
+      - KQtxBsFZpofiis7e3BWH-ZJ6sZdliliaJb5hvCVbGfTIQ0yA4R8zhA==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -209,15 +173,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '54'
+      - '78'
       x-ratelimit-limit:
-      - 200, 200;w=60
+      - 300, 300;w=60
       x-ratelimit-remaining:
-      - '197'
+      - '288'
       x-ratelimit-reset:
-      - '44'
+      - '42'
       x-request-id:
-      - 2cc9b3ee-a31e-96aa-9cd8-bceef80c9008
+      - 23b9053d-4346-92d5-8322-710d5cc7ffdc
     status:
       code: 200
       message: OK
@@ -239,39 +203,27 @@ interactions:
       User-Agent:
       - python-requests/2.31.0
       x-idempotence-id:
-      - 4a178661340a42bfb0e78d68959d205d
+      - 4a178661-340a-42bf-b0e7-8d68959d205d
     method: POST
     uri: https://api.fordefi.com/api/v1/transactions
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAACA7SUTW/kNgyG/0rgc5TKtvw1QIECPeytly56aLEQKImeCPFIriQnGQTz30t/zTZp
-        djeX+mCMOBT5vPQrvWTWZIcMG12iKAUzNTZMiDxn0BaG8Upok9fClC1kt5kOCAmNhER7Cl4IRolF
-        /TnPD2VxyMVdXjSc8z8p9eSN7e03cpsDF3dc5HsuODhSagrgIuhkvZMGEmSHl2tLdZ5XK6xStYKm
-        Y11uDBO1rlirlGKqKbGsOmXKklPVKWKQ6TwibYHRynlNYQenOTJ4DcNNwpisO978dPPb5PzNrz6m
-        WSe907KNWB6RAsEP85oADRW53GagfHiD1fO67vo2ZxXkLROVqJgC6JiuctWVTdl1qnqDNWKI3n2F
-        egWBJ7ADBR0F7/Qc/MXhs74Hd0Ra300P3yEFc7JuBjX4aDXKaI+OhMqAf0+keYaeQ9Q/O/z1skBd
-        hbRQ67pAElKjZgK5YV2HLSuUQOh70emieme+a72vYj6vs/0v5OUH7lidJPjmjnuIa21i62GIePlC
-        FUY/WH2WJ0j6fiGP0mAP00AFU5iQJjENKBdBfHvYO6/9ybYNGzwtNyPuCofBP83oq8x3hQcbH+Z5
-        frnNHleS3bE5tq3JC9b0DVlDcGSQF5rpBsuOCwNI4q6DUwPoB+Wf352cNXgafUKnN3EC8qat65yV
-        ggMTheqZ4nSIW1O3XdWZgldmm6KeQkCXlpMgF0JJDjzZGElo3Oc2y5H0gZa+U/K7aEhTwE2e8wtW
-        TGH7wiOc5A47uYiJgsYGXGZIMT+lo19zt8ktKiXJlNfi/xa8nq89Ilfbr2Zdf3/oFoJIKHIMdAR2
-        cny6gj6BnR0qex8kjGPwjzCQ2o90KNtvdhgDHTk/xe+3eU2yhknvj7q/uTk/0P1a+k3HbcCXeQ+c
-        Bw+zmX7/9EdUn9qfs//RwQYTXWxxLr1ZAbWJMJOFh9Wp91JZB+H8mmj5w7qEx/myyvizaOuKripd
-        99nl8g8AAAD//wMAOh79YcoGAAA=
+      string: '{"id":"e7c3e434-d6e7-4411-a82d-054cd164d38a","created_at":"2024-11-26T11:32:14.127000Z","modified_at":"2024-11-26T11:37:04.041000Z","managed_transaction_data":{"created_by":{"id":"ebb6ba79-91dd-46c5-8bbb-b73e359bd330","user_type":"api_user","name":"local
+        testing / Nuno Costa","state":"deleted","role":"trader"},"aborted_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"device_signing_request":{"signers":[{"user":{"id":"8a6c62e1-56ec-4e0d-99e8-2b4eaff49c25","user_type":"api_signer","name":"Testing","state":"deleted"},"modified_at":"2024-11-26T11:32:14.140000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"idempotence_id":"4a178661-340a-42bf-b0e7-8d68959d205d","has_current_user_vault_permissions":true,"sign_mode":"auto"},"signatures":[],"note":"string","spam_state":"unset","direction":"outgoing","state":"aborted","state_changes":[{"changed_at":"2024-11-26T11:32:14.127000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2024-11-26T11:32:14.138000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"},{"changed_at":"2024-11-26T11:37:04.041000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"approved","new_state":"aborted"}],"type":"black_box_signature","payload":"SGVsbG8=","vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"details":{"type":"ecdsa_stark","hash_binary":"SGVsbG8=","hash_integer":"0x48656c6c6f"}}'
     headers:
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Tue, 26 Nov 2024 13:30:16 GMT
+      - Thu, 13 Feb 2025 15:27:19 GMT
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 5d25c31f47a198dbf50acf297a389a00.cloudfront.net (CloudFront)
+      - 1.1 923c2d2f00d1c4aa09564e5db1f3c7a8.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - Cpk4lMo88KKhb8boreGQECTniv_woqmm4KCyV4lo83JqjwzRVdDqdg==
+      - 0melLNYlPfsHHXyXGPm_DkXP8X6Djv1uQ6XmydunXGOms0XgA2lVYA==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -283,15 +235,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '128'
+      - '97'
       x-ratelimit-limit:
-      - 200, 200;w=60
+      - 300, 300;w=60
       x-ratelimit-remaining:
-      - '196'
+      - '287'
       x-ratelimit-reset:
-      - '44'
+      - '41'
       x-request-id:
-      - e1b8e35e-4167-937d-b37e-fb73e388ce7c
+      - 8f85b299-2963-9485-bfce-e416301b09bb
     status:
       code: 200
       message: OK

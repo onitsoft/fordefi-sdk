@@ -18,7 +18,7 @@ def all_items_have(items: list[dict[str, Any]], required_properties: set[str]) -
 
 @pytest.mark.vcr()
 def test_get_assets(fordefi: Fordefi) -> None:
-    assets_iterable = fordefi.get_assets(vault_id=fordefienv.SOLANA_RELEASES_VAULT_ID)
+    assets_iterable = fordefi.get_assets(vault_id=fordefienv.APTOS_DEPOSITS_VAULT_ID)
     assets = list(assets_iterable)
     assert len(assets) > 0
     # https://documentation.fordefi.com/redoc/#operation/get_vault_assets_api_v1_vaults__id__assets_get
@@ -28,7 +28,10 @@ def test_get_assets(fordefi: Fordefi) -> None:
 @pytest.mark.vcr()
 def test_list_assets(fordefi: Fordefi) -> None:
     assets_iterable = fordefi.list_assets(
-        vault_ids=[fordefienv.SOLANA_RELEASES_VAULT_ID]
+        vault_ids=[
+            fordefienv.APTOS_RELEASES_VAULT_ID,
+            fordefienv.APTOS_DEPOSITS_VAULT_ID,
+        ]
     )
     assets = list(assets_iterable)
     assert len(assets) > 0
@@ -50,7 +53,7 @@ def test_list_assets__no_vault_id(
 @pytest.mark.vcr()
 def test_create_vault(fordefi: Fordefi) -> None:
     vault_request = dict(
-        name="New Vault",
+        name="creation-test-vault",
         type="evm",
     )
     created_vault = fordefi.create_vault(vault_request)
@@ -61,7 +64,7 @@ def test_create_vault(fordefi: Fordefi) -> None:
 
 @pytest.mark.vcr()
 def test_get_vault(fordefi: Fordefi) -> None:
-    response = fordefi.get_vault(vault_id=fordefienv.SOLANA_RELEASES_VAULT_ID)
+    response = fordefi.get_vault(vault_id=fordefienv.APTOS_RELEASES_VAULT_ID)
     assert isinstance(response, dict)
     assert len(response) > 0
 
@@ -85,19 +88,13 @@ def test_get_transaction(fordefi: Fordefi) -> None:
     argnames="vault_id,asset_symbol,amount,destination_address",
     argvalues=[
         (
-            fordefienv.SOLANA_RELEASES_VAULT_ID,
-            "DSOL",
-            Decimal("1"),
-            fordefienv.SOLANA_DEPOSITS_VAULT_ADDRESS,
-        ),
-        (
             fordefienv.APTOS_RELEASES_VAULT_ID,
             "APT",
             Decimal("1"),
             fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
         ),
     ],
-    ids=["DSOL", "APT"],
+    ids=["APT"],
 )
 def test_create_transfer(
     fordefi: Fordefi,
@@ -135,10 +132,10 @@ def test_create_transfer__bad_request(
 
     with pytest.raises(ClientError) as error:
         httpserver_fordefi.create_transfer(
-            vault_id=fordefienv.SOLANA_RELEASES_VAULT_ID,
-            asset_symbol="DSOL",
+            vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
+            asset_symbol="APT",
             amount=Decimal(1),
-            destination_address=fordefienv.SOLANA_DEPOSITS_VAULT_ADDRESS,
+            destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
         )
 
@@ -148,10 +145,10 @@ def test_create_transfer__bad_request(
 def test_create_transfer__non_interger_amount(fordefi: Fordefi):
     with pytest.raises(ValueError):
         fordefi.create_transfer(
-            vault_id=fordefienv.SOLANA_RELEASES_VAULT_ID,
+            vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             asset_symbol="DSOL",
             amount=Decimal("0.1"),
-            destination_address=fordefienv.SOLANA_DEPOSITS_VAULT_ADDRESS,
+            destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
         )
 
@@ -161,7 +158,7 @@ def test_create_transaction(
     fordefi: Fordefi,
 ) -> None:
     transaction_request = {
-        "vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed",
+        "vault_id": fordefienv.BLACKBOX_VAULT_ID,
         "note": "string",
         "sign_mode": "auto",
         "type": "black_box_signature",
@@ -169,7 +166,7 @@ def test_create_transaction(
     }
     created_transaction = fordefi.create_transaction(
         transaction_request,
-        idempotence_client_id=UUID("d3f00a83-e9eb-41c9-8824-ea7efaa22e1a"),
+        idempotence_client_id=UUID("56493cf2-36d9-4f37-b310-db1247941bbd"),
     )
     assert created_transaction
     assert "id" in created_transaction
@@ -210,7 +207,7 @@ def test_create_transaction_idempotence(
 
 def test_create_invalid_signature_type_transaction(fordefi: Fordefi) -> None:
     transaction_request = {
-        "vault_id": fordefienv.SOLANA_RELEASES_VAULT_ID,
+        "vault_id": fordefienv.APTOS_RELEASES_VAULT_ID,
         "signer_type": "initiator",
         "type": "black_box_signature",
         "details": {"format": "hash_binary", "hash_binary": "SGVsbG8="},
@@ -225,7 +222,7 @@ def test_create_invalid_signature_type_transaction(fordefi: Fordefi) -> None:
 @httpretty.activate
 def test_failed_create_transaction(fordefi: Fordefi) -> None:
     transaction_request = {
-        "vault_id": fordefienv.SOLANA_RELEASES_VAULT_ID,
+        "vault_id": fordefienv.APTOS_RELEASES_VAULT_ID,
         "note": "string",
         "sign_mode": "auto",
         "type": "black_box_signature",
@@ -247,7 +244,7 @@ def test_list_transactions(
 ) -> None:
     transactions_iterable = fordefi.list_transactions(
         vault_ids=[
-            fordefienv.SOLANA_RELEASES_VAULT_ID,
+            fordefienv.APTOS_RELEASES_VAULT_ID,
             fordefienv.SOLANA_DEPOSITS_VAULT_ID,
         ]
     )

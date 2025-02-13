@@ -9,6 +9,19 @@ from tests import helpers
 FAKE_FORDEFI_PRIVATE_KEY = helpers.generate_private_key()
 
 
+@pytest.fixture(scope="module")
+def vcr_config():
+    return {
+        "filter_headers": [
+            "authorization",
+            "x-signature",
+            "x-timestamp",
+            "X-API-Key",
+        ],
+        "ignore_localhost": True,
+    }
+
+
 @pytest.fixture(name="is_live_vcr_session")
 def is_live_vcr_session_fixture(request: pytest.FixtureRequest) -> bool:
     recording_disabled = request.config.getoption("--disable-recording")
