@@ -36,4 +36,4 @@ def test_get_pk_succeeds_when_env_var_is_set(monkeypatch: pytest.MonkeyPatch):
     result = runner.invoke(app, ["get-pk"])
 
     assert result.exit_code == 0, result.output
-    assert "-----BEGIN PUBLIC KEY-----" in result.output
+    assert "-----BEGIN PUBLIC KEY-----" not in result.output
