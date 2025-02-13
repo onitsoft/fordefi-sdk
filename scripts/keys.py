@@ -8,7 +8,7 @@ from ecdsa.keys import os
 from fordefi.keys import (
     decode_private_key,
     encode_private_key,
-    encode_public_key_as_pem,
+    encode_public_key_as_striped_pem,
     generate_private_key,
     get_public_key,
 )
@@ -24,7 +24,7 @@ def gen_keys(env_file: Path = Path(".env")) -> None:
     private_key = generate_private_key()
     public_key = get_public_key(private_key)
     base64_private_key = encode_private_key(private_key)
-    public_key_pem = encode_public_key_as_pem(public_key)
+    public_key_pem = encode_public_key_as_striped_pem(public_key)
 
     with env_file.open("a") as file:
         file.write(f'\n{FORDEFI_PRIVATE_KEY_ENV_VAR}="{base64_private_key}"\n')
@@ -32,7 +32,7 @@ def gen_keys(env_file: Path = Path(".env")) -> None:
     typer.echo(f"Appended {FORDEFI_PRIVATE_KEY_ENV_VAR} to {env_file}")
 
     pyperclip.copy(public_key_pem)
-    typer.echo("Copyied public key to clipboard")
+    typer.echo(f"Copyied public key to clipboard:\n {public_key_pem}")
 
 
 @app.command()
@@ -45,7 +45,7 @@ def get_pk() -> None:
 
     private_key = decode_private_key(encoded_private_key)
     public_key = get_public_key(private_key)
-    public_key_pem = encode_public_key_as_pem(public_key)
+    public_key_pem = encode_public_key_as_striped_pem(public_key)
     pyperclip.copy(public_key_pem)
     typer.echo(public_key_pem)
 
