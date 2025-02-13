@@ -20,10 +20,11 @@ logger = logging.getLogger(__name__)
 PAGE_SIZE = 50  # must be <= 100
 
 
-class BadRequestError(Exception):
-    def __init__(self, response_json: dict[str, str]) -> None:
-        detail = response_json["detail"]
-        super().__init__(detail)
+class ClientError(Exception):
+    def __init__(self, status_code: int, content: str) -> None:
+        self.status_code = status_code
+        self.content = content
+        super().__init__(f"Client error: {status_code} {content}")
 
 
 class Fordefi:
@@ -237,16 +238,23 @@ class Fordefi:
             "Fordefi responded: HTTP %s %s", response.status_code, response.content
         )
 
+        if response.status_code >= 400 and response.status_code < 500:
+            raise ClientError(response.status_code, response.content.decode())
+
+        response.raise_for_status()
+
         if response.headers.get("Content-Encoding") == "gzip":
             json_content = json.loads(gzip.decompress(response.content).decode("utf-8"))
 
         else:
-            json_content = response.json()
+            try:
+                json_content = response.json()
 
-        if response.status_code == 400:
-            raise BadRequestError(json_content)
+            except json.JSONDecodeError:
+                raise ValueError(
+                    f"Failed to decode JSON response from Fordefi: {response.headers} {response.content}"
+                )
 
-        response.raise_for_status()
         return json_content
 
     def _signature(self, path: str, request_json: Json) -> dict[str, bytes]:

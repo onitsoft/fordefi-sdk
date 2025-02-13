@@ -4,10 +4,9 @@ from uuid import UUID
 
 import httpretty
 import pytest
-import requests
 from pytest_httpserver import HTTPServer, httpserver
 
-from fordefi.client import BadRequestError, Fordefi
+from fordefi.client import ClientError, Fordefi
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 
@@ -142,7 +141,7 @@ def test_create_transfer__bad_request(
         status=400,
     )
 
-    with pytest.raises(BadRequestError) as error:
+    with pytest.raises(ClientError) as error:
         httpserver_fordefi.create_transfer(
             vault_id=SOLANA_RELEASES_VAULT_ID,
             asset_symbol="DSOL",
@@ -243,7 +242,7 @@ def test_failed_create_transaction(fordefi: Fordefi) -> None:
     httpretty.register_uri(
         httpretty.POST, f"{fordefi._base_url}/transactions", status=422
     )
-    with pytest.raises(requests.HTTPError):
+    with pytest.raises(ClientError):
         fordefi.create_transaction(
             transaction_request,
             idempotence_client_id=UUID("c9fe423a-4f2c-423c-83a0-c8c5b8389dc9"),
