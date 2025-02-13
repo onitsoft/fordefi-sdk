@@ -41,7 +41,7 @@ def fordefi_api_key_fixture(is_live_vcr_session: bool) -> str:
 
 @pytest.fixture(name="fordefi_private_key")
 def fordefi_private_key_fixture(is_live_vcr_session: bool) -> str:
-    default = FAKE_FORDEFI_PRIVATE_KEY
+    default = None
 
     if not is_live_vcr_session:
         default = FAKE_FORDEFI_PRIVATE_KEY
