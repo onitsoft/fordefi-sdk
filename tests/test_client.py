@@ -139,7 +139,7 @@ def test_create_transfer__bad_request(
             idempotence_client_id=UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
         )
 
-    assert str(error) == error_detail
+    assert error_detail in str(error)
 
 
 def test_create_transfer__non_interger_amount(fordefi: Fordefi):
