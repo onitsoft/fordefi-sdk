@@ -33,6 +33,7 @@ class Fordefi:
         private_key: str,
         base_url: str = "https://api.fordefi.com/api/v1",
         page_size: int = PAGE_SIZE,
+        timeout: int = 30,
     ) -> None:
         self._base_url = base_url
         self._api_key = api_key
@@ -41,6 +42,7 @@ class Fordefi:
             curve=ecdsa.curves.NIST256p,
         )
         self.page_size = page_size
+        self.timeout = timeout
 
     def create_vault(self, vault: Json) -> Json:
         endpoint = "/vaults"
@@ -220,7 +222,7 @@ class Fordefi:
             }
 
         response = requests.request(
-            method, url, headers=headers, params=params, json=data
+            method, url, headers=headers, params=params, json=data, timeout=self.timeout
         )
         logger.info(
             "Requested to Fordefi: %s",

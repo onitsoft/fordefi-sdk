@@ -22,7 +22,11 @@ build-backend = "hatchling.build"
 
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "C90" ]
+select = ["E4", "E7", "E9", "F", "I", "S", "C90", "ERA"]
+
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["S101"]
 
 
 [tool.mypy]
@@ -45,6 +49,7 @@ dev-dependencies = [
     "pytest-recording==0.13.2",
     "uv>=0.5.31",
     "pyperclip>=1.9.0",
+    "ruff>=0.9.6",
 ]
 
 [tool.pyright]

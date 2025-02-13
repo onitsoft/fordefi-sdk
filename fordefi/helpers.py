@@ -11,8 +11,7 @@ def generate_private_key() -> ecdsa.SigningKey:
 
 
 def public_key_of(private_key: ecdsa.SigningKey) -> str:
-    _public_key = private_key.get_verifying_key()
-    assert isinstance(_public_key, ecdsa.VerifyingKey)
+    _public_key = cast(ecdsa.VerifyingKey, private_key.get_verifying_key())
     pem = cast(bytes, _public_key.to_pem())
     return pem.decode()
 
