@@ -33,7 +33,7 @@ def gen_keys(env_file: Path = Path(".env")) -> None:
 
     typer.echo(f"Public key:\n {public_key_pem}")
 
-    try:
+    try:  # pragma: no cover
         pyperclip.copy(public_key_pem)
         typer.echo("Copied public key to clipboard")
 
@@ -54,7 +54,7 @@ def get_pk() -> None:
     public_key_pem = encode_public_key_as_striped_pem(public_key)
     typer.echo(public_key_pem)
 
-    try:
+    try:  # pragma: no cover
         pyperclip.copy(public_key_pem)
         typer.echo("Copied public key to clipboard")
 
