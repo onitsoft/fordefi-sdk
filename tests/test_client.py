@@ -254,6 +254,30 @@ def test_list_transactions(
     assert all_items_have(transactions, {"id", "type", "state"})
 
 
+@pytest.mark.vcr
+def test_list_transactions__with_direction_parameter(
+    fordefi: Fordefi,
+) -> None:
+    vault_ids = [
+        fordefienv.APTOS_DEPOSITS_VAULT_ID,
+        fordefienv.APTOS_RELEASES_VAULT_ID,
+    ]
+
+    transactions_iterable = fordefi.list_transactions(
+        vault_ids=vault_ids,
+    )
+    transactions = list(transactions_iterable)
+
+    incoming_transactions_iterable = fordefi.list_transactions(
+        vault_ids=vault_ids,
+        direction="incoming",
+    )
+    incoming_transactions = list(incoming_transactions_iterable)
+
+    assert 0 < len(incoming_transactions) < len(transactions)
+    assert all_items_have(incoming_transactions, {"id", "type", "state"})
+
+
 def test_get_pages(httpserver: HTTPServer) -> None:
     base_url = httpserver.url_for("")
 
