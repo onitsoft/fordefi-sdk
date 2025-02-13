@@ -44,6 +44,7 @@ dev-dependencies = [
     "pytest-cov>=6.0.0",
     "pytest-recording==0.13.2",
     "uv>=0.5.31",
+    "pyperclip>=1.9.0",
 ]
 
 [tool.pyright]
