@@ -1,6 +1,5 @@
 import base64
 import datetime
-import gzip
 import hashlib
 import json
 import logging
@@ -243,17 +242,7 @@ class Fordefi:
 
         response.raise_for_status()
 
-        if response.headers.get("Content-Encoding") == "gzip":
-            json_content = json.loads(gzip.decompress(response.content).decode("utf-8"))
-
-        else:
-            try:
-                json_content = response.json()
-
-            except json.JSONDecodeError:
-                raise ValueError(
-                    f"Failed to decode JSON response from Fordefi: {response.headers} {response.content}"
-                )
+        json_content = response.json()
 
         return json_content
 
