@@ -31,8 +31,14 @@ def gen_keys(env_file: Path = Path(".env")) -> None:
 
     typer.echo(f"Appended {FORDEFI_PRIVATE_KEY_ENV_VAR} to {env_file}")
 
-    pyperclip.copy(public_key_pem)
-    typer.echo(f"Copyied public key to clipboard:\n {public_key_pem}")
+    typer.echo(f"Public key:\n {public_key_pem}")
+
+    try:
+        pyperclip.copy(public_key_pem)
+        typer.echo("Copyied public key to clipboard")
+
+    except pyperclip.PyperclipException:  # pragma: no cover
+        typer.echo("Could not copy public key to clipboard", err=True)
 
 
 @app.command()
@@ -46,8 +52,14 @@ def get_pk() -> None:
     private_key = decode_private_key(encoded_private_key)
     public_key = get_public_key(private_key)
     public_key_pem = encode_public_key_as_striped_pem(public_key)
-    pyperclip.copy(public_key_pem)
     typer.echo(public_key_pem)
+
+    try:
+        pyperclip.copy(public_key_pem)
+        typer.echo("Copyied public key to clipboard")
+
+    except pyperclip.PyperclipException:  # pragma: no cover
+        typer.echo("Could not copy public key to clipboard", err=True)
 
 
 if __name__ == "__main__":
