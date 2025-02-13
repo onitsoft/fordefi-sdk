@@ -14,7 +14,7 @@ from tests.helpers import raises
     ],
     ids=[
         "known",
-        "unkown",
+        "unknown",
     ],
 )
 def test_get_asset_symbol(

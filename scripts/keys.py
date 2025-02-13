@@ -35,7 +35,7 @@ def gen_keys(env_file: Path = Path(".env")) -> None:
 
     try:
         pyperclip.copy(public_key_pem)
-        typer.echo("Copyied public key to clipboard")
+        typer.echo("Copied public key to clipboard")
 
     except pyperclip.PyperclipException:  # pragma: no cover
         typer.echo("Could not copy public key to clipboard", err=True)
@@ -56,7 +56,7 @@ def get_pk() -> None:
 
     try:
         pyperclip.copy(public_key_pem)
-        typer.echo("Copyied public key to clipboard")
+        typer.echo("Copied public key to clipboard")
 
     except pyperclip.PyperclipException:  # pragma: no cover
         typer.echo("Could not copy public key to clipboard", err=True)
