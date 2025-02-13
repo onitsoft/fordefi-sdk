@@ -26,11 +26,5 @@ def raises(
 
 def generate_private_key():
     private_key_bytes = os.urandom(32)
-    # signing_key = ecdsa.SigningKey.from_string(
-    #     private_key_bytes, curve=ecdsa.curves.NIST256p
-    # )
     private_key_base64 = base64.b64encode(private_key_bytes).decode("utf-8")
     return private_key_base64
-
-
-private_key = generate_private_key()
