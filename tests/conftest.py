@@ -29,18 +29,42 @@ def _get_config(env_var: str, default: str | None = None) -> str:
     return value
 
 
+@pytest.fixture(name="fordefi_api_key")
+def fordefi_api_key_fixture(is_live_vcr_session: bool) -> str:
+    default = None
+
+    if not is_live_vcr_session:
+        default = "fake-api-key"
+
+    return _get_config("FORDEFI_API_KEY", default)
+
+
+@pytest.fixture(name="fordefi_private_key")
+def fordefi_private_key_fixture(is_live_vcr_session: bool) -> str:
+    default = FAKE_FORDEFI_PRIVATE_KEY
+
+    if not is_live_vcr_session:
+        default = FAKE_FORDEFI_PRIVATE_KEY
+
+    return _get_config("FORDEFI_PRIVATE_KEY", default)
+
+
 @pytest.fixture(name="fordefi")
-def fordefi_fixture() -> Fordefi:
+def fordefi_fixture(fordefi_api_key: str, fordefi_private_key: str) -> Fordefi:
     return Fordefi(
-        api_key=_get_config("FORDEFI_API_KEY", "fake-api-key"),
-        private_key=_get_config("FORDEFI_PRIVATE_KEY", FAKE_FORDEFI_PRIVATE_KEY),
+        api_key=fordefi_api_key,
+        private_key=fordefi_private_key,
     )
 
 
 @pytest.fixture
-def httpserver_fordefi(httpserver: pytest_httpserver.HTTPServer) -> Fordefi:
+def httpserver_fordefi(
+    httpserver: pytest_httpserver.HTTPServer,
+    fordefi_api_key: str,
+    fordefi_private_key: str,
+) -> Fordefi:
     return Fordefi(
-        api_key=_get_config("FORDEFI_API_KEY", "fake-api-key"),
-        private_key=_get_config("FORDEFI_PRIVATE_KEY", FAKE_FORDEFI_PRIVATE_KEY),
+        api_key=fordefi_api_key,
+        private_key=fordefi_private_key,
         base_url=httpserver.url_for(""),
     )
