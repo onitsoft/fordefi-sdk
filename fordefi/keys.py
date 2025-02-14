@@ -28,7 +28,7 @@ def decode_private_key(encoded_private_key: str) -> SigningKey:
 
 def encode_public_key_as_striped_pem(public_key: VerifyingKey) -> str:
     # https://docs.fordefi.com/developers/getting-started/pair-an-api-client-with-the-api-signer#pair-an-api-client-with-the-api-signer
-    pem = public_key.to_pem().decode("utf-8")
+    pem = str(public_key.to_pem())
     return _strip_pem(pem)
 
 
