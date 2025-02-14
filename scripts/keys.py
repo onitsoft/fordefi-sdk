@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+import os
 from pathlib import Path
 
 import pyperclip
 import typer
-from ecdsa.keys import os
 
 from fordefi.keys import (
     decode_private_key,
