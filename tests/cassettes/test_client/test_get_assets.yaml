@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults/f5f13461-803f-455b-86ff-45e1cf8bc884/assets?page=1&size=50
+  response:
+    body:
+      string: '{"total":1,"page":1,"size":50,"owned_assets":[{"priced_asset":{"type":"asset_price","asset_info":{"id":"084327a1-b40b-4fa2-97e4-731a67cb59ab","asset_identifier":{"type":"aptos","details":{"type":"native","chain":"aptos_mainnet"},"chain":{"chain_type":"aptos","unique_id":"aptos_mainnet","name":"Aptos
+        Mainnet","native_currency_symbol":"APT","native_currency_name":"Aptos Coin","blockchain_explorer":{"transaction_url":"https://explorer.aptoslabs.com/transactions?network=mainnet","address_url":"https://explorer.aptoslabs.com/account/?network=mainnet","root_url":"https://explorer.aptoslabs.com/?network=mainnet","transaction_format_url":"https://explorer.aptoslabs.com/txn/%s/?network=mainnet","address_format_url":"https://explorer.aptoslabs.com/account/%s/?network=mainnet","asset_format_url":"https://explorer.aptoslabs.com/coin/%s/?network=mainnet"},"logo_url":"https://logos.fordefi.com/chains/aptos/mainnet.svg","is_testnet":false,"is_enabled":true}},"name":"Aptos
+        Coin","symbol":"APT","decimals":8,"verified":true,"metadata_uri":"","is_spam":false,"explorer_url":"https://explorer.aptoslabs.com/coin/0x1::aptos_coin::AptosCoin/?network=mainnet"},"price":{"price":"601","price_float":"601","fiat_currency":{"currency_symbol":"usd","decimals":2}}},"balance":"300000","balances":{"mined":"300000","pending_incoming":"0"}}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 13 Feb 2025 15:27:15 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 2b1fd1e1421ca124eaa002817c6c475a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - KHa64FLY-NjSz_YGk0zRZB3qaNB6oXxSwog4wvCCy7UEacefg68NKA==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '71'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '299'
+      x-ratelimit-reset:
+      - '45'
+      x-request-id:
+      - e458bd74-3a2a-9945-919f-75d6b7668878
+    status:
+      code: 200
+      message: OK
+version: 1

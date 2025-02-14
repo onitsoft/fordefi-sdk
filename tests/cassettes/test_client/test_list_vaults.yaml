@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults?page=1&size=50
+  response:
+    body:
+      string: '{"total":6,"page":1,"size":50,"vaults":[{"id":"f5f13461-803f-455b-86ff-45e1cf8bc884","created_at":"2024-11-25T11:24:41.005000Z","modified_at":"2024-11-26T09:59:58.431000Z","name":"Aptos
+        Deposits","created_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"vault_group":{"id":"53827306-ad1d-4500-824a-9e5825844e0b","name":"Deposits","vault_count":2,"can_current_user_create_or_edit_vaults":true},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/637/0/0/0","public_key_compressed":"vaTeg7G8kOx2HTkNK5pXgCX2EPWyuTOLRCCL/6L03BY=","derivation_info":{"derivation_path":"m/44/637/0/0/0","master_public_key":{"id":"68f66af6-811e-4687-8ee0-aba3fe13059f","xpub":"xpub661MyMwAqRbcFfuCrQbcXBFdTsTsXcphM8dThzmUeDuPrdFf4h1WsnAw7qaosNQB9kbxkbZw69EbLx6JtMQ7a2ygyZXZ3Fetxoygdy5UaMs"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"aptos","address":"0x01bf538ff2d24328aa441dcd6951f18abd211b13fbec3cc781d5ef3c0af3afff"},{"id":"3c091da6-9f5a-4a2d-adb7-61217329889b","created_at":"2024-11-25T12:31:50.397000Z","modified_at":"2024-11-26T10:00:20.477000Z","name":"Aptos
+        Releases","created_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"vault_group":{"id":"5fffafad-bc06-422d-9ca4-73ed2b64f7c3","name":"Releases","vault_count":2,"can_current_user_create_or_edit_vaults":false},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/637/3/0/0","public_key_compressed":"xsAndjkIS++FvSTA9+iNnC/39Dx/dhTvRQPVccG3ZTI=","derivation_info":{"derivation_path":"m/44/637/3/0/0","master_public_key":{"id":"68f66af6-811e-4687-8ee0-aba3fe13059f","xpub":"xpub661MyMwAqRbcFfuCrQbcXBFdTsTsXcphM8dThzmUeDuPrdFf4h1WsnAw7qaosNQB9kbxkbZw69EbLx6JtMQ7a2ygyZXZ3Fetxoygdy5UaMs"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"aptos","address":"0x958e2bbe42005cfc466c163c78b6c852ec454c7810f0ece04085cd44fb7f4b05"},{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","created_at":"2024-11-25T16:02:25.765000Z","modified_at":"2024-11-25T16:02:25.765000Z","name":"blackbox","created_by":{"id":"ebb6ba79-91dd-46c5-8bbb-b73e359bd330","user_type":"api_user","name":"local
+        testing / Nuno Costa","state":"deleted","role":"trader"},"vault_group":{"id":"58a9a179-e324-494a-9b92-0beebdba75b4","name":"Default","vault_count":2,"can_current_user_create_or_edit_vaults":true},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/9004/0/0/0","public_key_compressed":"AgHrhs42F/rYL45C7ndTONAsyI/qm8lmvAL0Ge9EEPcb","derivation_info":{"derivation_path":"m/44/9004/0/0/0","master_public_key":{"id":"7814b1f7-30b9-4603-b83e-fd44ffb07553","xpub":"xpub661MyMwAqRbcEk7W7Mn84ijj32QqqsLKBsTLXNrdrHqyzNqQM1vkmuwSwhSzYZ6YEn1SSqpG1HbLSHjwvuewTe76QtRUhmmSyUuQGip64oz"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"black_box","details":{"type":"ecdsa_stark","public_key":"0x01eb86ce3617fad82f8e42ee775338d02cc88fea9bc966bc02f419ef4410f71b","stark_key":"0x01eb86ce3617fad82f8e42ee775338d02cc88fea9bc966bc02f419ef4410f71b"}},{"id":"686dc906-324c-47b2-b1a7-5261287ead4b","created_at":"2025-02-13T15:27:16.186000Z","modified_at":"2025-02-13T15:27:16.186000Z","name":"creation-test-vault","created_by":{"id":"7e94b222-22f1-437a-b2a5-8d866d3d4d28","user_type":"api_user","name":"Nuno
+        C / Local Testing","state":"active","role":"trader"},"vault_group":{"id":"58a9a179-e324-494a-9b92-0beebdba75b4","name":"Default","vault_count":2,"can_current_user_create_or_edit_vaults":true},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/60/1/0/0","public_key_compressed":"A5GnkoLZ/bJYyBNExR2KIoCZoXyKxG8svK1obWnTKwXS","derivation_info":{"derivation_path":"m/44/60/1/0/0","master_public_key":{"id":"dd5b12ba-ea74-45f5-a254-58c4f69b89c6","xpub":"xpub661MyMwAqRbcFkEJn5BNqt6hfRUTEwRGisnEALNLLzKFr6NbEeJLCcncpADpTK84KLjVEvQM6a6dAkC8buuVsEoRJE9SSYNEHNHgs4rN1Rb"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"evm","address":"0x7867379eeB4cE505eB19B324dae04e2b1d7A3C72"},{"id":"cf7f9ce8-e237-4eed-be3d-50a7dd517220","created_at":"2024-11-25T12:31:31.749000Z","modified_at":"2024-11-25T12:31:31.749000Z","name":"Solana
+        Deposits","created_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"vault_group":{"id":"53827306-ad1d-4500-824a-9e5825844e0b","name":"Deposits","vault_count":2,"can_current_user_create_or_edit_vaults":true},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/501/2/0/0","public_key_compressed":"Lnu1JLsYOXbyyubcdA2i789W90cGDxTnfx503PvhTN8=","derivation_info":{"derivation_path":"m/44/501/2/0/0","master_public_key":{"id":"68f66af6-811e-4687-8ee0-aba3fe13059f","xpub":"xpub661MyMwAqRbcFfuCrQbcXBFdTsTsXcphM8dThzmUeDuPrdFf4h1WsnAw7qaosNQB9kbxkbZw69EbLx6JtMQ7a2ygyZXZ3Fetxoygdy5UaMs"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"solana","address":"48TAP2AyKh6Wkz1YpnUXTM3n8wojAtYW6g5cAB81DWCE"},{"id":"d656392d-c3c0-4407-a47b-00f2f673145a","created_at":"2024-11-25T12:09:00.596000Z","modified_at":"2024-11-25T12:30:16.951000Z","name":"Solana
+        Releases","created_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"active","role":"admin"},"vault_group":{"id":"5fffafad-bc06-422d-9ca4-73ed2b64f7c3","name":"Releases","vault_count":2,"can_current_user_create_or_edit_vaults":false},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/501/1/0/0","public_key_compressed":"SJmBhUyDnfwmVeBkm2/nW6QZJgp16uJ1EosOZLLVZkQ=","derivation_info":{"derivation_path":"m/44/501/1/0/0","master_public_key":{"id":"68f66af6-811e-4687-8ee0-aba3fe13059f","xpub":"xpub661MyMwAqRbcFfuCrQbcXBFdTsTsXcphM8dThzmUeDuPrdFf4h1WsnAw7qaosNQB9kbxkbZw69EbLx6JtMQ7a2ygyZXZ3Fetxoygdy5UaMs"}},"keyset":{"id":"2e6569a5-f0d0-4c60-a773-602078f4e425","name":"default","scope":"organization"},"type":"solana","address":"5tQ7i7i5SUBcttpktvJYFAB5GYW86hz6X8oRvtuZJEzX"}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 13 Feb 2025 15:27:16 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 8b0fd9a74745a3290a9c7ffef7d75076.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - RSR1epikPFTzvYKbti2zrVp3ocghOTY8MLUneY5qSFnQDBLXfXkZ-A==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '48'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '294'
+      x-ratelimit-reset:
+      - '44'
+      x-request-id:
+      - ed7fbc06-c422-9baa-811b-651f3ef177a0
+    status:
+      code: 200
+      message: OK
+version: 1

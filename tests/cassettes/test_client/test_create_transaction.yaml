@@ -1,0 +1,63 @@
+interactions:
+- request:
+    body: '{"vault_id": "e1e88d12-7f78-440e-a12c-c7e3904daeed", "note": "string",
+      "sign_mode": "auto", "type": "black_box_signature", "details": {"format": "hash_binary",
+      "hash_binary": "SGVsbG8="}, "signer_type": "api_signer"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-idempotence-id:
+      - 56493cf2-36d9-4f37-b310-db1247941bbd
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions
+  response:
+    body:
+      string: '{"id":"aebde6e4-c31a-46cd-b773-56a70f6b1973","created_at":"2025-02-13T15:21:32.564000Z","modified_at":"2025-02-13T15:21:32.564000Z","managed_transaction_data":{"created_by":{"id":"7e94b222-22f1-437a-b2a5-8d866d3d4d28","user_type":"api_user","name":"Nuno
+        C / Local Testing","state":"active","role":"trader"},"device_signing_request":{"signers":[{"user":{"id":"a1e1ccee-ef58-42b5-8d5f-c3f8d0f8f550","user_type":"api_signer","name":"Testing","state":"active"},"modified_at":"2025-02-13T15:21:32.577000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"idempotence_id":"56493cf2-36d9-4f37-b310-db1247941bbd","has_current_user_vault_permissions":true,"sign_mode":"auto"},"signatures":[],"note":"string","spam_state":"unset","direction":"outgoing","state":"approved","state_changes":[{"changed_at":"2025-02-13T15:21:32.564000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2025-02-13T15:21:32.576000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"}],"type":"black_box_signature","payload":"SGVsbG8=","vault":{"id":"e1e88d12-7f78-440e-a12c-c7e3904daeed","name":"blackbox","state":"active","type":"black_box"},"details":{"type":"ecdsa_stark","hash_binary":"SGVsbG8=","hash_integer":"0x48656c6c6f"}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 13 Feb 2025 15:27:17 GMT
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 923c2d2f00d1c4aa09564e5db1f3c7a8.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 75sca1gBIpOc1hAymjC2LdVvfdKZohgTuZDaJjawK3pTdQhCQMvjeQ==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      content-encoding:
+      - gzip
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '58'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '291'
+      x-ratelimit-reset:
+      - '43'
+      x-request-id:
+      - 41cb0052-a179-9ffb-bc83-7a411742f1ad
+    status:
+      code: 200
+      message: OK
+version: 1
