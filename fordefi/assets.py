@@ -84,6 +84,11 @@ ASSET_SYMBOL_BY_TRANSACTION_TYPE: dict[TransactionType, str] = {
         subtype="raw_transaction",
         chain_unique_id="solana_devnet",
     ): "DSOL",
+    TransactionType(
+        type="evm_transaction",
+        subtype="native_transfer",
+        chain_unique_id="evm_ethereum_mainnet",
+    ): "ETH",
 }
 
 
