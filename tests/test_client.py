@@ -16,7 +16,7 @@ def all_items_have(items: list[dict[str, Any]], required_properties: set[str]) -
     return all(required_properties <= set(item.keys()) for item in items)
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_get_assets(fordefi: Fordefi) -> None:
     assets_iterable = fordefi.get_assets(vault_id=fordefienv.APTOS_DEPOSITS_VAULT_ID)
     assets = list(assets_iterable)
@@ -25,13 +25,13 @@ def test_get_assets(fordefi: Fordefi) -> None:
     assert all_items_have(assets, {"priced_asset", "balance", "balances"})
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_list_assets(fordefi: Fordefi) -> None:
     assets_iterable = fordefi.list_assets(
         vault_ids=[
             fordefienv.APTOS_RELEASES_VAULT_ID,
             fordefienv.APTOS_DEPOSITS_VAULT_ID,
-        ]
+        ],
     )
     assets = list(assets_iterable)
     assert len(assets) > 0
@@ -39,7 +39,7 @@ def test_list_assets(fordefi: Fordefi) -> None:
     assert all_items_have(assets, {"priced_asset", "balance", "balances"})
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_list_assets__no_vault_id(
     fordefi: Fordefi,
 ) -> None:
@@ -50,7 +50,7 @@ def test_list_assets__no_vault_id(
     assert all_items_have(assets, {"priced_asset", "balance", "balances"})
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_create_vault(fordefi: Fordefi) -> None:
     vault_request = dict(
         name="creation-test-vault",
@@ -62,21 +62,21 @@ def test_create_vault(fordefi: Fordefi) -> None:
     assert created_vault.get("name") == vault_request["name"]
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_get_vault(fordefi: Fordefi) -> None:
     response = fordefi.get_vault(vault_id=fordefienv.APTOS_RELEASES_VAULT_ID)
     assert isinstance(response, dict)
     assert len(response) > 0
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_list_vaults(fordefi: Fordefi) -> None:
     vaults = list(fordefi.list_vaults())
     assert len(vaults) > 0
     assert all({"id", "name"}.intersection(set(vault.keys())) for vault in vaults)
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_get_transaction(fordefi: Fordefi) -> None:
     transaction = fordefi.get_transaction(fordefienv.TEST_TRANSACTION_ID)
     assert transaction
@@ -85,16 +85,24 @@ def test_get_transaction(fordefi: Fordefi) -> None:
 
 @pytest.mark.vcr
 @pytest.mark.parametrize(
-    argnames="vault_id,asset_symbol,amount,destination_address",
+    argnames="vault_id,asset_symbol,amount,destination_address,idepotence_client_id",
     argvalues=[
         (
             fordefienv.APTOS_RELEASES_VAULT_ID,
             "APT",
             Decimal("1"),
             fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+            UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
+        ),
+        (
+            fordefienv.EVM_RELEASES_VAULT_ID,
+            "ETH",
+            Decimal("1"),
+            fordefienv.EVM_DEPOSITS_VAULT_ID,
+            UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
         ),
     ],
-    ids=["APT"],
+    ids=["APT", "ETH"],
 )
 def test_create_transfer(
     fordefi: Fordefi,
@@ -102,13 +110,14 @@ def test_create_transfer(
     asset_symbol: str,
     amount: Decimal,
     destination_address: str,
+    idepotence_client_id: UUID,
 ):
     created_transfer = fordefi.create_transfer(
         vault_id=vault_id,
         asset_symbol=asset_symbol,
         amount=amount,
         destination_address=destination_address,
-        idempotence_client_id=UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
+        idempotence_client_id=idepotence_client_id,
     )
 
     assert created_transfer
@@ -153,7 +162,7 @@ def test_create_transfer__non_interger_amount(fordefi: Fordefi):
         )
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_create_transaction(
     fordefi: Fordefi,
 ) -> None:
@@ -174,7 +183,7 @@ def test_create_transaction(
     assert state
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_create_transaction_idempotence(
     fordefi: Fordefi,
 ) -> None:
@@ -197,10 +206,12 @@ def test_create_transaction_idempotence(
 
     common_id = UUID("4a178661-340a-42bf-b0e7-8d68959d205d")
     created_transaction3 = fordefi.create_transaction(
-        transaction_request, idempotence_client_id=common_id
+        transaction_request,
+        idempotence_client_id=common_id,
     )
     created_transaction4 = fordefi.create_transaction(
-        transaction_request, idempotence_client_id=common_id
+        transaction_request,
+        idempotence_client_id=common_id,
     )
     assert created_transaction4.get("id") == created_transaction3.get("id")
 
@@ -229,7 +240,9 @@ def test_failed_create_transaction(fordefi: Fordefi) -> None:
         "details": {"format": "hash_binary", "hash_binary": "SGVsbG8="},
     }
     httpretty.register_uri(
-        httpretty.POST, f"{fordefi._base_url}/transactions", status=422
+        httpretty.POST,
+        f"{fordefi._base_url}/transactions",
+        status=422,
     )
     with pytest.raises(ClientError):
         fordefi.create_transaction(
@@ -246,7 +259,7 @@ def test_list_transactions(
         vault_ids=[
             fordefienv.APTOS_RELEASES_VAULT_ID,
             fordefienv.SOLANA_DEPOSITS_VAULT_ID,
-        ]
+        ],
     )
     transactions = list(transactions_iterable)
 
@@ -289,13 +302,16 @@ def test_get_pages(httpserver: HTTPServer) -> None:
     )
 
     httpserver.expect_request(
-        "/items", query_string={"page": "1", "size": "2"}
+        "/items",
+        query_string={"page": "1", "size": "2"},
     ).respond_with_json({"items": ["a", "b"], "total": 5, "page": 1})
     httpserver.expect_request(
-        "/items", query_string={"page": "2", "size": "2"}
+        "/items",
+        query_string={"page": "2", "size": "2"},
     ).respond_with_json({"items": ["c", "d"], "total": 5, "page": 2})
     httpserver.expect_request(
-        "/items", query_string={"page": "3", "size": "2"}
+        "/items",
+        query_string={"page": "3", "size": "2"},
     ).respond_with_json({"items": ["f"], "total": 5, "page": 3})
 
     items = fordefi._get_pages("items", "items")
@@ -314,7 +330,8 @@ def test_get_pages_empty(httpserver: HTTPServer) -> None:
     )
 
     httpserver.expect_request(
-        "/items", query_string={"page": "1", "size": "2"}
+        "/items",
+        query_string={"page": "1", "size": "2"},
     ).respond_with_json({"items": [], "total": 0, "page": 1})
 
     items = fordefi._get_pages("items", "items")

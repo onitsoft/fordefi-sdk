@@ -20,8 +20,7 @@ build-backend = "hatchling.build"
 packages = ["fordefi"]
 
 [tool.ruff.lint]
-select = ["ALL"]
-# select = ["E4", "E7", "E9", "F", "I", "S", "ARG", "C90", "ERA"]
+select = ["E4", "E7", "E9", "F", "I", "S", "ARG", "C90", "ERA"]
 
 
 [tool.ruff.lint.per-file-ignores]

@@ -3,8 +3,9 @@ import datetime
 import hashlib
 import json
 import logging
+from collections.abc import Iterable
 from decimal import Decimal
-from typing import Any, Iterable, Literal, Optional
+from typing import Any, Literal
 
 import ecdsa
 import ecdsa.util
@@ -62,7 +63,7 @@ class Fordefi:
         endpoint = f"/vaults/{vault_id}/assets"
         return self._get_pages(endpoint, "owned_assets")
 
-    def list_assets(self, vault_ids: Optional[list[str]] = None) -> Iterable[Json]:
+    def list_assets(self, vault_ids: list[str] | None = None) -> Iterable[Json]:
         endpoint = "/assets/owned-assets"
         params = {"vault_ids": vault_ids}
         return self._get_pages(endpoint, "owned_assets", params=params)
@@ -74,8 +75,8 @@ class Fordefi:
 
     def list_transactions(
         self,
-        vault_ids: Optional[list[str]] = None,
-        direction: Literal["incoming"] | Literal["outgoing"] | None = None,
+        vault_ids: list[str] | None = None,
+        direction: Literal["incoming", "outgoing"] | None = None,
     ) -> Iterable[Json]:
         path = "/transactions"
 
@@ -103,7 +104,7 @@ class Fordefi:
     ) -> Json:
         if amount % 1 != 0:
             raise ValueError(
-                "Amount must be an integer representing the amount in smallest unit."
+                "Amount must be an integer representing the amount in smallest unit.",
             )
 
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
@@ -111,16 +112,21 @@ class Fordefi:
             "vault_id": vault_id,
             "type": f"{asset_identifier.type}_transaction",
             "details": self._serialize_transfer_transaction_details(
-                asset_identifier, destination_address, amount
+                asset_identifier,
+                destination_address,
+                amount,
             ),
         }
         return self.create_transaction(
-            transaction, idempotence_client_id=idempotence_client_id
+            transaction,
+            idempotence_client_id=idempotence_client_id,
         )
 
     @staticmethod
     def _serialize_transfer_transaction_details(
-        asset_identifier: AssetIdentifier, destination_address: str, amount: Decimal
+        asset_identifier: AssetIdentifier,
+        destination_address: str,
+        amount: Decimal,
     ) -> Json:
         details = {
             "type": f"{asset_identifier.type}_transfer",
@@ -131,6 +137,9 @@ class Fordefi:
             },
             "asset_identifier": Fordefi._serialize_asset_identifier(asset_identifier),
         }
+
+        if asset_identifier.default_gas is not None:
+            details["gas"] = asset_identifier.default_gas
 
         if asset_identifier.default_gas_config is not None:
             details["gas_config"] = asset_identifier.default_gas_config
@@ -176,7 +185,7 @@ class Fordefi:
         self,
         endpoint: str,
         items_property: str,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ) -> Iterable[Json]:
         if not params:
             params = {}
@@ -201,10 +210,10 @@ class Fordefi:
         self,
         method: str,
         endpoint: str,
-        params: Optional[dict[str, Any]] = None,
-        data: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
         sign: bool = False,
-        idempotence_id: Optional[UUID4] = None,
+        idempotence_id: UUID4 | None = None,
     ) -> Any:
         url = f"{self._base_url}{endpoint}"
         headers = {
@@ -222,7 +231,12 @@ class Fordefi:
             }
 
         response = requests.request(
-            method, url, headers=headers, params=params, json=data, timeout=self.timeout
+            method,
+            url,
+            headers=headers,
+            params=params,
+            json=data,
+            timeout=self.timeout,
         )
         logger.info(
             "Requested to Fordefi: %s",
@@ -236,7 +250,9 @@ class Fordefi:
             ),
         )
         logger.info(
-            "Fordefi responded: HTTP %s %s", response.status_code, response.content
+            "Fordefi responded: HTTP %s %s",
+            response.status_code,
+            response.content,
         )
 
         if response.status_code >= 400 and response.status_code < 500:
@@ -250,7 +266,7 @@ class Fordefi:
 
     def _signature(self, path: str, request_json: Json) -> dict[str, bytes]:
         request_body = json.dumps(request_json)
-        timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%s")
+        timestamp = datetime.datetime.now(datetime.UTC).strftime("%s")
         payload = f"/api/v1{path}|{timestamp}|{request_body}"
         signature = self._signing_key.sign(
             data=payload.encode(),

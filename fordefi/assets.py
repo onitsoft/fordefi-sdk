@@ -9,6 +9,7 @@ class AssetIdentifier:
     type: str
     subtype: str
     chain: str
+    default_gas: Json | None = None
     default_gas_config: Json | None = None
     default_destination_serializer: Callable[[str], str | Json] = (
         lambda address: address
@@ -48,6 +49,15 @@ ASSET_IDENTIFIER_BY_SYMBOL = {
         default_destination_serializer=lambda address: {
             "type": "hex",
             "address": address,
+        },
+    ),
+    "ETH": AssetIdentifier(
+        type="evm",
+        subtype="native",
+        chain="evm_ethereum_mainnet",
+        default_gas={
+            "type": "priority",
+            "priority_level": "medium",
         },
     ),
 }
