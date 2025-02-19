@@ -9,6 +9,7 @@ class AssetIdentifier:
     type: str
     subtype: str
     chain: str
+    default_gas: Json | None = None
     default_gas_config: Json | None = None
     default_destination_serializer: Callable[[str], str | Json] = (
         lambda address: address
@@ -50,6 +51,15 @@ ASSET_IDENTIFIER_BY_SYMBOL = {
             "address": address,
         },
     ),
+    "ETH": AssetIdentifier(
+        type="evm",
+        subtype="native",
+        chain="evm_ethereum_mainnet",
+        default_gas={
+            "type": "priority",
+            "priority_level": "medium",
+        },
+    ),
 }
 
 
@@ -74,6 +84,11 @@ ASSET_SYMBOL_BY_TRANSACTION_TYPE: dict[TransactionType, str] = {
         subtype="raw_transaction",
         chain_unique_id="solana_devnet",
     ): "DSOL",
+    TransactionType(
+        type="evm_transaction",
+        subtype="native_transfer",
+        chain_unique_id="evm_ethereum_mainnet",
+    ): "ETH",
 }
 
 
