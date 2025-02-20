@@ -114,10 +114,53 @@ def test_create_transfer(
 ):
     created_transfer = fordefi.create_transfer(
         vault_id=vault_id,
-        asset_symbol=asset_symbol,
         amount=amount,
         destination_address=destination_address,
         idempotence_client_id=idepotence_client_id,
+        asset_symbol=asset_symbol,
+    )
+
+    assert created_transfer
+    assert "id" in created_transfer
+    state = created_transfer.get("state")
+    assert state
+
+
+@pytest.mark.vcr
+@pytest.mark.parametrize(
+    argnames="vault_id,blockchain,amount,destination_address,idepotence_client_id",
+    argvalues=[
+        (
+            fordefienv.APTOS_RELEASES_VAULT_ID,
+            "aptos",
+            Decimal("1"),
+            fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+            UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
+        ),
+        (
+            fordefienv.EVM_RELEASES_VAULT_ID,
+            "ethereum",
+            Decimal("1"),
+            fordefienv.EVM_DEPOSITS_VAULT_ID,
+            UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
+        ),
+    ],
+    ids=["APT", "ETH"],
+)
+def test_create_transfer_by_blockchain(
+    fordefi: Fordefi,
+    vault_id: str,
+    blockchain: str,
+    amount: Decimal,
+    destination_address: str,
+    idepotence_client_id: UUID,
+):
+    created_transfer = fordefi.create_transfer(
+        vault_id=vault_id,
+        amount=amount,
+        destination_address=destination_address,
+        idempotence_client_id=idepotence_client_id,
+        blockchain=blockchain,
     )
 
     assert created_transfer

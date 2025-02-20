@@ -5,13 +5,15 @@ import json
 import logging
 from collections.abc import Iterable
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Any, Literal, overload
 
 import ecdsa
 import ecdsa.util
 import requests
 from pydantic import UUID4, Json
+from typing_extensions import deprecated
 
+from . import requests_factory
 from .assets import AssetIdentifier, get_transfer_asset_identifier
 from .logs import request_repr
 
@@ -94,19 +96,90 @@ class Fordefi:
             params=params,
         )
 
+    @deprecated("Use blockchain argument instead of asset_symbol.")
+    @overload
     def create_transfer(
         self,
         vault_id: str,
-        asset_symbol: str,
         destination_address: str,
         amount: Decimal,
         idempotence_client_id: UUID4,
+        blockchain: None = None,
+        asset_symbol: str = "APT",
+    ) -> Json: ...
+
+    @overload
+    def create_transfer(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        blockchain: str,
+        asset_symbol: None = None,
+    ) -> Json: ...
+
+    def create_transfer(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        blockchain: str | None = None,
+        asset_symbol: str | None = None,
     ) -> Json:
         if amount % 1 != 0:
-            raise ValueError(
-                "Amount must be an integer representing the amount in smallest unit.",
+            msg = "Amount must be an integer representing the amount in smallest unit."
+            raise ValueError(msg)
+
+        if asset_symbol is not None:
+            return self._create_transfer_by_asset_symbol(
+                vault_id,
+                destination_address,
+                amount,
+                idempotence_client_id,
+                asset_symbol,
             )
 
+        if blockchain is not None:
+            return self._create_transfer_by_blockchain(
+                vault_id,
+                destination_address,
+                amount,
+                idempotence_client_id,
+                blockchain,
+            )
+
+        msg = "Either asset_symbol or blockchain must be provided."
+        raise ValueError(msg)
+
+    def _create_transfer_by_blockchain(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        blockchain: str,
+    ) -> Json:
+        transaction = requests_factory.create_transfer_request(
+            vault_id=vault_id,
+            destination_address=destination_address,
+            amount=amount,
+            blockchain=blockchain,
+        )
+        return self.create_transaction(
+            transaction,
+            idempotence_client_id=idempotence_client_id,
+        )
+
+    def _create_transfer_by_asset_symbol(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        asset_symbol: str,
+    ) -> Json:
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
         transaction = {
             "vault_id": vault_id,
