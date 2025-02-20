@@ -20,7 +20,9 @@ build-backend = "hatchling.build"
 packages = ["fordefi"]
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "S", "ARG", "C90", "ERA"]
+select = ["ALL"]
+ignore = ["D", "CPY001"]
+# select = ["E4", "E7", "E9", "F", "I", "S", "ARG", "C90", "ERA"]
 
 
 [tool.ruff.lint.per-file-ignores]
@@ -38,6 +40,7 @@ dev-dependencies = [
     "uv>=0.5.31",
     "pyperclip>=1.9.0",
     "ruff>=0.9.6",
+    "datamodel-code-generator>=0.28.1",
 ]
 
 [tool.pyright]

@@ -1,0 +1,473 @@
+openapi: 3.1.0
+components:
+  schemas:
+    EvmChainName:
+      type: string
+      enum:
+      - arbitrum_mainnet
+      - arbitrum_sepolia
+      - avalanche_chain
+      - base_mainnet
+      - blast_mainnet
+      - bsc_mainnet
+      - canto_mainnet
+      - conflux_mainnet
+      - dymension_mainnet
+      - ethereum_goerli
+      - ethereum_holesky
+      - ethereum_mainnet
+      - ethereum_sepolia
+      - fantom_mainnet
+      - flare_testnet
+      - gnosis_mainnet
+      - kava_mainnet
+      - linea_mainnet
+      - optimism_mainnet
+      - manta_pacific_mainnet
+      - mantle_mainnet
+      - merlin_mainnet
+      - polygon_mainnet
+      - polygon_mumbai
+      - polygon_zkevm_mainnet
+      - reya_mainnet
+      - scroll_mainnet
+      - sei_mainnet
+      - sonic_mainnet
+      - xai_mainnet
+      - zeta_mainnet
+      - zklink_nova_mainnet
+      - zksync_era_mainnet
+      title: EvmChainName
+    CreateEvmTransferRequestExplicitValue:
+      properties:
+        type:
+          type: string
+          const: value
+          title: Type
+        value:
+          type: string
+          pattern: ^\d+$
+          title: Value
+          description: The explicit number of units of currency to transfer.
+          example: '1000000000000000000'
+      type: object
+      required:
+      - type
+      - value
+      title: CreateEvmTransferRequestExplicitValue
+    CreateEvmTransferRequest:
+      properties:
+        type:
+          type: string
+          const: evm_transfer
+          title: Type
+          description: An EVM transfer transaction is for transferring native currency
+            or ERC20/721/1155 tokens.
+        use_secure_node:
+          type: boolean
+          title: Use Secure Node
+          description: Use a secure node to send the transaction. By using a secure
+            node, you avoid maximal extractable value (MEV) attacks.
+          default: false
+        gas:
+          oneOf:
+          - $ref: '#/components/schemas/GasPriorityRequest'
+          - $ref: '#/components/schemas/CustomGasRequest'
+          description: The gas details of the transaction. The details depend on which
+            option you choose:<ul><li>Gas Priority or <li>Custom Gas Request </ul>
+          discriminator:
+            propertyName: type
+            mapping:
+              custom: '#/components/schemas/CustomGasRequest'
+              priority: '#/components/schemas/GasPriorityRequest'
+        fail_on_prediction_failure:
+          type: boolean
+          title: Fail On Prediction Failure
+          description: '`True` if transaction creation should fail in case prediction
+            failed, `False` otherwise. <br> In case simulation has failed upon continuation,
+            the expected result of the transaction will be partial and policy will
+            be applied on information that can be extracted statically from the transaction
+            only. This might result in falling back to the default policy rule. '
+          default: true
+        skip_prediction:
+          type: boolean
+          title: Skip Prediction
+          description: '`True` to create a transaction without prediction, `False`
+            otherwise. <br> In case of skipping simulation, the simulation status
+            will be skipped and the expected result of the transaction will be empty.
+            The policy will be applied on information that can be extracted statically
+            from the transaction only. This might result in falling back to the default
+            policy rule. <br> Note, it is recommended to use the default setting for
+            this field and to turn off `fail_on_prediction_failure` instead - unless
+            you wish to save time by omitting the prediction phase entirely. '
+          default: false
+        push_mode:
+          $ref: '#/components/schemas/PushMode'
+          description: 'The push mode of the transaction when sending it to the node.
+            It can be one of the following:<ul><li>`auto`: The transaction is pushed
+            automatically by Fordefi. <li>`manual`: The transaction should be pushed
+            manually by the user using a 3rd party.<li>`deferred`: The transaction
+            is pushed by Fordefi after a certain time, if by that time it wasn''t
+            pushed manually by the client.</ul></ul> '
+          default: auto
+        funder:
+          title: Funder
+          description: The unique identifier of the vault that pays the fee for this
+            transaction.
+          type: string
+          format: uuid
+        to:
+          anyOf:
+          - type: string
+            maxLength: 42
+            minLength: 42
+            pattern: ^0[xX][a-fA-F0-9]+$
+            example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+          - type: string
+            format: uuid
+          title: To
+          description: The recipient of the transfer. Specify either a general address
+            (a hex string of length 42 characters) or the ID of another vault (a UUID
+            string).
+        chain:
+          description: The chain that this transaction is on. Specify either the chain
+            name (for example `ethereum_mainnet`), the chain ID as a string (for example
+            `evm_1`), or the chain ID as an integer (for example, `1`).
+          deprecated: true
+          $ref: '#/components/schemas/EvmChainRequest'
+        token:
+          title: Token
+          description: The ERC-20 token contract (a hex string of length 42 characters)
+            to transfer. If you do not specify a value for `token`, the assumption
+            is that you are transferring units in the native currency of the chain.
+          deprecated: true
+          type: string
+          maxLength: 42
+          minLength: 42
+          pattern: ^0[xX][a-fA-F0-9]+$
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+        asset_identifier:
+          description: The asset to be transferred.
+          $ref: '#/components/schemas/EvmAssetIdentifierRequest'
+        value:
+          oneOf:
+          - $ref: '#/components/schemas/CreateEvmTransferRequestExplicitValue'
+          - $ref: '#/components/schemas/CreateEvmTransferRequestMaxValue'
+          description: 'Specify one of the following: <ul><li>`value`<li>`max`</ul>'
+          discriminator:
+            propertyName: type
+            mapping:
+              max: '#/components/schemas/CreateEvmTransferRequestMaxValue'
+              value: '#/components/schemas/CreateEvmTransferRequestExplicitValue'
+      type: object
+      required:
+      - type
+      - gas
+      - to
+      - value
+      title: CreateEvmTransferRequest
+    EvmNativeAssetIdentifierRequest:
+      properties:
+        type:
+          type: string
+          const: native
+          title: Type
+          description: EVM asset identifier type.
+        chain:
+          type: string
+          minLength: 1
+          title: EvmChainUniqueId
+          description: The details of the chain of the native asset.
+      type: object
+      required:
+      - type
+      - chain
+      title: EvmNativeAssetIdentifierRequest
+    DynamicGasRequest:
+      properties:
+        type:
+          type: string
+          const: dynamic
+          title: Type
+          description: The type of gas data.
+        max_priority_fee_per_gas:
+          type: string
+          pattern: ^\d+$
+          title: Max Priority Fee Per Gas
+          description: Max priority fee per gas.
+          example: '1000000000000000000'
+        max_fee_per_gas:
+          type: string
+          pattern: ^0*[1-9]\d*$
+          title: Max Fee Per Gas
+          description: Max fee per gas.
+          example: '1000000000000000000'
+      type: object
+      required:
+      - type
+      - max_priority_fee_per_gas
+      - max_fee_per_gas
+      title: DynamicGasRequest
+    CustomGasRequest:
+      properties:
+        gas_limit:
+          title: Gas Limit
+          description: Specifies the maximum number of gas units to be used for mining
+            the transaction. If omitted, Fordefi will automatically estimate the required
+            gas and apply that value.
+          type: string
+          pattern: ^0*[1-9]\d*$
+          example: '1000000000000000000'
+        type:
+          type: string
+          const: custom
+          title: Type
+        details:
+          oneOf:
+          - $ref: '#/components/schemas/LegacyGasRequest'
+          - $ref: '#/components/schemas/DynamicGasRequest'
+          description: 'Using the Custom Gas Request option, you specify `gas_limit`,
+            as well as the following gas details: <ul><li>If you choose `legacy` (meaning
+            a chain where gas price can specified exactly), you must specify only
+            the `price` of a gas unit. <li>If you choose `dynamic` (meaning a chain
+            where gas price can be determined dynamically), you must specify two additional
+            values: <ul><li>`max_priority_fee_per_gas`, the maximum tip amount for
+            mining your transaction <li>`max_fee_per_gas`, the maximum amount you
+            are willing to pay for the fee (ultimately, either you''ll pay this amount,
+            or less, depending on the network base fee). </ul></ul> <br> Note that
+            the Legacy gas price setting is allowed on dynamic (EIP-1559) networks
+            as well. <br> You can get information on gas fees for different chains
+            by examining the response to a call to [List Chains](https://documentation.fordefi.com/redoc/#operation/list_chains_api_v1_blockchains_get)
+            More information is provided in [EVM chains and their fee mechanisms](https://docs.fordefi.com/docs/evm-chains#evm-chains-and-their-fee-mechanisms). '
+          discriminator:
+            propertyName: type
+            mapping:
+              dynamic: '#/components/schemas/DynamicGasRequest'
+              legacy: '#/components/schemas/LegacyGasRequest'
+      type: object
+      required:
+      - type
+      - details
+      title: CustomGasRequest
+    EvmAddressRequest:
+      properties:
+        chain:
+          type: string
+          minLength: 1
+          title: EvmChainUniqueId
+          description: The chain details this address is of.
+        hex_repr:
+          type: string
+          maxLength: 42
+          minLength: 42
+          pattern: ^0[xX][a-fA-F0-9]+$
+          title: Hex Repr
+          description: Hexadecimal representation of the address in the chain.
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+      type: object
+      required:
+      - chain
+      - hex_repr
+      title: EvmAddressRequest
+      description: Address represents a blockchain address.
+    CreateEvmTransferRequestMaxValue:
+      properties:
+        type:
+          type: string
+          const: max
+          title: Type
+          description: The maximum available currency to transfer. <ul><li>In the
+            case of an ERC-20 token contract, the full balance is transferred.<li>In
+            the case of native currency, the full balance less the minimum gas fee
+            is transferred.</ul>
+      type: object
+      required:
+      - type
+      title: CreateEvmTransferRequestMaxValue
+    LegacyGasRequest:
+      properties:
+        type:
+          type: string
+          const: legacy
+          title: Type
+          description: The type of gas data.
+        price:
+          type: string
+          pattern: ^0*[1-9]\d*$
+          title: Price
+          description: The price of a gas unit.
+          example: '1000000000000000000'
+      type: object
+      required:
+      - type
+      - price
+      title: LegacyGasRequest
+    EvmHyperLiquidAssetIdentifierRequest:
+      properties:
+        type:
+          type: string
+          const: hyperliquid
+          title: Type
+          description: EVM asset identifier type.
+        chain:
+          type: string
+          minLength: 1
+          title: EvmChainUniqueId
+          description: Currently artificially set to Arbitrum.
+        token_id:
+          type: string
+          title: Token Id
+          description: The token id of the asset on Hyperliquid.
+        index:
+          type: integer
+          title: Index
+          description: The index of the asset on Hyperliquid.
+      type: object
+      required:
+      - type
+      - chain
+      - token_id
+      - index
+      title: EvmHyperLiquidAssetIdentifierRequest
+    EvmErc721AssetIdentifierRequest:
+      properties:
+        type:
+          type: string
+          const: erc721
+          title: Type
+          description: EVM asset identifier type.
+        token:
+          $ref: '#/components/schemas/EvmAddressRequest'
+          description: The ERC-721 token contract.
+        token_id:
+          type: string
+          pattern: ^\d+$
+          title: Token Id
+          description: The token id of the ERC-721 token.
+          example: '1000000000000000000'
+      type: object
+      required:
+      - type
+      - token
+      - token_id
+      title: EvmErc721AssetIdentifierRequest
+    PushMode:
+      type: string
+      enum:
+      - auto
+      - manual
+      - deferred
+      title: PushMode
+    EvmErc20AssetIdentifierRequest:
+      properties:
+        type:
+          type: string
+          const: erc20
+          title: Type
+          description: EVM asset identifier type.
+        token:
+          $ref: '#/components/schemas/EvmAddressRequest'
+          description: The ERC-20 token contract.
+      type: object
+      required:
+      - type
+      - token
+      title: EvmErc20AssetIdentifierRequest
+    EvmAssetIdentifierRequest:
+      properties:
+        type:
+          type: string
+          const: evm
+          title: Type
+          description: Asset identifier type.
+        details:
+          oneOf:
+          - $ref: '#/components/schemas/EvmNativeAssetIdentifierRequest'
+          - $ref: '#/components/schemas/EvmErc20AssetIdentifierRequest'
+          - $ref: '#/components/schemas/EvmErc721AssetIdentifierRequest'
+          - $ref: '#/components/schemas/EvmErc1155AssetIdentifierRequest'
+          - $ref: '#/components/schemas/EvmHyperLiquidAssetIdentifierRequest'
+          discriminator:
+            propertyName: type
+            mapping:
+              erc1155: '#/components/schemas/EvmErc1155AssetIdentifierRequest'
+              erc20: '#/components/schemas/EvmErc20AssetIdentifierRequest'
+              erc721: '#/components/schemas/EvmErc721AssetIdentifierRequest'
+              hyperliquid: '#/components/schemas/EvmHyperLiquidAssetIdentifierRequest'
+              native: '#/components/schemas/EvmNativeAssetIdentifierRequest'
+      type: object
+      required:
+      - type
+      - details
+      title: EvmAssetIdentifierRequest
+    EvmChainRequest:
+      anyOf:
+      - $ref: '#/components/schemas/EvmChainName'
+      - type: integer
+        minimum: 1
+        title: EvmChainId
+        description: The EVM chain ID can be either one of those supported by the
+          default chains below or a custom chain ID if one was added to your organization.
+          <ul><li>1=`ethereum_mainnet`</li><li>5=`ethereum_goerli`</li><li>10=`optimism_mainnet`</li><li>16=`flare_testnet`</li><li>56=`bsc_mainnet`</li><li>100=`gnosis_mainnet`</li><li>137=`polygon_mainnet`</li><li>146=`sonic_mainnet`</li><li>169=`manta_pacific_mainnet`</li><li>250=`fantom_mainnet`</li><li>324=`zksync_era_mainnet`</li><li>1030=`conflux_mainnet`</li><li>1100=`dymension_mainnet`</li><li>1101=`polygon_zkevm_mainnet`</li><li>1329=`sei_mainnet`</li><li>1729=`reya_mainnet`</li><li>2222=`kava_mainnet`</li><li>4200=`merlin_mainnet`</li><li>5000=`mantle_mainnet`</li><li>7000=`zeta_mainnet`</li><li>7700=`canto_mainnet`</li><li>8453=`base_mainnet`</li><li>17000=`ethereum_holesky`</li><li>80001=`polygon_mumbai`</li><li>42161=`arbitrum_mainnet`</li><li>43114=`avalanche_chain`</li><li>59144=`linea_mainnet`</li><li>81457=`blast_mainnet`</li><li>421614=`arbitrum_sepolia`</li><li>534352=`scroll_mainnet`</li><li>660279=`xai_mainnet`</li><li>810180=`zklink_nova_mainnet`</li><li>11155111=`ethereum_sepolia`</li></ul>
+      - type: string
+        minLength: 1
+        title: EvmChainUniqueId
+        description: The unique EVM chain ID. </br>Can be either one of those supported
+          by the default chains below or a custom numeric chain ID `evm_<numeric_chain_id>`
+          if one was added to your organization. <ul><li>`"evm_1"`</li><li>`"evm_5"`</li><li>`"evm_10"`</li><li>`"evm_16"`</li><li>`"evm_56"`</li><li>`"evm_100"`</li><li>`"evm_137"`</li><li>`"evm_146"`</li><li>`"evm_169"`</li><li>`"evm_250"`</li><li>`"evm_324"`</li><li>`"evm_1030"`</li><li>`"evm_1100"`</li><li>`"evm_1101"`</li><li>`"evm_1329"`</li><li>`"evm_1729"`</li><li>`"evm_2222"`</li><li>`"evm_4200"`</li><li>`"evm_5000"`</li><li>`"evm_7000"`</li><li>`"evm_7700"`</li><li>`"evm_8453"`</li><li>`"evm_17000"`</li><li>`"evm_80001"`</li><li>`"evm_42161"`</li><li>`"evm_43114"`</li><li>`"evm_59144"`</li><li>`"evm_81457"`</li><li>`"evm_421614"`</li><li>`"evm_534352"`</li><li>`"evm_660279"`</li><li>`"evm_810180"`</li><li>`"evm_11155111"`</li><li>`"evm_ethereum_mainnet"`</li><li>`"evm_ethereum_goerli"`</li><li>`"evm_optimism_mainnet"`</li><li>`"evm_flare_testnet"`</li><li>`"evm_bsc_mainnet"`</li><li>`"evm_gnosis_mainnet"`</li><li>`"evm_polygon_mainnet"`</li><li>`"evm_sonic_mainnet"`</li><li>`"evm_manta_pacific_mainnet"`</li><li>`"evm_fantom_mainnet"`</li><li>`"evm_zksync_era_mainnet"`</li><li>`"evm_conflux_mainnet"`</li><li>`"evm_dymension_mainnet"`</li><li>`"evm_polygon_zkevm_mainnet"`</li><li>`"evm_sei_mainnet"`</li><li>`"evm_reya_mainnet"`</li><li>`"evm_kava_mainnet"`</li><li>`"evm_merlin_mainnet"`</li><li>`"evm_mantle_mainnet"`</li><li>`"evm_zeta_mainnet"`</li><li>`"evm_canto_mainnet"`</li><li>`"evm_base_mainnet"`</li><li>`"evm_ethereum_holesky"`</li><li>`"evm_polygon_mumbai"`</li><li>`"evm_arbitrum_mainnet"`</li><li>`"evm_avalanche_chain"`</li><li>`"evm_linea_mainnet"`</li><li>`"evm_blast_mainnet"`</li><li>`"evm_arbitrum_sepolia"`</li><li>`"evm_scroll_mainnet"`</li><li>`"evm_xai_mainnet"`</li><li>`"evm_zklink_nova_mainnet"`</li><li>`"evm_ethereum_sepolia"`</li></ul>
+      title: EvmChainRequest
+      description: The EVM chain name or ID.
+    GasPriorityRequest:
+      properties:
+        gas_limit:
+          title: Gas Limit
+          description: Specifies the maximum number of gas units to be used for mining
+            the transaction. If omitted, Fordefi will automatically estimate the required
+            gas and apply that value.
+          type: string
+          pattern: ^0*[1-9]\d*$
+          example: '1000000000000000000'
+        type:
+          type: string
+          const: priority
+          title: Type
+        priority_level:
+          $ref: '#/components/schemas/GasPriorityLevelRequest'
+          description: 'Using the Gas Priority option, you allocate gas according
+            to `gas_limit` and `priority_level`, and the range of fee you are willing
+            to add: low, medium,  or high - Fordefi will add 10%, 20%, or 25%, respectively
+            to the recent average gas price to mine the transaction successfully.'
+      type: object
+      required:
+      - type
+      - priority_level
+      title: GasPriorityRequest
+    EvmErc1155AssetIdentifierRequest:
+      properties:
+        type:
+          type: string
+          const: erc1155
+          title: Type
+          description: EVM asset identifier type.
+        token:
+          $ref: '#/components/schemas/EvmAddressRequest'
+          description: The ERC-1155 token contract.
+        token_id:
+          type: string
+          pattern: ^\d+$
+          title: Token Id
+          description: The token id of the ERC-1155 token.
+          example: '1000000000000000000'
+      type: object
+      required:
+      - type
+      - token
+      - token_id
+      title: EvmErc1155AssetIdentifierRequest
+    GasPriorityLevelRequest:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+      title: GasPriorityLevelRequest
