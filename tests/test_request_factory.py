@@ -1,6 +1,10 @@
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
+import requests
+from openapi_core import Config, OpenAPI, V31RequestValidator
+from openapi_core.contrib.requests import RequestsOpenAPIRequest
 
 from fordefi import requests_factory
 from fordefi.types import Json
@@ -8,6 +12,15 @@ from fordefi.types import Json
 VAULD_ID = "ce26562d-ca59-4e85-af01-f86c111939fb"
 APTOS_ADDRESS = "0x3300c18e7b931bdfc73dccf3e2d043ad1c9d120c777fff5aeeb9956224e5247a"
 EVM_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+OPENAPI_PATH = Path(__file__).parent / "openapi.json"
+
+
+@pytest.fixture(name="openapi")
+def openapi_fixture() -> OpenAPI:
+    config = Config(
+        request_validator_cls=V31RequestValidator,
+    )
+    return OpenAPI.from_file_path(OPENAPI_PATH.as_posix(), config=config)
 
 
 @pytest.mark.parametrize(
@@ -97,3 +110,21 @@ def test_create_transfer_request(
     )
 
     assert request == expected_request
+
+
+def test_create_transfer_request_schema(openapi: OpenAPI) -> None:
+    request = requests_factory.create_transfer_request(
+        vault_id=VAULD_ID,
+        amount=Decimal(1),
+        destination_address=APTOS_ADDRESS,
+        blockchain="aptos",
+    )
+
+    request = requests.Request(
+        method="POST",
+        headers={"Authorization": "Bearer token"},
+        url="https://api.fordefi.com/api/v1/transactions",
+        json=request,
+    )
+    openapi_request = RequestsOpenAPIRequest(request)
+    openapi.validate_request(openapi_request)
