@@ -1,4 +1,9 @@
+from abc import abstractmethod
+from dataclasses import dataclass
 from decimal import Decimal
+
+import requests
+from requests import Request
 
 from fordefi.types import Json
 
@@ -102,18 +107,43 @@ def _create_transfer_details(
     raise UnsupportedBlockchainError(blockchain)
 
 
-def create_transfer_request(
-    vault_id: str,
-    destination_address: str,
-    amount: Decimal,
-    blockchain: str,
-) -> Json:
-    return {
-        "vault_id": vault_id,
-        "type": _get_transaction_type(blockchain),
-        "details": _create_transfer_details(
-            destination_address=destination_address,
-            amount=amount,
-            blockchain=blockchain,
-        ),
-    }
+class RequestFactory:
+    path_prefix = "/api/v1"
+    path: str
+    method: str
+
+    @property
+    def full_path(self) -> str:
+        return f"{self.path_prefix}{self.path}"
+
+    @abstractmethod
+    def _get_body(self) -> Json: ...
+
+    def build(self, base_url: str, auth_token: str) -> Request:
+        return requests.Request(
+            method=self.method,
+            headers={"Authorization": f"Bearer {auth_token}"},
+            url=f"{base_url}{self.full_path}",
+            json=self._get_body(),
+        )
+
+
+@dataclass()
+class TranferRequestFactory(RequestFactory):
+    method = "POST"
+    path = "/transactions"
+    vault_id: str
+    destination_address: str
+    amount: Decimal
+    blockchain: str
+
+    def _get_body(self) -> Json:
+        return {
+            "vault_id": self.vault_id,
+            "type": _get_transaction_type(self.blockchain),
+            "details": _create_transfer_details(
+                destination_address=self.destination_address,
+                amount=self.amount,
+                blockchain=self.blockchain,
+            ),
+        }
