@@ -1,9 +1,16 @@
+import base64
+import datetime
+import hashlib
+import json
+import time
 from abc import abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import Enum
 from typing import ClassVar
+from uuid import UUID
 
+import ecdsa.util
 import requests
 from requests import Request
 
@@ -11,23 +18,72 @@ from fordefi.types import Json
 
 
 class _RequestFactory:
-    path_prefix: ClassVar[str] = "/api/v1"
     path: ClassVar[str]
     method: ClassVar[str]
 
-    @property
-    def full_path(self) -> str:
-        return f"{self.path_prefix}{self.path}"
+    @staticmethod
+    def _signature(
+        path: str,
+        request_json: Json,
+        signing_key: ecdsa.SigningKey,
+    ) -> dict[str, bytes | str]:
+        request_body = json.dumps(request_json)
+        timestamp = datetime.datetime.now(datetime.UTC).strftime("%s")
+        timestamp = str(int(time.time()))
+        payload = f"/api/v1{path}|{timestamp}|{request_body}"
+        signature = signing_key.sign(
+            data=payload.encode(),
+            hashfunc=hashlib.sha256,
+            sigencode=ecdsa.util.sigencode_der,
+        )
+        return {
+            "x-signature": base64.b64encode(signature),
+            "x-timestamp": timestamp,
+        }
 
     @abstractmethod
     def _get_body(self) -> Json: ...
 
-    def build(self, base_url: str, auth_token: str) -> Request:
+    def _get_headers(
+        self,
+        data: Json,
+        auth_token: str,
+        idempotence_id: UUID | None,
+        signing_key: ecdsa.SigningKey,
+    ) -> dict[str, str]:
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {auth_token}",
+        }
+        if idempotence_id:
+            headers["x-idempotence-id"] = str(idempotence_id)
+
+        if signing_key:
+            headers = {
+                **headers,
+                **self._signature(self.path, data, signing_key),
+            }
+
+        return headers
+
+    def build(
+        self,
+        base_url: str,
+        auth_token: str,
+        idempotence_id: UUID | None,
+        signing_key: ecdsa.SigningKey,
+    ) -> Request:
+        body = self._get_body()
         return requests.Request(
             method=self.method,
-            headers={"Authorization": f"Bearer {auth_token}"},
-            url=f"{base_url}{self.full_path}",
-            json=self._get_body(),
+            headers=self._get_headers(
+                auth_token=auth_token,
+                data=body,
+                idempotence_id=idempotence_id,
+                signing_key=signing_key,
+            ),
+            url=f"{base_url}{self.path}",
+            json=body,
         )
 
 
@@ -124,9 +180,15 @@ class BlockchainType(Enum):
 
 
 class RequestFactory:
-    def __init__(self, base_url: str, auth_token: str) -> None:
+    def __init__(
+        self,
+        base_url: str,
+        auth_token: str,
+        signing_key: ecdsa.SigningKey,
+    ) -> None:
         self.base_url = base_url
         self.auth_token = auth_token
+        self._signing_key = signing_key
 
     def create_transfer_request(
         self,
@@ -134,6 +196,7 @@ class RequestFactory:
         vault_id: str,
         amount: Decimal,
         destination_address: str,
+        idempotence_id: UUID | None = None,
     ) -> Request:
         factory_class = blockchain_type.value
         factory = factory_class(
@@ -141,4 +204,9 @@ class RequestFactory:
             amount=amount,
             destination_address=destination_address,
         )
-        return factory.build(base_url=self.base_url, auth_token=self.auth_token)
+        return factory.build(
+            base_url=self.base_url,
+            auth_token=self.auth_token,
+            idempotence_id=idempotence_id,
+            signing_key=self._signing_key,
+        )

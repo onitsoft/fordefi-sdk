@@ -7,6 +7,7 @@ import pytest
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
+from fordefi.requests_factory import BlockchainType
 from tests import fordefienv
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
@@ -128,18 +129,24 @@ def test_create_transfer(
 
 @pytest.mark.vcr
 @pytest.mark.parametrize(
-    argnames="vault_id,blockchain,amount,destination_address,idepotence_client_id",
+    argnames=(
+        "vault_id",
+        "blockchain_type",
+        "amount",
+        "destination_address",
+        "idepotence_client_id",
+    ),
     argvalues=[
         (
             fordefienv.APTOS_RELEASES_VAULT_ID,
-            "aptos",
+            BlockchainType.APTOS,
             Decimal("1"),
             fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
         ),
         (
             fordefienv.EVM_RELEASES_VAULT_ID,
-            "ethereum",
+            BlockchainType.EVM,
             Decimal("1"),
             fordefienv.EVM_DEPOSITS_VAULT_ID,
             UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
@@ -150,7 +157,7 @@ def test_create_transfer(
 def test_create_transfer_by_blockchain(
     fordefi: Fordefi,
     vault_id: str,
-    blockchain: str,
+    blockchain_type: BlockchainType,
     amount: Decimal,
     destination_address: str,
     idepotence_client_id: UUID,
@@ -160,7 +167,7 @@ def test_create_transfer_by_blockchain(
         amount=amount,
         destination_address=destination_address,
         idempotence_client_id=idepotence_client_id,
-        blockchain=blockchain,
+        blockchain_type=blockchain_type,
     )
 
     assert created_transfer

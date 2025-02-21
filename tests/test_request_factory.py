@@ -1,6 +1,9 @@
+import base64
 from decimal import Decimal
 from pathlib import Path
 
+import ecdsa
+import ecdsa.curves
 import pytest
 from openapi_core import Config, OpenAPI, V31RequestValidator
 from openapi_core.contrib.requests import RequestsOpenAPIRequest
@@ -13,8 +16,9 @@ from fordefi.requests_factory import (
 VAULD_ID = "ce26562d-ca59-4e85-af01-f86c111939fb"
 APTOS_ADDRESS = "0x3300c18e7b931bdfc73dccf3e2d043ad1c9d120c777fff5aeeb9956224e5247a"
 EVM_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 
-BASE_URL = "https://api.fordefi.com"
+BASE_URL = "https://api.fordefi.com/api/v1"
 JWT = "ejw.eya"
 
 OPENAPI_PATH = Path(__file__).parent / "openapi.json"
@@ -30,7 +34,12 @@ def openapi_fixture() -> OpenAPI:
 
 @pytest.fixture(name="request_factory")
 def request_factory_fixture() -> RequestFactory:
-    return RequestFactory(base_url=BASE_URL, auth_token=JWT)
+    signing_key = ecdsa.SigningKey.from_string(
+        base64.b64decode(FAKE_PRIVATE_KEY),
+        curve=ecdsa.curves.NIST256p,
+    )
+
+    return RequestFactory(base_url=BASE_URL, auth_token=JWT, signing_key=signing_key)
 
 
 @pytest.mark.parametrize(
