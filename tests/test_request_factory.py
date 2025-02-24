@@ -76,15 +76,29 @@ def test_create_transfer_request_body(
     assert body.get("details", {}).get("value", {}).get("value") == str(amount)
 
 
+@pytest.mark.parametrize(
+    argnames=("vault_id", "blockchain_type", "destination_address"),
+    argvalues=[
+        (VAULD_ID, BlockchainType.APTOS, APTOS_ADDRESS),
+        (VAULD_ID, BlockchainType.EVM, EVM_ADDRESS),
+    ],
+    ids=[
+        "APT",
+        "ETH",
+    ],
+)
 def test_create_transfer_request_schema(
+    vault_id: str,
+    blockchain_type: BlockchainType,
+    destination_address: str,
     openapi: OpenAPI,
     request_factory: RequestFactory,
 ) -> None:
     request = request_factory.create_transfer_request(
-        blockchain_type=BlockchainType.APTOS,
-        vault_id=VAULD_ID,
+        blockchain_type=blockchain_type,
+        vault_id=vault_id,
         amount=Decimal(1),
-        destination_address=APTOS_ADDRESS,
+        destination_address=destination_address,
     )
     openapi_request = RequestsOpenAPIRequest(request)
     openapi.validate_request(openapi_request)
