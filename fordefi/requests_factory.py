@@ -5,6 +5,7 @@ import hashlib
 import json
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import Enum
@@ -41,12 +42,6 @@ class Token:
 class Asset:
     blockchain: Blockchain
     token: Token | None = None
-
-
-class UnsupportedBlockchainError(ValueError):
-    def __init__(self, blockchain: Blockchain) -> None:
-        super().__init__(f"Unsupported blockchain: {blockchain.value}")
-        self.blockchain = blockchain
 
 
 class TokenNotImplementedError(NotImplementedError):
@@ -280,13 +275,42 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
-_EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
-
-
 _REQUEST_FACTORY_BY_BLOCKCHAIN = {
     Blockchain.APTOS: _AptosTransferRequestFactory,
     Blockchain.ARBITRUM: _EvmTransferRequestFactory,
     Blockchain.ETHEREUM: _EvmTransferRequestFactory,
+}
+
+
+def _create_aptos_asset_identifier(asset: Asset) -> _AssetIdentifier:
+    if asset.token:
+        raise TokenNotImplementedError(asset)
+
+    return _AptosNativeAssetIdentifier(
+        network="mainnet",
+    )
+
+
+def _create_evm_asset_identifier(asset: Asset) -> _AssetIdentifier:
+    if asset.token and asset.token.token_type is EvmTokenType.ERC20:
+        return _EvmErc20AssetIdentifier(
+            blockchain=asset.blockchain.value,
+            network="mainnet",
+            contract_address=asset.token.token_id,
+        )
+
+    return _EvmNativeAssetIdentifier(
+        blockchain=asset.blockchain.value,
+        network="mainnet",
+    )
+
+
+_ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
+    Blockchain, Callable[[Asset], _AssetIdentifier]
+] = {
+    Blockchain.APTOS: _create_aptos_asset_identifier,
+    Blockchain.ARBITRUM: _create_evm_asset_identifier,
+    Blockchain.ETHEREUM: _create_evm_asset_identifier,
 }
 
 
@@ -325,31 +349,5 @@ class RequestFactory:
         )
 
     def _create_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
-        if asset.blockchain is Blockchain.APTOS:
-            return self._create_aptos_asset_identifier(asset)
-
-        if asset.blockchain in _EVM_BLOCKCHAINS:
-            return self._create_evm_asset_identifier(asset)
-
-        raise UnsupportedBlockchainError(asset.blockchain)
-
-    def _create_aptos_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
-        if asset.token:
-            raise TokenNotImplementedError(asset)
-
-        return _AptosNativeAssetIdentifier(
-            network="mainnet",
-        )
-
-    def _create_evm_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
-        if asset.token and asset.token.token_type is EvmTokenType.ERC20:
-            return _EvmErc20AssetIdentifier(
-                blockchain=asset.blockchain.value,
-                network="mainnet",
-                contract_address=asset.token.token_id,
-            )
-
-        return _EvmNativeAssetIdentifier(
-            blockchain=asset.blockchain.value,
-            network="mainnet",
-        )
+        factory = _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN[asset.blockchain]
+        return factory(asset)

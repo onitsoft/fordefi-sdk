@@ -197,6 +197,18 @@ def test_create_transfer_by_blockchain(
     assert state
 
 
+def test_create_transfer_missing_asset(
+    fordefi: Fordefi,
+):
+    with pytest.raises(ValueError):
+        fordefi.create_transfer(
+            vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
+            amount=Decimal(1),
+            destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+            idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
+        )
+
+
 def test_create_transfer__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
@@ -217,6 +229,31 @@ def test_create_transfer__bad_request(
             amount=Decimal(1),
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
+        )
+
+    assert error_detail in str(error)
+
+
+def test_create_transfer_by_asset__bad_request(
+    httpserver_fordefi: Fordefi,
+    httpserver: httpserver.HTTPServer,
+):
+    error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
+    httpserver.expect_oneshot_request(
+        method="POST",
+        uri="/transactions",
+    ).respond_with_json(
+        {"detail": error_detail},
+        status=400,
+    )
+
+    with pytest.raises(ClientError) as error:
+        httpserver_fordefi.create_transfer(
+            vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
+            asset=Asset(blockchain=Blockchain.APTOS),
+            amount=Decimal(1),
+            destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+            idempotence_client_id=UUID("2b23019c-6c11-4f35-931e-b396a92f4155"),
         )
 
     assert error_detail in str(error)

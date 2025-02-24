@@ -14,6 +14,7 @@ from fordefi.requests_factory import (
     EvmTokenType,
     RequestFactory,
     Token,
+    TokenNotImplementedError,
 )
 
 ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
@@ -116,3 +117,19 @@ def test_create_transfer_request_schema(
     )
     openapi_request = RequestsOpenAPIRequest(request)
     openapi.validate_request(openapi_request)
+
+
+def test_not_implemented_token(request_factory: RequestFactory) -> None:
+    with pytest.raises(TokenNotImplementedError):
+        request_factory.create_transfer_request(
+            vault_id=VAULD_ID,
+            amount=Decimal(1),
+            asset=Asset(
+                blockchain=Blockchain.APTOS,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
+                ),
+            ),
+            destination_address=EVM_ADDRESS,
+        )
