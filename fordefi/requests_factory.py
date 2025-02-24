@@ -220,6 +220,7 @@ class _TranferRequestFactory(_RequestFactory):
 
     def _get_body(self) -> Json:
         return {
+            "signer_type": "api_signer",
             "vault_id": self.vault_id,
             "type": self.transaction_type,
             "details": self._get_transfer_details(
