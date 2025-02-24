@@ -163,14 +163,14 @@ def test_create_transfer(
             fordefienv.EVM_RELEASES_VAULT_ID,
             Decimal("1"),
             Asset(
-                blockchain=Blockchain.ETHEREUM,
+                blockchain=Blockchain.ARBITRUM,
                 token=Token(
                     token_type=EvmTokenType.ERC20,
                     token_id=ARBITRUM_TOKEN_CONTRACT,
                 ),
             ),
             fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("82e9b69c-0ee4-481c-a1da-608261508bc6"),
+            UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),
         ),
     ],
     ids=["APT", "ETH", "Arbitrum-ETH", "Arbitrum-ARB"],
