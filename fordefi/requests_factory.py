@@ -146,7 +146,8 @@ class _AptosTransferRequestFactory(_TranferRequestFactory):
 
 
 class _EvmTransferRequestFactory(_TranferRequestFactory):
-    transaction_type = "evm_transaction"
+    transaction_type: ClassVar[str] = "evm_transaction"
+    chain: ClassVar[str]
 
     def _get_transfer_details(
         self,
@@ -163,7 +164,7 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
                 "type": "evm",
                 "details": {
                     "type": "native",
-                    "chain": "evm_ethereum_mainnet",
+                    "chain": self.chain,
                 },
             },
             "to": destination_address,
@@ -174,22 +175,14 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
-class BlockchainType(Enum):
-    APTOS = _AptosTransferRequestFactory
-    EVM = _EvmTransferRequestFactory
+class _EthereumTransferRequestFactory(_EvmTransferRequestFactory):
+    transaction_type = "evm_transaction"
+    chain = "evm_ethereum_mainnet"
 
 
 class Blockchain(Enum):
-    APTOS = "aptos"
-    ARBITRUM = "arbitrum"
-    ETHEREUM = "ethereum"
-
-
-TYPES_BY_BLOCKCHAIN = {
-    Blockchain.APTOS: BlockchainType.APTOS,
-    Blockchain.ARBITRUM: BlockchainType.EVM,
-    Blockchain.ETHEREUM: BlockchainType.EVM,
-}
+    APTOS = _AptosTransferRequestFactory
+    ETHEREUM = _EthereumTransferRequestFactory
 
 
 class RequestFactory:
@@ -211,8 +204,7 @@ class RequestFactory:
         destination_address: str,
         idempotence_id: UUID | None = None,
     ) -> Request:
-        blockchain_type = TYPES_BY_BLOCKCHAIN[blockchain]
-        factory_class = blockchain_type.value
+        factory_class = blockchain.value
         factory = factory_class(
             vault_id=vault_id,
             amount=amount,
