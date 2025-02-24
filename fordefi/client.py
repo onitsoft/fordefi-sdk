@@ -5,15 +5,21 @@ import json
 import logging
 from collections.abc import Iterable
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Any, Literal, overload
 
 import ecdsa
 import ecdsa.util
 import requests
 from pydantic import UUID4, Json
+from typing_extensions import deprecated
 
-from .assets import AssetIdentifier, get_transfer_asset_identifier
+from .assets import (
+    ASSET_IDENTIFIER_BY_SYMBOL,
+    AssetIdentifier,
+    get_transfer_asset_identifier,
+)
 from .logs import request_repr
+from .requests_factory import Asset, RequestFactory
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +47,11 @@ class Fordefi:
         self._signing_key = ecdsa.SigningKey.from_string(
             base64.b64decode(private_key),
             curve=ecdsa.curves.NIST256p,
+        )
+        self._request_factory = RequestFactory(
+            base_url=base_url,
+            auth_token=api_key,
+            signing_key=self._signing_key,
         )
         self.page_size = page_size
         self.timeout = timeout
@@ -94,19 +105,126 @@ class Fordefi:
             params=params,
         )
 
+    @deprecated("Use asset (Asset) argument instead of asset_symbol (str).")
+    @overload
     def create_transfer(
         self,
         vault_id: str,
-        asset_symbol: str,
         destination_address: str,
         amount: Decimal,
         idempotence_client_id: UUID4,
+        asset: None = None,
+        asset_symbol: Literal["APT", "ETH", "DSOL"] = "APT",
+    ) -> Json: ...
+
+    @overload
+    def create_transfer(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        asset: Asset,
+        asset_symbol: None = None,
+    ) -> Json: ...
+
+    def create_transfer(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        asset: Asset | None = None,
+        asset_symbol: str | None = None,
     ) -> Json:
         if amount % 1 != 0:
-            raise ValueError(
-                "Amount must be an integer representing the amount in smallest unit.",
+            msg = "Amount must be an integer representing the amount in smallest unit."
+            raise ValueError(msg)
+
+        if asset_symbol is not None and asset_symbol not in ASSET_IDENTIFIER_BY_SYMBOL:
+            supported_assets = ", ".join(ASSET_IDENTIFIER_BY_SYMBOL.keys())
+            msg = f"Deprecated asset_symbol (str) argument only supports {supported_assets}."
+            raise ValueError(msg)
+
+        if asset_symbol is not None:
+            return self._create_transfer_by_asset_symbol(
+                vault_id,
+                destination_address,
+                amount,
+                idempotence_client_id,
+                asset_symbol,
             )
 
+        if asset is not None:
+            return self._create_transfer_by_blockchain_type(
+                vault_id,
+                destination_address,
+                amount,
+                asset,
+                idempotence_client_id,
+            )
+
+        msg = "Either asset_symbol or blockchain must be provided."
+        raise ValueError(msg)
+
+    def _create_transfer_by_blockchain_type(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        asset: Asset,
+        idempotence_client_id: UUID4,
+    ) -> Json:
+        request = self._request_factory.create_transfer_request(
+            vault_id=vault_id,
+            destination_address=destination_address,
+            amount=amount,
+            asset=asset,
+            idempotence_id=idempotence_client_id,
+        )
+        return self._send_request(request)
+
+    @staticmethod
+    def _send_request(request: requests.Request) -> Json:
+        prepared_request = request.prepare()
+
+        with requests.Session() as session:
+            response = session.send(prepared_request)
+
+            logger.info(
+                "Requested to Fordefi: %s",
+                request_repr(
+                    method=request.method,
+                    path=request.url,
+                    query_params=request.params,
+                    headers=request.headers,
+                    body=request.json,
+                    sensitive_headers={"Authorization", "x-signature"},
+                ),
+            )
+            logger.info(
+                "Fordefi responded: HTTP %s %s",
+                response.status_code,
+                response.content,
+            )
+
+            if response.status_code >= 400 and response.status_code < 500:
+                raise ClientError(response.status_code, response.content.decode())
+
+            response.raise_for_status()
+
+            json_content = response.json()
+
+            return json_content
+
+    def _create_transfer_by_asset_symbol(
+        self,
+        vault_id: str,
+        destination_address: str,
+        amount: Decimal,
+        idempotence_client_id: UUID4,
+        asset_symbol: str,
+    ) -> Json:
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
         transaction = {
             "vault_id": vault_id,
