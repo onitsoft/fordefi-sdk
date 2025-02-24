@@ -1,4 +1,5 @@
 import base64
+import dataclasses
 import datetime
 import hashlib
 import json
@@ -12,7 +13,6 @@ from uuid import UUID
 
 import ecdsa.util
 import requests
-from pydantic import dataclasses
 from requests import Request
 
 from fordefi.types import Json
@@ -24,9 +24,16 @@ class Blockchain(Enum):
     ETHEREUM = "ethereum"
 
 
+class TokenType(Enum): ...
+
+
+class EvmTokenType(TokenType):
+    ERC20 = "erc20"
+
+
 @dataclass(frozen=True)
 class Token:
-    token_type: str
+    token_type: TokenType
     token_id: str
 
 
@@ -44,7 +51,7 @@ class UnsupportedBlockchainError(ValueError):
 
 class TokenNotImplementedError(NotImplementedError):
     def __init__(self, asset: Asset) -> None:
-        super().__init__(f"Token type not implemented: {dataclasses.as_dict(asset)}")
+        super().__init__(f"Token type not implemented: {dataclasses.asdict(asset)}")
         self.asset = asset
 
 
@@ -180,6 +187,21 @@ class _EvmNativeAssetIdentifier(_EvmAssetIdentifier):
 
 
 @dataclass(frozen=True)
+class _EvmErc20AssetIdentifier(_EvmAssetIdentifier):
+    subtype: ClassVar[str] = "erc20"
+    contract_address: str
+
+    def _get_details(self) -> Json:
+        return {
+            "type": self.subtype,
+            "token": {
+                "chain": self.chain,
+                "hex_repr": self.contract_address,
+            },
+        }
+
+
+@dataclass(frozen=True)
 class _TranferRequestFactory(_RequestFactory):
     method: ClassVar[str] = "POST"
     path: ClassVar[str] = "/transactions"
@@ -257,20 +279,13 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
-EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
+_EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
 
 
-REQUEST_FACTORY_BY_BLOCKCHAIN = {
+_REQUEST_FACTORY_BY_BLOCKCHAIN = {
     Blockchain.APTOS: _AptosTransferRequestFactory,
     Blockchain.ARBITRUM: _EvmTransferRequestFactory,
     Blockchain.ETHEREUM: _EvmTransferRequestFactory,
-}
-
-
-ASSET_IDENTIFIER_BY_BLOCKCHAIN = {
-    Blockchain.APTOS: _AptosNativeAssetIdentifier,
-    Blockchain.ARBITRUM: _EvmAssetIdentifier,
-    Blockchain.ETHEREUM: _EvmAssetIdentifier,
 }
 
 
@@ -293,7 +308,7 @@ class RequestFactory:
         asset: Asset,
         idempotence_id: UUID | None = None,
     ) -> Request:
-        factory_class = REQUEST_FACTORY_BY_BLOCKCHAIN[asset.blockchain]
+        factory_class = _REQUEST_FACTORY_BY_BLOCKCHAIN[asset.blockchain]
         asset_identifier = self._create_asset_identifier(asset)
         factory = factory_class(
             asset_identifier=asset_identifier,
@@ -312,7 +327,7 @@ class RequestFactory:
         if asset.blockchain is Blockchain.APTOS:
             return self._create_aptos_asset_identifier(asset)
 
-        if asset.blockchain in EVM_BLOCKCHAINS:
+        if asset.blockchain in _EVM_BLOCKCHAINS:
             return self._create_evm_asset_identifier(asset)
 
         raise UnsupportedBlockchainError(asset.blockchain)
@@ -326,8 +341,12 @@ class RequestFactory:
         )
 
     def _create_evm_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
-        if asset.token:
-            raise TokenNotImplementedError(asset)
+        if asset.token and asset.token.token_type is EvmTokenType.ERC20:
+            return _EvmErc20AssetIdentifier(
+                blockchain=asset.blockchain.value,
+                network="mainnet",
+                contract_address=asset.token.token_id,
+            )
 
         return _EvmNativeAssetIdentifier(
             blockchain=asset.blockchain.value,

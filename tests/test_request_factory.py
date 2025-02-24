@@ -11,7 +11,9 @@ from openapi_core.contrib.requests import RequestsOpenAPIRequest
 from fordefi.requests_factory import (
     Asset,
     Blockchain,
+    EvmTokenType,
     RequestFactory,
+    Token,
 )
 
 VAULD_ID = "ce26562d-ca59-4e85-af01-f86c111939fb"
@@ -83,12 +85,19 @@ def test_create_transfer_request_body(
         (VAULD_ID, Asset(blockchain=Blockchain.APTOS), APTOS_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.ARBITRUM), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.ETHEREUM), EVM_ADDRESS),
+        (
+            VAULD_ID,
+            Asset(
+                blockchain=Blockchain.ETHEREUM,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id="0xdac17f958d2ee523a2206206994597c13d831ec7",  # noqa: S106
+                ),
+            ),
+            EVM_ADDRESS,
+        ),
     ],
-    ids=[
-        "APT",
-        "ARB",
-        "ETH",
-    ],
+    ids=["APT", "ARB", "ETH", "USDTERC"],
 )
 def test_create_transfer_request_schema(
     vault_id: str,
