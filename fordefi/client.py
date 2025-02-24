@@ -13,7 +13,11 @@ import requests
 from pydantic import UUID4, Json
 from typing_extensions import deprecated
 
-from .assets import AssetIdentifier, get_transfer_asset_identifier
+from .assets import (
+    ASSET_IDENTIFIER_BY_SYMBOL,
+    AssetIdentifier,
+    get_transfer_asset_identifier,
+)
 from .logs import request_repr
 from .requests_factory import Asset, RequestFactory
 
@@ -101,7 +105,7 @@ class Fordefi:
             params=params,
         )
 
-    @deprecated("Use blockchain argument instead of asset_symbol.")
+    @deprecated("Use asset (Asset) argument instead of asset_symbol (str).")
     @overload
     def create_transfer(
         self,
@@ -110,7 +114,7 @@ class Fordefi:
         amount: Decimal,
         idempotence_client_id: UUID4,
         asset: None = None,
-        asset_symbol: str = "APT",
+        asset_symbol: Literal["APT", "ETH", "DSOL"] = "APT",
     ) -> Json: ...
 
     @overload
@@ -135,6 +139,11 @@ class Fordefi:
     ) -> Json:
         if amount % 1 != 0:
             msg = "Amount must be an integer representing the amount in smallest unit."
+            raise ValueError(msg)
+
+        if asset_symbol is not None and asset_symbol not in ASSET_IDENTIFIER_BY_SYMBOL:
+            supported_assets = ", ".join(ASSET_IDENTIFIER_BY_SYMBOL.keys())
+            msg = f"Deprecated asset_symbol (str) argument only supports {supported_assets}."
             raise ValueError(msg)
 
         if asset_symbol is not None:

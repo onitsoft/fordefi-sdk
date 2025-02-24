@@ -119,7 +119,7 @@ def test_create_transfer(
         amount=amount,
         destination_address=destination_address,
         idempotence_client_id=idepotence_client_id,
-        asset_symbol=asset_symbol,
+        asset_symbol=asset_symbol,  # type: ignore
     )
 
     assert created_transfer
@@ -197,13 +197,26 @@ def test_create_transfer_by_blockchain(
     assert state
 
 
-def test_create_transfer_missing_asset(
+def test_create_transfer__missing_asset(
     fordefi: Fordefi,
 ):
     with pytest.raises(ValueError):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
+            destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+            idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
+        )
+
+
+def test_create_transfer__invalid_asset_symbol(
+    fordefi: Fordefi,
+):
+    with pytest.raises(ValueError):
+        fordefi.create_transfer(
+            vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
+            amount=Decimal(1),
+            asset_symbol="ARB",  # type: ignore
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
         )
@@ -263,7 +276,7 @@ def test_create_transfer__non_interger_amount(fordefi: Fordefi):
     with pytest.raises(ValueError):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
-            asset_symbol="DSOL",
+            asset=Asset(blockchain=Blockchain.APTOS),
             amount=Decimal("0.1"),
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
