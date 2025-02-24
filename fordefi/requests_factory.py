@@ -175,6 +175,11 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
+class _ArbitrumTransferRequestFactory(_EvmTransferRequestFactory):
+    transaction_type = "evm_transaction"
+    chain = "evm_arbitrum_mainnet"
+
+
 class _EthereumTransferRequestFactory(_EvmTransferRequestFactory):
     transaction_type = "evm_transaction"
     chain = "evm_ethereum_mainnet"
@@ -182,6 +187,7 @@ class _EthereumTransferRequestFactory(_EvmTransferRequestFactory):
 
 class Blockchain(Enum):
     APTOS = _AptosTransferRequestFactory
+    ARBITRUM = _ArbitrumTransferRequestFactory
     ETHEREUM = _EthereumTransferRequestFactory
 
 

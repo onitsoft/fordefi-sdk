@@ -80,10 +80,12 @@ def test_create_transfer_request_body(
     argnames=("vault_id", "blockchain", "destination_address"),
     argvalues=[
         (VAULD_ID, Blockchain.APTOS, APTOS_ADDRESS),
+        (VAULD_ID, Blockchain.ARBITRUM, EVM_ADDRESS),
         (VAULD_ID, Blockchain.ETHEREUM, EVM_ADDRESS),
     ],
     ids=[
         "APT",
+        "ARB",
         "ETH",
     ],
 )
