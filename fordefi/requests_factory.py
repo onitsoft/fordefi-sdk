@@ -207,21 +207,14 @@ class _TranferRequestFactory(_RequestFactory):
     amount: Decimal
 
     @abstractmethod
-    def _get_transfer_details(
-        self,
-        destination_address: str,
-        amount: Decimal,
-    ) -> Json: ...
+    def _get_transfer_details(self) -> Json: ...
 
     def _get_body(self) -> Json:
         return {
             "signer_type": "api_signer",
             "vault_id": self.vault_id,
             "type": self.transaction_type,
-            "details": self._get_transfer_details(
-                destination_address=self.destination_address,
-                amount=self.amount,
-            ),
+            "details": self._get_transfer_details(),
         }
 
 
@@ -229,11 +222,7 @@ class _TranferRequestFactory(_RequestFactory):
 class _AptosTransferRequestFactory(_TranferRequestFactory):
     transaction_type = "aptos_transaction"
 
-    def _get_transfer_details(
-        self,
-        destination_address: str,
-        amount: Decimal,
-    ) -> Json:
+    def _get_transfer_details(self) -> Json:
         return {
             "type": "aptos_transfer",
             "gas_config": {
@@ -244,9 +233,9 @@ class _AptosTransferRequestFactory(_TranferRequestFactory):
             },
             "to": {
                 "type": "hex",
-                "address": destination_address,
+                "address": self.destination_address,
             },
-            "value": {"type": "value", "value": str(amount)},
+            "value": {"type": "value", "value": str(self.amount)},
             "asset_identifier": self.asset_identifier.as_dict(),
         }
 
@@ -255,11 +244,7 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
     transaction_type: ClassVar[str] = "evm_transaction"
     chain: ClassVar[str]
 
-    def _get_transfer_details(
-        self,
-        destination_address: str,
-        amount: Decimal,
-    ) -> Json:
+    def _get_transfer_details(self) -> Json:
         return {
             "type": "evm_transfer",
             "gas": {
@@ -267,10 +252,10 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
                 "priority_level": "medium",
             },
             "asset_identifier": self.asset_identifier.as_dict(),
-            "to": destination_address,
+            "to": self.destination_address,
             "value": {
                 "type": "value",
-                "value": str(amount),
+                "value": str(self.amount),
             },
         }
 
