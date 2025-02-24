@@ -12,15 +12,40 @@ from uuid import UUID
 
 import ecdsa.util
 import requests
+from pydantic import dataclasses
 from requests import Request
 
 from fordefi.types import Json
 
 
-class UnsupportedBlockchainError(Exception):
-    def __init__(self, blockchain: str) -> None:
-        super().__init__(f"Unsupported blockchain: {blockchain}")
+class Blockchain(Enum):
+    APTOS = "aptos"
+    ARBITRUM = "arbitrum"
+    ETHEREUM = "ethereum"
+
+
+@dataclass(frozen=True)
+class Token:
+    token_type: str
+    token_id: str
+
+
+@dataclass(frozen=True)
+class Asset:
+    blockchain: Blockchain
+    token: Token | None = None
+
+
+class UnsupportedBlockchainError(ValueError):
+    def __init__(self, blockchain: Blockchain) -> None:
+        super().__init__(f"Unsupported blockchain: {blockchain.value}")
         self.blockchain = blockchain
+
+
+class TokenNotImplementedError(NotImplementedError):
+    def __init__(self, asset: Asset) -> None:
+        super().__init__(f"Token type not implemented: {dataclasses.as_dict(asset)}")
+        self.asset = asset
 
 
 class _RequestFactory:
@@ -232,12 +257,6 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
-class Blockchain(Enum):
-    APTOS = "aptos"
-    ARBITRUM = "arbitrum"
-    ETHEREUM = "ethereum"
-
-
 EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
 
 
@@ -253,18 +272,6 @@ ASSET_IDENTIFIER_BY_BLOCKCHAIN = {
     Blockchain.ARBITRUM: _EvmAssetIdentifier,
     Blockchain.ETHEREUM: _EvmAssetIdentifier,
 }
-
-
-@dataclass(frozen=True)
-class Token:
-    token_type: str
-    token_id: str
-
-
-@dataclass(frozen=True)
-class Asset:
-    blockchain: Blockchain
-    token: Token | None = None
 
 
 class RequestFactory:
@@ -303,17 +310,26 @@ class RequestFactory:
 
     def _create_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
         if asset.blockchain is Blockchain.APTOS:
-            return _AptosNativeAssetIdentifier(
-                network="mainnet",
-            )
-
-        if asset.blockchain in EVM_BLOCKCHAINS and asset.token is not None:
-            raise NotImplementedError(asset.token.token_type)
+            return self._create_aptos_asset_identifier(asset)
 
         if asset.blockchain in EVM_BLOCKCHAINS:
-            return _EvmNativeAssetIdentifier(
-                blockchain=asset.blockchain.value,
-                network="mainnet",
-            )
+            return self._create_evm_asset_identifier(asset)
 
-        raise UnsupportedBlockchainError(asset.blockchain.value)
+        raise UnsupportedBlockchainError(asset.blockchain)
+
+    def _create_aptos_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
+        if asset.token:
+            raise TokenNotImplementedError(asset)
+
+        return _AptosNativeAssetIdentifier(
+            network="mainnet",
+        )
+
+    def _create_evm_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
+        if asset.token:
+            raise TokenNotImplementedError(asset)
+
+        return _EvmNativeAssetIdentifier(
+            blockchain=asset.blockchain.value,
+            network="mainnet",
+        )
