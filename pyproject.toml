@@ -39,7 +39,6 @@ dev-dependencies = [
     "uv>=0.5.31",
     "pyperclip>=1.9.0",
     "ruff>=0.9.6",
-    "datamodel-code-generator>=0.28.1",
     "openapi-core>=0.19.4",
     "openapi-spec-validator>=0.7.1",
 ]
