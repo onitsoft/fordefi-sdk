@@ -11,6 +11,7 @@ from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
+ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
 
 
 def all_items_have(items: list[dict[str, Any]], required_properties: set[str]) -> bool:
@@ -156,7 +157,7 @@ def test_create_transfer(
             Decimal("1"),
             Asset(blockchain=Blockchain.ARBITRUM),
             fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("11792d14-6aae-4b70-b8f2-a32a7c1b91a2"),
+            UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),
         ),
         (
             fordefienv.EVM_RELEASES_VAULT_ID,
@@ -165,14 +166,14 @@ def test_create_transfer(
                 blockchain=Blockchain.ETHEREUM,
                 token=Token(
                     token_type=EvmTokenType.ERC20,
-                    token_id="0xdAC17F958D2ee523a2206206994597C13D831ec7",  # noqa: S106
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
                 ),
             ),
             fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("f69cfc3b-b973-4ab6-b12b-b254109d2aa2"),
+            UUID("82e9b69c-0ee4-481c-a1da-608261508bc6"),
         ),
     ],
-    ids=["APT", "ETH", "ARB", "USDTERC"],
+    ids=["APT", "ETH", "Arbitrum-ETH", "Arbitrum-ARB"],
 )
 def test_create_transfer_by_blockchain(
     fordefi: Fordefi,

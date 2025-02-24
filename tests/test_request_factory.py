@@ -16,6 +16,8 @@ from fordefi.requests_factory import (
     Token,
 )
 
+ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
+
 VAULD_ID = "ce26562d-ca59-4e85-af01-f86c111939fb"
 APTOS_ADDRESS = "0x3300c18e7b931bdfc73dccf3e2d043ad1c9d120c777fff5aeeb9956224e5247a"
 EVM_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -91,13 +93,13 @@ def test_create_transfer_request_body(
                 blockchain=Blockchain.ETHEREUM,
                 token=Token(
                     token_type=EvmTokenType.ERC20,
-                    token_id="0xdac17f958d2ee523a2206206994597c13d831ec7",  # noqa: S106
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
                 ),
             ),
             EVM_ADDRESS,
         ),
     ],
-    ids=["APT", "ARB", "ETH", "USDTERC"],
+    ids=["Aptos", "Arbitrum", "Ethereum", "Arbitrum-Ether"],
 )
 def test_create_transfer_request_schema(
     vault_id: str,
