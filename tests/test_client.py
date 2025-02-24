@@ -7,7 +7,7 @@ import pytest
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
-from fordefi.requests_factory import Asset, Blockchain
+from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
@@ -148,11 +148,31 @@ def test_create_transfer(
             fordefienv.EVM_RELEASES_VAULT_ID,
             Decimal("1"),
             Asset(blockchain=Blockchain.ETHEREUM),
-            fordefienv.EVM_DEPOSITS_VAULT_ID,
+            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
             UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
         ),
+        (
+            fordefienv.EVM_RELEASES_VAULT_ID,
+            Decimal("1"),
+            Asset(blockchain=Blockchain.ARBITRUM),
+            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+            UUID("11792d14-6aae-4b70-b8f2-a32a7c1b91a2"),
+        ),
+        (
+            fordefienv.EVM_RELEASES_VAULT_ID,
+            Decimal("1"),
+            Asset(
+                blockchain=Blockchain.ETHEREUM,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id="0xdAC17F958D2ee523a2206206994597C13D831ec7",  # noqa: S106
+                ),
+            ),
+            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+            UUID("f69cfc3b-b973-4ab6-b12b-b254109d2aa2"),
+        ),
     ],
-    ids=["APT", "ETH"],
+    ids=["APT", "ETH", "ARB", "USDTERC"],
 )
 def test_create_transfer_by_blockchain(
     fordefi: Fordefi,
