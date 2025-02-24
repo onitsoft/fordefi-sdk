@@ -179,6 +179,19 @@ class BlockchainType(Enum):
     EVM = _EvmTransferRequestFactory
 
 
+class Blockchain(Enum):
+    APTOS = "aptos"
+    ARBITRUM = "arbitrum"
+    ETHEREUM = "ethereum"
+
+
+TYPES_BY_BLOCKCHAIN = {
+    Blockchain.APTOS: BlockchainType.APTOS,
+    Blockchain.ARBITRUM: BlockchainType.EVM,
+    Blockchain.ETHEREUM: BlockchainType.EVM,
+}
+
+
 class RequestFactory:
     def __init__(
         self,
@@ -192,12 +205,13 @@ class RequestFactory:
 
     def create_transfer_request(
         self,
-        blockchain_type: BlockchainType,
+        blockchain: Blockchain,
         vault_id: str,
         amount: Decimal,
         destination_address: str,
         idempotence_id: UUID | None = None,
     ) -> Request:
+        blockchain_type = TYPES_BY_BLOCKCHAIN[blockchain]
         factory_class = blockchain_type.value
         factory = factory_class(
             vault_id=vault_id,

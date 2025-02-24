@@ -9,7 +9,7 @@ from openapi_core import Config, OpenAPI, V31RequestValidator
 from openapi_core.contrib.requests import RequestsOpenAPIRequest
 
 from fordefi.requests_factory import (
-    BlockchainType,
+    Blockchain,
     RequestFactory,
 )
 
@@ -43,10 +43,10 @@ def request_factory_fixture() -> RequestFactory:
 
 
 @pytest.mark.parametrize(
-    argnames=("vault_id", "blockchain_type", "amount", "destination_address"),
+    argnames=("vault_id", "blockchain", "amount", "destination_address"),
     argvalues=[
-        (VAULD_ID, BlockchainType.APTOS, Decimal(1), APTOS_ADDRESS),
-        (VAULD_ID, BlockchainType.EVM, Decimal(1), EVM_ADDRESS),
+        (VAULD_ID, Blockchain.APTOS, Decimal(1), APTOS_ADDRESS),
+        (VAULD_ID, Blockchain.ETHEREUM, Decimal(1), EVM_ADDRESS),
     ],
     ids=[
         "APT",
@@ -56,12 +56,12 @@ def request_factory_fixture() -> RequestFactory:
 def test_create_transfer_request_body(
     request_factory: RequestFactory,
     vault_id: str,
-    blockchain_type: BlockchainType,
+    blockchain: Blockchain,
     amount: Decimal,
     destination_address: str,
 ) -> None:
     request = request_factory.create_transfer_request(
-        blockchain_type=blockchain_type,
+        blockchain=blockchain,
         vault_id=vault_id,
         amount=amount,
         destination_address=destination_address,
@@ -77,10 +77,10 @@ def test_create_transfer_request_body(
 
 
 @pytest.mark.parametrize(
-    argnames=("vault_id", "blockchain_type", "destination_address"),
+    argnames=("vault_id", "blockchain", "destination_address"),
     argvalues=[
-        (VAULD_ID, BlockchainType.APTOS, APTOS_ADDRESS),
-        (VAULD_ID, BlockchainType.EVM, EVM_ADDRESS),
+        (VAULD_ID, Blockchain.APTOS, APTOS_ADDRESS),
+        (VAULD_ID, Blockchain.ETHEREUM, EVM_ADDRESS),
     ],
     ids=[
         "APT",
@@ -89,13 +89,13 @@ def test_create_transfer_request_body(
 )
 def test_create_transfer_request_schema(
     vault_id: str,
-    blockchain_type: BlockchainType,
+    blockchain: Blockchain,
     destination_address: str,
     openapi: OpenAPI,
     request_factory: RequestFactory,
 ) -> None:
     request = request_factory.create_transfer_request(
-        blockchain_type=blockchain_type,
+        blockchain=blockchain,
         vault_id=vault_id,
         amount=Decimal(1),
         destination_address=destination_address,
