@@ -181,6 +181,10 @@ class Fordefi:
 
         with requests.Session() as session:
             response = session.send(prepared_request)
+
+            if 400 <= response.status_code < 500:
+                raise ClientError(response.status_code, response.content.decode())
+
             response.raise_for_status()
 
             logger.info(
