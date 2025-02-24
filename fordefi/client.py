@@ -15,7 +15,7 @@ from typing_extensions import deprecated
 
 from .assets import AssetIdentifier, get_transfer_asset_identifier
 from .logs import request_repr
-from .requests_factory import Blockchain, RequestFactory
+from .requests_factory import Asset, RequestFactory
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ class Fordefi:
         destination_address: str,
         amount: Decimal,
         idempotence_client_id: UUID4,
-        blockchain: None = None,
+        asset: None = None,
         asset_symbol: str = "APT",
     ) -> Json: ...
 
@@ -120,7 +120,7 @@ class Fordefi:
         destination_address: str,
         amount: Decimal,
         idempotence_client_id: UUID4,
-        blockchain: Blockchain,
+        asset: Asset,
         asset_symbol: None = None,
     ) -> Json: ...
 
@@ -130,7 +130,7 @@ class Fordefi:
         destination_address: str,
         amount: Decimal,
         idempotence_client_id: UUID4,
-        blockchain: Blockchain | None = None,
+        asset: Asset | None = None,
         asset_symbol: str | None = None,
     ) -> Json:
         if amount % 1 != 0:
@@ -146,13 +146,13 @@ class Fordefi:
                 asset_symbol,
             )
 
-        if blockchain is not None:
+        if asset is not None:
             return self._create_transfer_by_blockchain_type(
                 vault_id,
                 destination_address,
                 amount,
+                asset,
                 idempotence_client_id,
-                blockchain,
             )
 
         msg = "Either asset_symbol or blockchain must be provided."
@@ -163,14 +163,14 @@ class Fordefi:
         vault_id: str,
         destination_address: str,
         amount: Decimal,
+        asset: Asset,
         idempotence_client_id: UUID4,
-        blockchain: Blockchain,
     ) -> Json:
         request = self._request_factory.create_transfer_request(
             vault_id=vault_id,
             destination_address=destination_address,
             amount=amount,
-            blockchain=blockchain,
+            asset=asset,
             idempotence_id=idempotence_client_id,
         )
         return self._send_request(request)

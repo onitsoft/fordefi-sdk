@@ -3,7 +3,7 @@ import datetime
 import hashlib
 import json
 import time
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import Enum
@@ -15,6 +15,12 @@ import requests
 from requests import Request
 
 from fordefi.types import Json
+
+
+class UnsupportedBlockchainError(Exception):
+    def __init__(self, blockchain: str) -> None:
+        super().__init__(f"Unsupported blockchain: {blockchain}")
+        self.blockchain = blockchain
 
 
 class _RequestFactory:
@@ -88,10 +94,72 @@ class _RequestFactory:
 
 
 @dataclass(frozen=True)
+class _AssetIdentifier(ABC):
+    type: ClassVar[str]
+    subtype: ClassVar[str]
+    network: str
+
+    @property
+    @abstractmethod
+    def chain(self) -> str: ...
+
+    @abstractmethod
+    def _get_details(self) -> Json: ...
+
+    def as_dict(self) -> Json:
+        return {
+            "type": self.type,
+            "details": self._get_details(),
+        }
+
+
+@dataclass(frozen=True)
+class _AptosAssetIdentifier(_AssetIdentifier):
+    type: ClassVar[str] = "aptos"
+
+    @property
+    def chain(self) -> str:
+        return f"{self.type}_{self.network}"
+
+    def _get_details(self) -> Json:
+        return {
+            "type": self.subtype,
+            "chain": self.chain,
+        }
+
+
+@dataclass(frozen=True)
+class _AptosNativeAssetIdentifier(_AptosAssetIdentifier):
+    subtype: ClassVar[str] = "native"
+
+
+@dataclass(frozen=True)
+class _EvmAssetIdentifier(_AssetIdentifier):
+    type: ClassVar[str] = "evm"
+    blockchain: str
+
+    @property
+    def chain(self) -> str:
+        return f"{self.type}_{self.blockchain}_{self.network}"
+
+
+@dataclass(frozen=True)
+class _EvmNativeAssetIdentifier(_EvmAssetIdentifier):
+    subtype: ClassVar[str] = "native"
+
+    def _get_details(self) -> Json:
+        return {
+            "type": self.subtype,
+            "chain": self.chain,
+        }
+
+
+@dataclass(frozen=True)
 class _TranferRequestFactory(_RequestFactory):
     method: ClassVar[str] = "POST"
     path: ClassVar[str] = "/transactions"
     transaction_type: ClassVar[str]
+    asset_identifier: _AssetIdentifier
     vault_id: str
     destination_address: str
     amount: Decimal
@@ -114,6 +182,7 @@ class _TranferRequestFactory(_RequestFactory):
         }
 
 
+@dataclass(frozen=True)
 class _AptosTransferRequestFactory(_TranferRequestFactory):
     transaction_type = "aptos_transaction"
 
@@ -135,13 +204,7 @@ class _AptosTransferRequestFactory(_TranferRequestFactory):
                 "address": destination_address,
             },
             "value": {"type": "value", "value": str(amount)},
-            "asset_identifier": {
-                "type": "aptos",
-                "details": {
-                    "type": "native",
-                    "chain": "aptos_mainnet",
-                },
-            },
+            "asset_identifier": self.asset_identifier.as_dict(),
         }
 
 
@@ -160,13 +223,7 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
                 "type": "priority",
                 "priority_level": "medium",
             },
-            "asset_identifier": {
-                "type": "evm",
-                "details": {
-                    "type": "native",
-                    "chain": self.chain,
-                },
-            },
+            "asset_identifier": self.asset_identifier.as_dict(),
             "to": destination_address,
             "value": {
                 "type": "value",
@@ -175,20 +232,39 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
-class _ArbitrumTransferRequestFactory(_EvmTransferRequestFactory):
-    transaction_type = "evm_transaction"
-    chain = "evm_arbitrum_mainnet"
-
-
-class _EthereumTransferRequestFactory(_EvmTransferRequestFactory):
-    transaction_type = "evm_transaction"
-    chain = "evm_ethereum_mainnet"
-
-
 class Blockchain(Enum):
-    APTOS = _AptosTransferRequestFactory
-    ARBITRUM = _ArbitrumTransferRequestFactory
-    ETHEREUM = _EthereumTransferRequestFactory
+    APTOS = "aptos"
+    ARBITRUM = "arbitrum"
+    ETHEREUM = "ethereum"
+
+
+EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
+
+
+REQUEST_FACTORY_BY_BLOCKCHAIN = {
+    Blockchain.APTOS: _AptosTransferRequestFactory,
+    Blockchain.ARBITRUM: _EvmTransferRequestFactory,
+    Blockchain.ETHEREUM: _EvmTransferRequestFactory,
+}
+
+
+ASSET_IDENTIFIER_BY_BLOCKCHAIN = {
+    Blockchain.APTOS: _AptosNativeAssetIdentifier,
+    Blockchain.ARBITRUM: _EvmAssetIdentifier,
+    Blockchain.ETHEREUM: _EvmAssetIdentifier,
+}
+
+
+@dataclass(frozen=True)
+class Token:
+    token_type: str
+    token_id: str
+
+
+@dataclass(frozen=True)
+class Asset:
+    blockchain: Blockchain
+    token: Token | None = None
 
 
 class RequestFactory:
@@ -204,14 +280,16 @@ class RequestFactory:
 
     def create_transfer_request(
         self,
-        blockchain: Blockchain,
         vault_id: str,
         amount: Decimal,
         destination_address: str,
+        asset: Asset,
         idempotence_id: UUID | None = None,
     ) -> Request:
-        factory_class = blockchain.value
+        factory_class = REQUEST_FACTORY_BY_BLOCKCHAIN[asset.blockchain]
+        asset_identifier = self._create_asset_identifier(asset)
         factory = factory_class(
+            asset_identifier=asset_identifier,
             vault_id=vault_id,
             amount=amount,
             destination_address=destination_address,
@@ -222,3 +300,20 @@ class RequestFactory:
             idempotence_id=idempotence_id,
             signing_key=self._signing_key,
         )
+
+    def _create_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
+        if asset.blockchain is Blockchain.APTOS:
+            return _AptosNativeAssetIdentifier(
+                network="mainnet",
+            )
+
+        if asset.blockchain in EVM_BLOCKCHAINS and asset.token is not None:
+            raise NotImplementedError(asset.token.token_type)
+
+        if asset.blockchain in EVM_BLOCKCHAINS:
+            return _EvmNativeAssetIdentifier(
+                blockchain=asset.blockchain.value,
+                network="mainnet",
+            )
+
+        raise UnsupportedBlockchainError(asset.blockchain.value)
