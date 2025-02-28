@@ -38,7 +38,7 @@ ignore = [
 
 [tool.uv]
 dev-dependencies = [
-    "pyright>=1.1.394",
+    "pyright>=1.1.395",
     "pytest>=8.3.4",
     "httpretty>=1.1.4",
     "pytest-httpserver>=1.1.1",

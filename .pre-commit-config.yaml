@@ -20,19 +20,19 @@ repos:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.5.31
+    rev: 0.6.3
     hooks:
       - id: uv-lock
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.6
+    rev: v0.9.9
     hooks:
       - id: ruff
         args: [ --fix]
       - id: ruff-format
 
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.394
+    rev: v1.1.395
     hooks:
     - id: pyright
 
