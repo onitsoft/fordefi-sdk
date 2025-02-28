@@ -16,7 +16,7 @@ import ecdsa.util
 import requests
 from requests import Request
 
-from fordefi.types import Json
+from .httptypes import Json
 
 
 class Blockchain(Enum):

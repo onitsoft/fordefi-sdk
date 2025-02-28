@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 import httpretty
@@ -9,6 +9,9 @@ from pytest_httpserver import HTTPServer, httpserver
 from fordefi.client import ClientError, Fordefi
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
+
+if TYPE_CHECKING:
+    from fordefi.httptypes import JsonDict
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
@@ -54,7 +57,7 @@ def test_list_assets__no_vault_id(
 
 @pytest.mark.vcr
 def test_create_vault(fordefi: Fordefi) -> None:
-    vault_request = {
+    vault_request: JsonDict = {
         "name": "creation-test-vault",
         "type": "evm",
     }
@@ -98,14 +101,14 @@ def test_get_transaction(fordefi: Fordefi) -> None:
         (
             fordefienv.APTOS_RELEASES_VAULT_ID,
             "APT",
-            Decimal("1"),
+            Decimal(1),
             fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
         ),
         (
             fordefienv.EVM_RELEASES_VAULT_ID,
             "ETH",
-            Decimal("1"),
+            Decimal(1),
             fordefienv.EVM_DEPOSITS_VAULT_ID,
             UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
         ),
@@ -125,7 +128,7 @@ def test_create_transfer(
         amount=amount,
         destination_address=destination_address,
         idempotence_client_id=idepotence_client_id,
-        asset_symbol=asset_symbol,  # type: ignore
+        asset_symbol=asset_symbol,  # pyright: ignore[reportArgumentType]
     )
 
     assert created_transfer
@@ -146,28 +149,28 @@ def test_create_transfer(
     argvalues=[
         (
             fordefienv.APTOS_RELEASES_VAULT_ID,
-            Decimal("1"),
+            Decimal(1),
             Asset(blockchain=Blockchain.APTOS),
             fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
         ),
         (
             fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal("1"),
+            Decimal(1),
             Asset(blockchain=Blockchain.ETHEREUM),
             fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
             UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
         ),
         (
             fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal("1"),
+            Decimal(1),
             Asset(blockchain=Blockchain.ARBITRUM),
             fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
             UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),
         ),
         (
             fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal("1"),
+            Decimal(1),
             Asset(
                 blockchain=Blockchain.ARBITRUM,
                 token=Token(
@@ -222,7 +225,7 @@ def test_create_transfer__invalid_asset_symbol(
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
-            asset_symbol="ARB",  # type: ignore
+            asset_symbol="ARB",  # pyright: ignore[reportArgumentType]
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
         )
@@ -232,7 +235,8 @@ def test_create_transfer__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
 ) -> None:
-    error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
+    error_detail = "Invalid prediction result: move abort in 0x1::coin:"
+    "einsufficient_balance(0x10006): not enough coins to complete transaction"
     httpserver.expect_oneshot_request(
         method="POST",
         uri="/transactions",
@@ -257,7 +261,8 @@ def test_create_transfer_by_asset__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
 ) -> None:
-    error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
+    error_detail = "Invalid prediction result: move abort in 0x1::coin: "
+    "einsufficient_balance(0x10006): not enough coins to complete transaction"
     httpserver.expect_oneshot_request(
         method="POST",
         uri="/transactions",

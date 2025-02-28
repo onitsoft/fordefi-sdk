@@ -104,7 +104,8 @@ def test_fordefi_webooks_signature_validator(
     argnames=("data", "valid_signature", "parsed_webhook", "error"),
     argvalues=[
         (
-            b'{"event_id": "8c690c58-e6c7-44d6-bbdb-5cfabc2da05b", "event": {"transaction_id": "1", "direction": "incoming"}}',
+            b'{"event_id": "8c690c58-e6c7-44d6-bbdb-5cfabc2da05b", '
+            b'"event": {"transaction_id": "1", "direction": "incoming"}}',
             True,
             Webhook(
                 event_id="8c690c58-e6c7-44d6-bbdb-5cfabc2da05b",

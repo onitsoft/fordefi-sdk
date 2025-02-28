@@ -1,12 +1,12 @@
-from typing import Any
+from .httptypes import Headers, Json, QueryParams
 
 
 def request_repr(
     method: str,
     path: str,
-    query_params: dict[str, str] | None,
-    headers: dict[str, str],
-    body: dict[str, Any] | None,
+    query_params: QueryParams | None,
+    headers: Headers,
+    body: Json | None,
     sensitive_headers: set[str] | None = None,
 ) -> str:
     if sensitive_headers is None:
@@ -24,7 +24,7 @@ def request_repr(
 
 
 def masked_headers(
-    headers: dict[str, str],
+    headers: Headers,
     sensitive_headers: set[str],
 ) -> dict[str, str]:
     return {
@@ -33,7 +33,11 @@ def masked_headers(
     }
 
 
-def masked_header_value(header: str, value: str | bytes, sensitive_headers) -> str:
+def masked_header_value(
+    header: str,
+    value: str | bytes,
+    sensitive_headers: set[str],
+) -> str:
     if isinstance(value, bytes):
         value = value.decode()
 

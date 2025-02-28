@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 from fordefi.logs import request_repr
+
+if TYPE_CHECKING:
+    from fordefi.httptypes import QueryParams
 
 
 def test_request_repr() -> None:
     method = "GET"
     path = "/vaults"
-    query_params = {"page": "1"}
+    query_params: QueryParams = {"page": "1"}
     headers = {
         "Authorization": "Bearer 123456",
         "Content-Type": "application/json",
@@ -20,8 +25,9 @@ def test_request_repr() -> None:
         sensitive_headers=sensitive_headers,
     )
     assert (
-        result
-        == "{'method': 'GET', 'path': '/vaults', 'query': {'page': '1'}, 'headers': {'Authorization': 'Bearer 123*** (13 chars)', 'Content-Type': 'application/json'}, 'body': None}"
+        result == "{'method': 'GET', 'path': '/vaults', 'query': {'page': '1'}, "
+        "'headers': {'Authorization': 'Bearer 123*** (13 chars)', "
+        "'Content-Type': 'application/json'}, 'body': None}"
     )
 
     result = request_repr(
@@ -33,6 +39,7 @@ def test_request_repr() -> None:
         sensitive_headers=None,
     )
     assert (
-        result
-        == "{'method': 'GET', 'path': '/vaults', 'query': {'page': '1'}, 'headers': {'Authorization': 'Bearer 123456', 'Content-Type': 'application/json'}, 'body': None}"
+        result == "{'method': 'GET', 'path': '/vaults', 'query': {'page': '1'}, "
+        "'headers': {'Authorization': 'Bearer 123456', "
+        "'Content-Type': 'application/json'}, 'body': None}"
     )

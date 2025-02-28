@@ -25,20 +25,11 @@ ignore = [
   "D",
   "CPY001",
   "N818",
-  "A001",
-  "A005",
   "PLR0913",
-  "PLR2004",
-  "E501",
   "FBT001",
   "FBT002",
-  "ANN001",
-  "ANN401",
   "ANN201",
-  "UP035",
-  "PGH003",
   "PT011",
-  "TRY300",
 ]
 
 [tool.ruff.lint.per-file-ignores]
