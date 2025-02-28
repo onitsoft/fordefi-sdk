@@ -11,6 +11,7 @@ from openapi_core.contrib.requests import RequestsOpenAPIRequest
 from fordefi.requests_factory import (
     Asset,
     Blockchain,
+    BlockchainNotImplementedError,
     EvmTokenType,
     RequestFactory,
     Token,
@@ -132,4 +133,36 @@ def test_not_implemented_token(request_factory: RequestFactory) -> None:
                 ),
             ),
             destination_address=EVM_ADDRESS,
+        )
+
+
+def test_create_signature_request(
+    openapi: OpenAPI,
+    request_factory: RequestFactory,
+) -> None:
+    message = "bWVzc2FnZQ=="
+    request = request_factory.create_signature_request(
+        message=message,
+        vault_id=VAULD_ID,
+        blockchain=Blockchain.ETHEREUM,
+    )
+    openapi_request = RequestsOpenAPIRequest(request)
+    openapi.validate_request(openapi_request)
+    body = request.json
+
+    assert body.get("details", {}).get("raw_data") == message
+    assert body.get("vault_id") == VAULD_ID
+    assert Blockchain.ETHEREUM.value in body.get("details", {}).get("chain", "")
+    assert "mainnet" in body.get("details", {}).get("chain", "")
+
+
+def test_create_signature_request__blockchain_not_implemented_error(
+    request_factory: RequestFactory,
+) -> None:
+    message = "bWVzc2FnZQ=="
+    with pytest.raises(BlockchainNotImplementedError):
+        request_factory.create_signature_request(
+            message=message,
+            vault_id=VAULD_ID,
+            blockchain=Blockchain.APTOS,
         )

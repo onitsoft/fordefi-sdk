@@ -25,6 +25,9 @@ class Blockchain(Enum):
     ETHEREUM = "ethereum"
 
 
+EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
+
+
 class TokenType(Enum): ...
 
 
@@ -48,6 +51,11 @@ class TokenNotImplementedError(NotImplementedError):
     def __init__(self, asset: Asset) -> None:
         super().__init__(f"Token type not implemented: {dataclasses.asdict(asset)}")
         self.asset = asset
+
+
+class BlockchainNotImplementedError(NotImplementedError):
+    def __init__(self, blockchain: Blockchain) -> None:
+        super().__init__(f"Blockchain not implemented: {blockchain}")
 
 
 class _RequestFactory:
@@ -127,8 +135,8 @@ class _AssetIdentifier(ABC):
     network: str
 
     @property
-    @abstractmethod
-    def chain(self) -> str: ...
+    def chain(self) -> str:
+        return f"{self.type}_{self.network}"
 
     @abstractmethod
     def _get_details(self) -> Json: ...
@@ -143,10 +151,6 @@ class _AssetIdentifier(ABC):
 @dataclass(frozen=True)
 class _AptosAssetIdentifier(_AssetIdentifier):
     type: ClassVar[str] = "aptos"
-
-    @property
-    def chain(self) -> str:
-        return f"{self.type}_{self.network}"
 
     def _get_details(self) -> Json:
         return {
@@ -300,6 +304,27 @@ _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
 }
 
 
+@dataclass(frozen=True)
+class _EvmSignatureRequest(_RequestFactory):
+    path: ClassVar[str] = "/transactions"
+    method: ClassVar[str] = "POST"
+    vault_id: str
+    blockchain: Blockchain
+    network: str
+    message: str
+
+    def _get_body(self) -> Json:
+        return {
+            "vault_id": self.vault_id,
+            "type": "evm_message",
+            "details": {
+                "type": "typed_message_type",
+                "chain": f"{self.blockchain.value}_{self.network}",
+                "raw_data": self.message,
+            },
+        }
+
+
 class RequestFactory:
     def __init__(
         self,
@@ -337,3 +362,25 @@ class RequestFactory:
     def _create_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
         factory = _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN[asset.blockchain]
         return factory(asset)
+
+    def create_signature_request(
+        self,
+        message: str,
+        vault_id: str,
+        blockchain: Blockchain,
+        network: str = "mainnet",
+    ) -> Request:
+        if blockchain not in EVM_BLOCKCHAINS:
+            raise BlockchainNotImplementedError(blockchain)
+
+        return _EvmSignatureRequest(
+            message=message,
+            vault_id=vault_id,
+            blockchain=blockchain,
+            network=network,
+        ).build(
+            base_url=self.base_url,
+            auth_token=self.auth_token,
+            idempotence_id=None,
+            signing_key=self._signing_key,
+        )
