@@ -58,8 +58,7 @@ class Fordefi:
 
     def create_vault(self, vault: Json) -> Json:
         endpoint = "/vaults"
-        vault_data = self._request("POST", endpoint, data=vault)
-        return vault_data
+        return self._request("POST", endpoint, data=vault)
 
     def list_vaults(self) -> Iterable[Json]:
         endpoint = "/vaults"
@@ -67,8 +66,7 @@ class Fordefi:
 
     def get_vault(self, vault_id: str) -> Json:
         endpoint = f"/vaults/{vault_id}"
-        vault = self._request("GET", endpoint)
-        return vault
+        return self._request("GET", endpoint)
 
     def get_assets(self, vault_id: str) -> Iterable[Json]:
         endpoint = f"/vaults/{vault_id}/assets"
@@ -81,8 +79,7 @@ class Fordefi:
 
     def get_transaction(self, transaction_id: str) -> Json:
         endpoint = f"/transactions/{transaction_id}"
-        transaction_data = self._request("GET", endpoint)
-        return transaction_data
+        return self._request("GET", endpoint)
 
     def list_transactions(
         self,
@@ -213,9 +210,7 @@ class Fordefi:
 
             response.raise_for_status()
 
-            json_content = response.json()
-
-            return json_content
+            return response.json()
 
     def _create_transfer_by_asset_symbol(
         self,
@@ -288,16 +283,16 @@ class Fordefi:
             transaction["signer_type"] = "api_signer"
 
         if transaction["signer_type"] != "api_signer":
-            raise ValueError("signer_type must be 'api_signer'")
+            msg = "signer_type must be 'api_signer'"
+            raise ValueError(msg)
 
-        transaction_data = self._request(
+        return self._request(
             "POST",
             endpoint,
             sign=True,
             data=transaction,
             idempotence_id=idempotence_client_id,
         )
-        return transaction_data
 
     def _get_pages(
         self,
@@ -378,9 +373,7 @@ class Fordefi:
 
         response.raise_for_status()
 
-        json_content = response.json()
-
-        return json_content
+        return response.json()
 
     def _signature(self, path: str, request_json: Json) -> dict[str, bytes]:
         request_body = json.dumps(request_json)

@@ -81,7 +81,7 @@ class ValidSignature(Signer):
 
 
 @pytest.mark.parametrize(
-    argnames="signer, is_valid",
+    argnames=("signer", "is_valid"),
     argvalues=[
         (MissingSignature, False),
         (MalformedSignature, False),
@@ -101,8 +101,8 @@ def test_fordefi_webooks_signature_validator(
 
 
 @pytest.mark.parametrize(
-    argnames="data, valid_signature, parsed_webhook, error",
-    argvalues=(
+    argnames=("data", "valid_signature", "parsed_webhook", "error"),
+    argvalues=[
         (
             b'{"event_id": "8c690c58-e6c7-44d6-bbdb-5cfabc2da05b", "event": {"transaction_id": "1", "direction": "incoming"}}',
             True,
@@ -124,7 +124,7 @@ def test_fordefi_webooks_signature_validator(
             None,
             InvalidSignatureError,
         ),
-    ),
+    ],
     ids=[
         "valid",
         "invalid-schema",

@@ -54,10 +54,10 @@ def test_list_assets__no_vault_id(
 
 @pytest.mark.vcr
 def test_create_vault(fordefi: Fordefi) -> None:
-    vault_request = dict(
-        name="creation-test-vault",
-        type="evm",
-    )
+    vault_request = {
+        "name": "creation-test-vault",
+        "type": "evm",
+    }
     created_vault = fordefi.create_vault(vault_request)
     assert created_vault
     assert "id" in created_vault
@@ -87,7 +87,13 @@ def test_get_transaction(fordefi: Fordefi) -> None:
 
 @pytest.mark.vcr
 @pytest.mark.parametrize(
-    argnames="vault_id,asset_symbol,amount,destination_address,idepotence_client_id",
+    argnames=(
+        "vault_id",
+        "asset_symbol",
+        "amount",
+        "destination_address",
+        "idepotence_client_id",
+    ),
     argvalues=[
         (
             fordefienv.APTOS_RELEASES_VAULT_ID,
@@ -113,7 +119,7 @@ def test_create_transfer(
     amount: Decimal,
     destination_address: str,
     idepotence_client_id: UUID,
-):
+) -> None:
     created_transfer = fordefi.create_transfer(
         vault_id=vault_id,
         amount=amount,
@@ -182,7 +188,7 @@ def test_create_transfer_by_blockchain(
     asset: Asset,
     destination_address: str,
     idepotence_client_id: UUID,
-):
+) -> None:
     created_transfer = fordefi.create_transfer(
         vault_id=vault_id,
         amount=amount,
@@ -199,7 +205,7 @@ def test_create_transfer_by_blockchain(
 
 def test_create_transfer__missing_asset(
     fordefi: Fordefi,
-):
+) -> None:
     with pytest.raises(ValueError):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
@@ -211,7 +217,7 @@ def test_create_transfer__missing_asset(
 
 def test_create_transfer__invalid_asset_symbol(
     fordefi: Fordefi,
-):
+) -> None:
     with pytest.raises(ValueError):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
@@ -225,7 +231,7 @@ def test_create_transfer__invalid_asset_symbol(
 def test_create_transfer__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
-):
+) -> None:
     error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
     httpserver.expect_oneshot_request(
         method="POST",
@@ -250,7 +256,7 @@ def test_create_transfer__bad_request(
 def test_create_transfer_by_asset__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
-):
+) -> None:
     error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
     httpserver.expect_oneshot_request(
         method="POST",
@@ -272,7 +278,7 @@ def test_create_transfer_by_asset__bad_request(
     assert error_detail in str(error)
 
 
-def test_create_transfer__non_interger_amount(fordefi: Fordefi):
+def test_create_transfer__non_interger_amount(fordefi: Fordefi) -> None:
     with pytest.raises(ValueError):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
