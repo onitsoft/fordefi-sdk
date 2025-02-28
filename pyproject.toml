@@ -27,7 +27,6 @@ ignore = [
   "FBT001",
   "FBT002",
   "FBT003",
-  "ANN201",
 ]
 
 [tool.ruff.lint.per-file-ignores]
