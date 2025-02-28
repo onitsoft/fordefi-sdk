@@ -4,6 +4,7 @@ from uuid import UUID
 
 import httpretty
 import pytest
+from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
@@ -209,7 +210,10 @@ def test_create_transfer_by_blockchain(
 def test_create_transfer__missing_asset(
     fordefi: Fordefi,
 ) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match=r".*asset_symbol or blockchain must be provided.*",
+    ):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
@@ -221,7 +225,10 @@ def test_create_transfer__missing_asset(
 def test_create_transfer__invalid_asset_symbol(
     fordefi: Fordefi,
 ) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match=re.compile(r".*asset_symbol.*argument only supports:.*", re.DOTALL),
+    ):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
@@ -261,8 +268,8 @@ def test_create_transfer_by_asset__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
 ) -> None:
-    error_detail = "Invalid prediction result: move abort in 0x1::coin: "
-    "einsufficient_balance(0x10006): not enough coins to complete transaction"
+    error_detail = r".*Invalid prediction result: move abort in 0x1::coin: "
+    "einsufficient_balance(0x10006): not enough coins to complete transaction.*"
     httpserver.expect_oneshot_request(
         method="POST",
         uri="/transactions",
@@ -271,7 +278,7 @@ def test_create_transfer_by_asset__bad_request(
         status=400,
     )
 
-    with pytest.raises(ClientError) as error:
+    with pytest.raises(ClientError, match=error_detail):
         httpserver_fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             asset=Asset(blockchain=Blockchain.APTOS),
@@ -280,11 +287,12 @@ def test_create_transfer_by_asset__bad_request(
             idempotence_client_id=UUID("2b23019c-6c11-4f35-931e-b396a92f4155"),
         )
 
-    assert error_detail in str(error)
-
 
 def test_create_transfer__non_interger_amount(fordefi: Fordefi) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match=r"Amount must be an integer representing the amount in smallest unit.",
+    ):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             asset=Asset(blockchain=Blockchain.APTOS),
@@ -355,7 +363,7 @@ def test_create_invalid_signature_type_transaction(fordefi: Fordefi) -> None:
         "type": "black_box_signature",
         "details": {"format": "hash_binary", "hash_binary": "SGVsbG8="},
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="signer_type must be 'api_signer'"):
         fordefi.create_transaction(
             transaction_request,
             idempotence_client_id=UUID("34a525c3-61a2-46f4-80ec-2142320fe5b8"),
