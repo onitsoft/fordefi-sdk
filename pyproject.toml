@@ -29,7 +29,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
   "S101",
-  "ARG",
+  "ARG002",
   "SLF001",
   "FBT001",
   "FBT003",
