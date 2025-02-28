@@ -137,7 +137,7 @@ class Fordefi:
         asset_symbol: None = None,
     ) -> JsonDict: ...
 
-    def create_transfer(
+    def create_transfer(  # noqa: PLR0913
         self,
         vault_id: str,
         destination_address: str,
@@ -339,7 +339,7 @@ class Fordefi:
             yield from page_content[items_property]
             page += 1
 
-    def _request(
+    def _request(  # noqa: PLR0913
         self,
         method: str,
         endpoint: str,

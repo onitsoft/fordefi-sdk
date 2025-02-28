@@ -23,7 +23,7 @@ class TransactionType:
     chain_unique_id: str
 
 
-class UnknownTransactionType(Exception):
+class UnknownTransactionType(Exception):  # noqa: N818
     def __init__(self, transfer_type: TransactionType, transaction_id: str) -> None:
         super().__init__(
             f"Transaction {transaction_id} has an unknown type {transfer_type}",

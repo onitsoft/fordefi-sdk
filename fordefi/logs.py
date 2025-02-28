@@ -1,7 +1,7 @@
 from .httptypes import Headers, Json, QueryParams
 
 
-def request_repr(
+def request_repr(  # noqa: PLR0913
     method: str,
     path: str,
     query_params: QueryParams | None,

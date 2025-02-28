@@ -1,13 +1,35 @@
 import base64
+import operator
 import os
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import AbstractContextManager, contextmanager
-from typing import TypeVar
+from typing import NamedTuple, TypeVar
 
 import pytest
 from _pytest.python_api import RaisesContext
 
 E = TypeVar("E", bound=BaseException)
+
+
+TestFunction = Callable[..., None]
+
+
+class BaseTestCase(NamedTuple):
+    name: str
+
+
+def cases(
+    name_position: int,
+    *cases: NamedTuple,
+) -> Callable[[TestFunction], TestFunction]:
+    def wrapper(test_function: TestFunction) -> TestFunction:
+        return pytest.mark.parametrize(
+            argnames="case",
+            argvalues=list(cases),
+            ids=operator.itemgetter(name_position),
+        )(test_function)
+
+    return wrapper
 
 
 @contextmanager

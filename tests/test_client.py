@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 from uuid import UUID
 
 import httpretty
@@ -10,6 +10,7 @@ from pytest_httpserver import HTTPServer, httpserver
 from fordefi.client import ClientError, Fordefi
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
+from tests.helpers import cases
 
 if TYPE_CHECKING:
     from fordefi.httptypes import JsonDict
@@ -89,47 +90,42 @@ def test_get_transaction(fordefi: Fordefi) -> None:
     assert transaction.get("id") == fordefienv.TEST_TRANSACTION_ID
 
 
+class CreateTransferBySymbolTestCase(NamedTuple):
+    vault_id: str
+    asset_symbol: str
+    amount: Decimal
+    destination_address: str
+    idepotence_client_id: UUID
+
+
 @pytest.mark.vcr
-@pytest.mark.parametrize(
-    argnames=(
-        "vault_id",
-        "asset_symbol",
-        "amount",
-        "destination_address",
-        "idepotence_client_id",
+@cases(
+    1,
+    CreateTransferBySymbolTestCase(
+        fordefienv.APTOS_RELEASES_VAULT_ID,
+        "APT",
+        Decimal(1),
+        fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+        UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
     ),
-    argvalues=[
-        (
-            fordefienv.APTOS_RELEASES_VAULT_ID,
-            "APT",
-            Decimal(1),
-            fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
-            UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            "ETH",
-            Decimal(1),
-            fordefienv.EVM_DEPOSITS_VAULT_ID,
-            UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
-        ),
-    ],
-    ids=["APT", "ETH"],
+    CreateTransferBySymbolTestCase(
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        "ETH",
+        Decimal(1),
+        fordefienv.EVM_DEPOSITS_VAULT_ID,
+        UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
+    ),
 )
 def test_create_transfer(
     fordefi: Fordefi,
-    vault_id: str,
-    asset_symbol: str,
-    amount: Decimal,
-    destination_address: str,
-    idepotence_client_id: UUID,
+    case: CreateTransferBySymbolTestCase,
 ) -> None:
     created_transfer = fordefi.create_transfer(
-        vault_id=vault_id,
-        amount=amount,
-        destination_address=destination_address,
-        idempotence_client_id=idepotence_client_id,
-        asset_symbol=asset_symbol,  # pyright: ignore[reportArgumentType]
+        vault_id=case.vault_id,
+        amount=case.amount,
+        destination_address=case.destination_address,
+        idempotence_client_id=case.idepotence_client_id,
+        asset_symbol=case.asset_symbol,  # pyright: ignore[reportArgumentType]
     )
 
     assert created_transfer
@@ -138,67 +134,67 @@ def test_create_transfer(
     assert state
 
 
+class CreateTransferByAssetTestCase(NamedTuple):
+    name: str
+    vault_id: str
+    amount: Decimal
+    asset: Asset
+    destination_address: str
+    idepotence_client_id: UUID
+
+
 @pytest.mark.vcr
-@pytest.mark.parametrize(
-    argnames=(
-        "vault_id",
-        "amount",
-        "asset",
-        "destination_address",
-        "idepotence_client_id",
+@cases(
+    0,
+    CreateTransferByAssetTestCase(
+        "APT",
+        fordefienv.APTOS_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.APTOS),
+        fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+        UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
     ),
-    argvalues=[
-        (
-            fordefienv.APTOS_RELEASES_VAULT_ID,
-            Decimal(1),
-            Asset(blockchain=Blockchain.APTOS),
-            fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
-            UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal(1),
-            Asset(blockchain=Blockchain.ETHEREUM),
-            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal(1),
-            Asset(blockchain=Blockchain.ARBITRUM),
-            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal(1),
-            Asset(
-                blockchain=Blockchain.ARBITRUM,
-                token=Token(
-                    token_type=EvmTokenType.ERC20,
-                    token_id=ARBITRUM_TOKEN_CONTRACT,
-                ),
+    CreateTransferByAssetTestCase(
+        "ETH",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.ETHEREUM),
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
+    ),
+    CreateTransferByAssetTestCase(
+        "Arbitrum-ETH",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.ARBITRUM),
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),
+    ),
+    CreateTransferByAssetTestCase(
+        "Arbitrum-ARB",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(
+            blockchain=Blockchain.ARBITRUM,
+            token=Token(
+                token_type=EvmTokenType.ERC20,
+                token_id=ARBITRUM_TOKEN_CONTRACT,
             ),
-            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),
         ),
-    ],
-    ids=["APT", "ETH", "Arbitrum-ETH", "Arbitrum-ARB"],
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),
+    ),
 )
 def test_create_transfer_by_blockchain(
     fordefi: Fordefi,
-    vault_id: str,
-    amount: Decimal,
-    asset: Asset,
-    destination_address: str,
-    idepotence_client_id: UUID,
+    case: CreateTransferByAssetTestCase,
 ) -> None:
     created_transfer = fordefi.create_transfer(
-        vault_id=vault_id,
-        amount=amount,
-        asset=asset,
-        destination_address=destination_address,
-        idempotence_client_id=idepotence_client_id,
+        vault_id=case.vault_id,
+        amount=case.amount,
+        asset=case.asset,
+        destination_address=case.destination_address,
+        idempotence_client_id=case.idepotence_client_id,
     )
 
     assert created_transfer
