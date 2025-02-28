@@ -24,13 +24,16 @@ select = ["ALL"]
 ignore = [
   "D",
   "CPY001",
-  "FBT001",
-  "FBT002",
-  "FBT003",
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "ARG", "SLF001"]
+"tests/*" = [
+  "S101",
+  "ARG",
+  "SLF001",
+  "FBT001",
+  "FBT003",
+]
 
 
 [tool.uv]

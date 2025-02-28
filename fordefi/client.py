@@ -345,7 +345,7 @@ class Fordefi:
         endpoint: str,
         params: QueryParams | None = None,
         data: Json | None = None,
-        sign: bool = False,
+        sign: bool = False,  # noqa: FBT001 FBT002
         idempotence_id: UUID4 | None = None,
     ) -> JsonDict:
         if data is None:
