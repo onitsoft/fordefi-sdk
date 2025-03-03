@@ -28,6 +28,13 @@ class Blockchain(Enum):
 
 EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
 
+# As per EIP-155
+# https://chainid.network/
+EVM_BLOCKCHAIN_IDS = {
+    Blockchain.ETHEREUM: 1,
+    Blockchain.ARBITRUM: 42161,
+}
+
 
 class TokenType(Enum): ...
 
@@ -57,6 +64,13 @@ class TokenNotImplementedError(NotImplementedError):
 class BlockchainNotImplementedError(NotImplementedError):
     def __init__(self, blockchain: Blockchain) -> None:
         super().__init__(f"Blockchain not implemented: {blockchain}")
+
+
+class InvalidBlockchainIdError(ValueError):
+    def __init__(self, blockchain_id: int, blockchain: Blockchain) -> None:
+        super().__init__(f"Invalid chain ID for {blockchain}: {blockchain_id}")
+        self.blockchain_id = blockchain_id
+        self.blockchain = blockchain
 
 
 class _RequestFactory:
@@ -383,6 +397,9 @@ class RequestFactory:
     ) -> Request:
         if blockchain not in EVM_BLOCKCHAINS:
             raise BlockchainNotImplementedError(blockchain)
+
+        if message.domain.chain_id != EVM_BLOCKCHAIN_IDS[blockchain]:
+            raise InvalidBlockchainIdError(message.domain.chain_id, blockchain)
 
         return _EvmSignatureRequest(
             message=message,

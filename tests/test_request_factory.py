@@ -16,12 +16,13 @@ from fordefi.requests_factory import (
     Blockchain,
     BlockchainNotImplementedError,
     EvmTokenType,
+    InvalidBlockchainIdError,
     RequestFactory,
     Token,
     TokenNotImplementedError,
     _EvmSignatureRequest,
 )
-from tests.factories import EIP712TypedDataFactory
+from tests.factories import EIP712DomainFactory, EIP712TypedDataFactory
 
 if TYPE_CHECKING:
     from fordefi.httptypes import Json
@@ -154,7 +155,8 @@ def test_create_signature_request(
     openapi: OpenAPI,
     request_factory: RequestFactory,
 ) -> None:
-    message = EIP712TypedDataFactory.build()
+    domain = EIP712DomainFactory.build(chain_id=1)
+    message = EIP712TypedDataFactory.build(domain=domain)
     request = request_factory.create_signature_request(
         message=message,
         vault_id=VAULD_ID,
@@ -189,4 +191,18 @@ def test_create_signature_request__blockchain_not_implemented_error(
             message=message,
             vault_id=VAULD_ID,
             blockchain=Blockchain.APTOS,
+        )
+
+
+def test_create_signature_request__invalid_blockchain_id(
+    request_factory: RequestFactory,
+) -> None:
+    invalid_blockchain_id = 1
+    domain = EIP712DomainFactory.build(chain_id=invalid_blockchain_id)
+    message = EIP712TypedDataFactory.build(domain=domain)
+    with pytest.raises(InvalidBlockchainIdError):
+        request_factory.create_signature_request(
+            message=message,
+            vault_id=VAULD_ID,
+            blockchain=Blockchain.ARBITRUM,
         )
