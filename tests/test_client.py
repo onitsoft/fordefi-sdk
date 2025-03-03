@@ -4,12 +4,14 @@ from uuid import UUID
 
 import httpretty
 import pytest
+from glom import Regex, glom
 from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
+from tests.factories import EIP712DomainFactory, EIP712TypedDataFactory
 from tests.helpers import cases
 
 if TYPE_CHECKING:
@@ -473,3 +475,18 @@ def test_get_pages_empty(httpserver: HTTPServer) -> None:
     items = fordefi._get_pages("items", "items")
 
     assert list(items) == []
+
+
+@pytest.mark.vcr
+def test_create_signature(fordefi: Fordefi) -> None:
+    domain = EIP712DomainFactory.build(chain_id=1)
+    message = EIP712TypedDataFactory.build(domain=domain)
+    response = fordefi.create_signature(
+        message=message,
+        vault_id=fordefienv.EVM_RELEASES_VAULT_ID,
+        blockchain=Blockchain.ETHEREUM,
+    )
+
+    assert glom(response, "signatures[0].data", default="") == Regex(
+        r"^[a-zA-Z0-9+/]{342}==$",
+    )

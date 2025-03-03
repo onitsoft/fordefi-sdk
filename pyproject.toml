@@ -9,6 +9,8 @@ dependencies = [
     "ecdsa==0.13.3",
     "typer>=0.15.1",
     "requests==2.31.0",
+    "eth-pydantic-types>=0.1.3",
+    "eth-hash[pycryptodome]>=0.7.1",
 ]
 
 
@@ -48,6 +50,9 @@ dev-dependencies = [
     "ruff>=0.9.6",
     "openapi-core>=0.19.4",
     "openapi-spec-validator>=0.7.1",
+    "glom>=24.11.0",
+    "datamodel-code-generator>=0.28.2",
+    "polyfactory>=2.19.0",
 ]
 
 [tool.pyright]

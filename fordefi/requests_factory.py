@@ -16,6 +16,7 @@ import ecdsa.util
 import requests
 from requests import Request
 
+from .evmtypes import EIP712TypedData
 from .httptypes import Json
 
 
@@ -311,18 +312,26 @@ class _EvmSignatureRequest(_RequestFactory):
     vault_id: str
     blockchain: Blockchain
     network: str
-    message: str
+    message: EIP712TypedData
+    timeout: int
 
     def _get_body(self) -> Json:
         return {
             "vault_id": self.vault_id,
+            "signer_type": "api_signer",
             "type": "evm_message",
             "details": {
                 "type": "typed_message_type",
                 "chain": f"{self.blockchain.value}_{self.network}",
-                "raw_data": self.message,
+                "raw_data": self._serialize_eip712message(self.message),
             },
+            "wait_for_state": "signed",
+            "timeout": self.timeout,
         }
+
+    @staticmethod
+    def _serialize_eip712message(message: EIP712TypedData) -> str:
+        return json.dumps(message.model_dump(by_alias=True))
 
 
 class RequestFactory:
@@ -331,8 +340,10 @@ class RequestFactory:
         base_url: str,
         auth_token: str,
         signing_key: ecdsa.SigningKey,
+        timeout: int,
     ) -> None:
         self.base_url = base_url
+        self.timeout = timeout
         self.auth_token = auth_token
         self._signing_key = signing_key
 
@@ -365,7 +376,7 @@ class RequestFactory:
 
     def create_signature_request(
         self,
-        message: str,
+        message: EIP712TypedData,
         vault_id: str,
         blockchain: Blockchain,
         network: str = "mainnet",
@@ -378,6 +389,7 @@ class RequestFactory:
             vault_id=vault_id,
             blockchain=blockchain,
             network=network,
+            timeout=self.timeout,
         ).build(
             base_url=self.base_url,
             auth_token=self.auth_token,

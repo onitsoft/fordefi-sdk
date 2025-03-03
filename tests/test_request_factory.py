@@ -1,10 +1,13 @@
 import base64
 from decimal import Decimal
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import ecdsa
 import ecdsa.curves
 import pytest
+from glom import glom
+from httpretty.core import json
 from openapi_core import Config, OpenAPI, V31RequestValidator
 from openapi_core.contrib.requests import RequestsOpenAPIRequest
 
@@ -16,7 +19,13 @@ from fordefi.requests_factory import (
     RequestFactory,
     Token,
     TokenNotImplementedError,
+    _EvmSignatureRequest,
 )
+from tests.factories import EIP712TypedDataFactory
+
+if TYPE_CHECKING:
+    from fordefi.httptypes import Json
+
 
 ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
 
@@ -46,7 +55,12 @@ def request_factory_fixture() -> RequestFactory:
         curve=ecdsa.curves.NIST256p,
     )
 
-    return RequestFactory(base_url=BASE_URL, auth_token=JWT, signing_key=signing_key)
+    return RequestFactory(
+        base_url=BASE_URL,
+        auth_token=JWT,
+        signing_key=signing_key,
+        timeout=15,
+    )
 
 
 @pytest.mark.parametrize(
@@ -140,7 +154,7 @@ def test_create_signature_request(
     openapi: OpenAPI,
     request_factory: RequestFactory,
 ) -> None:
-    message = "bWVzc2FnZQ=="
+    message = EIP712TypedDataFactory.build()
     request = request_factory.create_signature_request(
         message=message,
         vault_id=VAULD_ID,
@@ -149,17 +163,27 @@ def test_create_signature_request(
     openapi_request = RequestsOpenAPIRequest(request)
     openapi.validate_request(openapi_request)
     body = request.json
-
-    assert body.get("details", {}).get("raw_data") == message
+    request_raw_data = glom(body, "details.raw_data", default="{}")
+    request_data = json.loads(request_raw_data)
+    expected_data: Json = message.model_dump(by_alias=True)
+    assert request_data == expected_data
     assert body.get("vault_id") == VAULD_ID
     assert Blockchain.ETHEREUM.value in body.get("details", {}).get("chain", "")
     assert "mainnet" in body.get("details", {}).get("chain", "")
 
 
+def test_serialize_json_field() -> None:
+    message = EIP712TypedDataFactory.build()
+    result = _EvmSignatureRequest._serialize_eip712message(message)
+
+    meta_obj = {"j": result}
+    assert json.loads(json.dumps(meta_obj)) == meta_obj
+
+
 def test_create_signature_request__blockchain_not_implemented_error(
     request_factory: RequestFactory,
 ) -> None:
-    message = "bWVzc2FnZQ=="
+    message = EIP712TypedDataFactory.build()
     with pytest.raises(BlockchainNotImplementedError):
         request_factory.create_signature_request(
             message=message,

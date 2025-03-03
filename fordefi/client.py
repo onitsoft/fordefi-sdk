@@ -14,6 +14,8 @@ import requests
 from pydantic import UUID4
 from typing_extensions import deprecated
 
+from fordefi.evmtypes import EIP712TypedData
+
 from .assets import (
     ASSET_IDENTIFIER_BY_SYMBOL,
     AssetIdentifier,
@@ -21,7 +23,7 @@ from .assets import (
 )
 from .httptypes import Json, JsonDict, QueryParams
 from .logs import request_repr
-from .requests_factory import Asset, RequestFactory
+from .requests_factory import Asset, Blockchain, RequestFactory
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +62,7 @@ class Fordefi:
             base_url=base_url,
             auth_token=api_key,
             signing_key=self._signing_key,
+            timeout=timeout,
         )
         self.page_size = page_size
         self.timeout = timeout
@@ -414,3 +417,16 @@ class Fordefi:
             "x-signature": base64.b64encode(signature),
             "x-timestamp": timestamp.encode(),
         }
+
+    def create_signature(
+        self,
+        message: EIP712TypedData,
+        blockchain: Blockchain,
+        vault_id: str,
+    ) -> JsonDict:
+        request = self._request_factory.create_signature_request(
+            message=message,
+            blockchain=blockchain,
+            vault_id=vault_id,
+        )
+        return cast("JsonDict", self._send_request(request))
