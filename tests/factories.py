@@ -9,7 +9,7 @@ from fordefi.evmtypes import EIP712Domain, EIP712TypedData, TypeField
 from fordefi.httptypes import JsonValue
 
 
-def _hexbytes_provider() -> BaseHexBytes:
+def get_random_hexbytes() -> BaseHexBytes:
     random_bytes = bytes(
         random.getrandbits(8) for _ in range(32)
     )  # Example: 32 random bytes
@@ -24,7 +24,7 @@ class EIP712DomainFactory(ModelFactory[EIP712Domain]):
         providers_map = super().get_provider_map()
 
         return {
-            HexBytes: _hexbytes_provider,
+            HexBytes: get_random_hexbytes,
             **providers_map,
         }
 
@@ -59,6 +59,6 @@ class EIP712TypedDataFactory(ModelFactory[EIP712TypedData]):
         providers_map = super().get_provider_map()
 
         return {
-            HexBytes: _hexbytes_provider,
+            HexBytes: get_random_hexbytes,
             **providers_map,
         }

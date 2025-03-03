@@ -5,14 +5,19 @@ from uuid import UUID
 
 import httpretty
 import pytest
+from eth_account import Account
+from eth_account.messages import encode_typed_data
 from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
-from fordefi.evmtypes import SignedMessage
+from fordefi.evmtypes import EIP712TypedData, SignedMessage
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
-from tests.factories import EIP712DomainFactory, EIP712TypedDataFactory
+from tests.factories import (
+    EIP712DomainFactory,
+    EIP712TypedDataFactory,
+)
 from tests.helpers import cases
 
 if TYPE_CHECKING:
@@ -495,9 +500,29 @@ def test_create_signature(fordefi: Fordefi) -> None:
     assert base64.b64decode(signatures[0])
 
 
+def assert_valid_eip712_signature(
+    message: EIP712TypedData,
+    signed_message: SignedMessage,
+    expected_signer: str,
+) -> None:
+    encoded_message = encode_typed_data(
+        full_message=message.model_dump(by_alias=True),
+    )
+
+    # Recover the signer's address
+    recovered_address = Account.recover_message(encoded_message, vrs=signed_message)
+
+    # Compare the recovered address with the expected signer
+    assert recovered_address == expected_signer
+
+
 @pytest.mark.vcr
 def test_sign_message(fordefi: Fordefi) -> None:
-    domain = EIP712DomainFactory.build(chain_id=1)
+    domain = EIP712DomainFactory.build(
+        chain_id=1,
+        salt=bytes(541657),
+        verifying_contract=fordefienv.EVM_RELEASES_VAULT_ADDRESS,
+    )
     message = EIP712TypedDataFactory.build(domain=domain)
     message_signature = fordefi.sign_message(
         message=message,
@@ -506,3 +531,8 @@ def test_sign_message(fordefi: Fordefi) -> None:
     )
 
     assert isinstance(message_signature, SignedMessage)
+    assert_valid_eip712_signature(
+        message=message,
+        signed_message=message_signature,
+        expected_signer=fordefienv.EVM_RELEASES_VAULT_ADDRESS,
+    )

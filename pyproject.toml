@@ -53,6 +53,7 @@ dev-dependencies = [
     "glom>=24.11.0",
     "datamodel-code-generator>=0.28.2",
     "polyfactory>=2.19.0",
+    "eth-account>=0.13.5",
 ]
 
 [tool.pyright]

@@ -39,16 +39,22 @@ class EIP712TypedData(BaseModel):
     def validate_types(
         cls,
         v: dict[str, list[TypeField]],
+        info: ValidationInfo,
     ) -> dict[str, list[TypeField]]:
         if "EIP712Domain" not in set(v.keys()):
-            return {
+            domain_fields = [
+                TypeField(name="name", type="string"),
+                TypeField(name="version", type="string"),
+                TypeField(name="chainId", type="uint256"),
+                TypeField(name="verifyingContract", type="address"),
+            ]
+
+            if info.data.get("salt") is None:
+                domain_fields.append(TypeField(name="salt", type="bytes32"))
+
+            v = {
                 **v,
-                "EIP712Domain": [
-                    TypeField(name="name", type="string"),
-                    TypeField(name="version", type="string"),
-                    TypeField(name="chainId", type="uint256"),
-                    TypeField(name="verifyingContract", type="address"),
-                ],
+                "EIP712Domain": domain_fields,
             }
 
         return v
