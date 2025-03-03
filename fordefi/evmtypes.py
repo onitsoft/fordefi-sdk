@@ -1,3 +1,5 @@
+from typing import NamedTuple
+
 from eth_pydantic_types import Address, HexBytes
 from pydantic import BaseModel, ConfigDict, JsonValue, ValidationInfo, field_validator
 from pydantic.alias_generators import to_camel
@@ -60,3 +62,9 @@ class EIP712TypedData(BaseModel):
             raise ValueError(msg)
 
         return v
+
+
+class SignedMessage(NamedTuple):
+    r: int
+    s: int
+    v: int

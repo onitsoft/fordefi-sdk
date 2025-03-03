@@ -9,6 +9,7 @@ from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
+from fordefi.evmtypes import SignedMessage
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
 from tests.factories import EIP712DomainFactory, EIP712TypedDataFactory
@@ -492,3 +493,16 @@ def test_create_signature(fordefi: Fordefi) -> None:
     assert len(signatures) == 1
     assert isinstance(signatures[0], str)
     assert base64.b64decode(signatures[0])
+
+
+@pytest.mark.vcr
+def test_sign_message(fordefi: Fordefi) -> None:
+    domain = EIP712DomainFactory.build(chain_id=1)
+    message = EIP712TypedDataFactory.build(domain=domain)
+    message_signature = fordefi.sign_message(
+        message=message,
+        vault_id=fordefienv.EVM_RELEASES_VAULT_ID,
+        blockchain=Blockchain.ETHEREUM,
+    )
+
+    assert isinstance(message_signature, SignedMessage)

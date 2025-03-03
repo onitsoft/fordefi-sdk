@@ -14,7 +14,7 @@ import requests
 from pydantic import UUID4
 from typing_extensions import deprecated
 
-from fordefi.evmtypes import EIP712TypedData
+from fordefi.evmtypes import EIP712TypedData, SignedMessage
 
 from .assets import (
     ASSET_IDENTIFIER_BY_SYMBOL,
@@ -430,3 +430,26 @@ class Fordefi:
             vault_id=vault_id,
         )
         return cast("JsonDict", self._send_request(request))
+
+    def sign_message(
+        self,
+        message: EIP712TypedData,
+        blockchain: Blockchain,
+        vault_id: str,
+    ) -> SignedMessage:
+        response = self.create_signature(
+            message=message,
+            blockchain=blockchain,
+            vault_id=vault_id,
+        )
+        return self._parse_signature(response, chain_id=message.domain.chain_id)
+
+    @staticmethod
+    def _parse_signature(response: JsonDict, chain_id: int) -> SignedMessage:
+        signatures = cast("str", response["signatures"])
+        raw_signature = base64.b64decode(signatures[0])
+        r = int.from_bytes(raw_signature[0:32], byteorder="big")
+        s = int.from_bytes(raw_signature[32:64], byteorder="big")
+        v_raw = int(raw_signature[-1])  # 27 or 28
+        v = v_raw + 35 + 2 * chain_id
+        return SignedMessage(r=r, s=s, v=v)
