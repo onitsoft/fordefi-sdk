@@ -1,10 +1,10 @@
+import base64
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any, NamedTuple
 from uuid import UUID
 
 import httpretty
 import pytest
-from glom import Regex, glom
 from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
@@ -486,7 +486,9 @@ def test_create_signature(fordefi: Fordefi) -> None:
         vault_id=fordefienv.EVM_RELEASES_VAULT_ID,
         blockchain=Blockchain.ETHEREUM,
     )
+    signatures = response.get("signatures")
 
-    assert glom(response, "signatures[0].data", default="") == Regex(
-        r"^[a-zA-Z0-9+/]{342}==$",
-    )
+    assert isinstance(signatures, list)
+    assert len(signatures) == 1
+    assert isinstance(signatures[0], str)
+    assert base64.b64decode(signatures[0])

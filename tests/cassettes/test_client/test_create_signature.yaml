@@ -7,49 +7,34 @@ interactions:
       \"string\"}], \"EIP712Domain\": [{\"name\": \"name\", \"type\": \"string\"},
       {\"name\": \"version\", \"type\": \"string\"}, {\"name\": \"chainId\", \"type\":
       \"uint256\"}, {\"name\": \"verifyingContract\", \"type\": \"address\"}]}, \"domain\":
-      {\"name\": \"WPkAgpSwqbmLNpzeoCkG\", \"version\": \"KDReiTfAtZkKVWsYayGB\",
+      {\"name\": \"OetSEwjdVjxXRYnSOeIR\", \"version\": \"GKrpgqugSRSfDVJuWnWt\",
       \"chainId\": 1, \"verifyingContract\": \"0x0000000000000000000000000000000000000000\",
-      \"salt\": \"0xb619a1d3b3da172b226beb0239ee7335c75be64252e70683ccbdfca77a0ef221\"},
-      \"primaryType\": \"Message\", \"message\": {\"from\": \"0x5409ed021d9299bf6814279a6a1411a7e866a631\",
+      \"salt\": null}, \"primaryType\": \"Message\", \"message\": {\"from\": \"0x5409ed021d9299bf6814279a6a1411a7e866a631\",
       \"to\": \"0x6ecbe1db9ef729cbe972c83fb886247691f41e9e\", \"contents\": \"Hello,
       Bob!\"}}"}, "wait_for_state": "signed", "timeout": 30}'
     headers:
       Content-Length:
-      - '1062'
+      - '996'
       Content-Type:
       - application/json
     method: POST
-    uri: https://api.fordefi.com/api/v1/transactions
+    uri: https://api.fordefi.com/api/v1/transactions/create-and-wait
   response:
     body:
-      string: '{"id":"4f20ffea-577b-4bc6-ada3-bbec0d069234","created_at":"2025-03-03T14:52:40.670000Z","modified_at":"2025-03-03T14:52:40.670000Z","managed_transaction_data":{"created_by":{"id":"7e94b222-22f1-437a-b2a5-8d866d3d4d28","user_type":"api_user","name":"Nuno
-        C / Local Testing","state":"active","role":"trader"},"device_signing_request":{"signers":[{"user":{"id":"a1e1ccee-ef58-42b5-8d5f-c3f8d0f8f550","user_type":"api_signer","name":"Testing","state":"active"},"modified_at":"2025-03-03T14:52:40.699000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
-        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"has_current_user_vault_permissions":true,"sign_mode":"auto"},"signatures":[],"spam_state":"unset","direction":"outgoing","state":"approved","state_changes":[{"changed_at":"2025-03-03T14:52:40.670000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2025-03-03T14:52:40.698000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"}],"type":"evm_message","evm_message_type":"typed_message_type","raw_data":"{\"types\":
-        {\"Message\": [{\"name\": \"from\", \"type\": \"string\"}, {\"name\": \"to\",
-        \"type\": \"string\"}, {\"name\": \"contents\", \"type\": \"string\"}], \"EIP712Domain\":
-        [{\"name\": \"name\", \"type\": \"string\"}, {\"name\": \"version\", \"type\":
-        \"string\"}, {\"name\": \"chainId\", \"type\": \"uint256\"}, {\"name\": \"verifyingContract\",
-        \"type\": \"address\"}]}, \"domain\": {\"name\": \"WPkAgpSwqbmLNpzeoCkG\",
-        \"version\": \"KDReiTfAtZkKVWsYayGB\", \"chainId\": 1, \"verifyingContract\":
-        \"0x0000000000000000000000000000000000000000\", \"salt\": \"0xb619a1d3b3da172b226beb0239ee7335c75be64252e70683ccbdfca77a0ef221\"},
-        \"primaryType\": \"Message\", \"message\": {\"from\": \"0x5409ed021d9299bf6814279a6a1411a7e866a631\",
-        \"to\": \"0x6ecbe1db9ef729cbe972c83fb886247691f41e9e\", \"contents\": \"Hello,
-        Bob!\"}}","typed_data":{"domain":{"name":"WPkAgpSwqbmLNpzeoCkG","version":"KDReiTfAtZkKVWsYayGB","chain_id":1,"verifying_contract":{"explorer_url":"https://etherscan.io/address/0x0000000000000000000000000000000000000000","type":"evm","address":"0x0000000000000000000000000000000000000000"},"salt":"thmh07PaFysia+sCOe5zNcdb5kJS5waDzL38p3oO8iE="},"primary_type":"Message","type":"unknown"},"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
-        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"},"sender":{"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
-        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"explorer_url":"https://etherscan.io/address/0xA031314c1bFc27b83163978DFB8549829789ae63","type":"evm","address":"0xA031314c1bFc27b83163978DFB8549829789ae63"}}'
+      string: '{"id":"21ebbd16-892b-4f72-be0c-5c8ae01d4324","created_at":"2025-03-03T15:45:35.070000Z","modified_at":"2025-03-03T15:45:36.403000Z","signatures":["VXT1or5Tub7/Mf7d8dvNFs/MYkKNtzMm67SMF2LYmvdzfHGlrzrvNYkiboJuir4Kbh+oaOh6+NRZyfeasFysHxw="],"state":"completed","has_timed_out":false}'
     headers:
       Connection:
       - keep-alive
       Content-Length:
-      - '3728'
+      - '280'
       Content-Type:
       - application/json
       Date:
-      - Mon, 03 Mar 2025 14:52:40 GMT
+      - Mon, 03 Mar 2025 15:45:36 GMT
       Via:
-      - 1.1 87bac7324deaa405623c690127b8a87c.cloudfront.net (CloudFront)
+      - 1.1 191181f299c93f856cc1cdad79c1bb76.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - 1DT5GYTYXqEy0W0MmD5ntJnJFUlBaqG7rlLcMrU-uuE0EiW9ZyV8Dg==
+      - igSudfXX_syI8_19rVe9vYKleKVFlNE6d2okGzEIw0DQfP9yLP8R2g==
       X-Amz-Cf-Pop:
       - LIS50-P1
       X-Cache:
@@ -59,15 +44,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '256'
+      - '1418'
       x-ratelimit-limit:
       - 300, 300;w=60
       x-ratelimit-remaining:
       - '299'
       x-ratelimit-reset:
-      - '20'
+      - '25'
       x-request-id:
-      - 5752e0b2-1485-9dde-b7a2-cc6188fd7477
+      - d180afbe-3ea7-9768-87d9-ec21300079a8
     status:
       code: 201
       message: Created

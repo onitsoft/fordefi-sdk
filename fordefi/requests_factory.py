@@ -307,7 +307,7 @@ _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
 
 @dataclass(frozen=True)
 class _EvmSignatureRequest(_RequestFactory):
-    path: ClassVar[str] = "/transactions"
+    path: ClassVar[str] = "/transactions/create-and-wait"
     method: ClassVar[str] = "POST"
     vault_id: str
     blockchain: Blockchain
