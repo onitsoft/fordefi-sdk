@@ -1,4 +1,5 @@
 import base64
+import os
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any, NamedTuple
 from uuid import UUID
@@ -508,20 +509,43 @@ def assert_valid_eip712_signature(
     encoded_message = encode_typed_data(
         full_message=message.model_dump(by_alias=True),
     )
+    r, s, v = signed_message
+    recovered_address = Account.recover_message(encoded_message, vrs=(v, r, s))
 
-    # Recover the signer's address
-    recovered_address = Account.recover_message(encoded_message, vrs=signed_message)
-
-    # Compare the recovered address with the expected signer
     assert recovered_address == expected_signer
+
+
+def test__parse_signature() -> None:
+    private_key = os.urandom(32)
+    account = Account.from_key(private_key)
+    message = EIP712TypedDataFactory.build(
+        domain=EIP712DomainFactory.build(
+            salt=b"\x00" * 32,
+        ),
+    ).model_dump(by_alias=True)
+    encoded_message = encode_typed_data(full_message=message)
+    signed_message = account.sign_message(encoded_message)
+    signature: bytes = signed_message.signature
+    encoded_signature = base64.b64encode(signature).decode("utf-8")
+    response: JsonDict = {"signatures": [encoded_signature]}
+    parsed_signature = Fordefi._parse_signature(response)
+
+    assert parsed_signature == SignedMessage(
+        r=signed_message.r,
+        s=signed_message.s,
+        v=signed_message.v,
+    )
 
 
 @pytest.mark.vcr
 def test_sign_message(fordefi: Fordefi) -> None:
+    contract = "0x0000000000000000000000000000000000000000"
     domain = EIP712DomainFactory.build(
+        name="smart-contract",
+        version="1.0",
         chain_id=1,
-        salt=bytes(541657),
-        verifying_contract=fordefienv.EVM_RELEASES_VAULT_ADDRESS,
+        verifying_contract=contract,
+        salt=b"\x00" * 32,
     )
     message = EIP712TypedDataFactory.build(domain=domain)
     message_signature = fordefi.sign_message(

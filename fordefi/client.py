@@ -442,14 +442,13 @@ class Fordefi:
             blockchain=blockchain,
             vault_id=vault_id,
         )
-        return self._parse_signature(response, chain_id=message.domain.chain_id)
+        return self._parse_signature(response)
 
     @staticmethod
-    def _parse_signature(response: JsonDict, chain_id: int) -> SignedMessage:
+    def _parse_signature(response: JsonDict) -> SignedMessage:
         signatures = cast("str", response["signatures"])
         raw_signature = base64.b64decode(signatures[0])
         r = int.from_bytes(raw_signature[0:32], byteorder="big")
         s = int.from_bytes(raw_signature[32:64], byteorder="big")
-        v_raw = int(raw_signature[-1])  # 27 or 28
-        v = v_raw + 35 + 2 * chain_id
+        v = int(raw_signature[-1])  # 27 or 28
         return SignedMessage(r=r, s=s, v=v)
