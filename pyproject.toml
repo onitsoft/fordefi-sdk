@@ -54,6 +54,8 @@ dev-dependencies = [
     "datamodel-code-generator>=0.28.2",
     "polyfactory>=2.19.0",
     "eth-account>=0.13.5",
+    "radon>=6.0.1",
+    "xenon>=0.9.3",
 ]
 
 [tool.pyright]
