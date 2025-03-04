@@ -20,7 +20,7 @@ repos:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.6.3
+    rev: 0.6.4
     hooks:
       - id: uv-lock
 
@@ -32,9 +32,15 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.395
+    rev: v1.1.396
     hooks:
     - id: pyright
+
+  - repo: https://github.com/yunojuno/pre-commit-xenon
+    rev: v0.1
+    hooks:
+      - id: xenon
+        args: ["--max-average=A", "--max-modules=A", "--max-absolute=B"]
 
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.4.1"

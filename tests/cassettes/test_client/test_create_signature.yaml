@@ -1,0 +1,59 @@
+interactions:
+- request:
+    body: '{"vault_id": "bdb889c8-7f39-4b1c-8973-bd0532143796", "signer_type": "api_signer",
+      "type": "evm_message", "details": {"type": "typed_message_type", "chain": "ethereum_mainnet",
+      "raw_data": "{\"types\": {\"Message\": [{\"name\": \"from\", \"type\": \"string\"},
+      {\"name\": \"to\", \"type\": \"string\"}, {\"name\": \"contents\", \"type\":
+      \"string\"}], \"EIP712Domain\": [{\"name\": \"name\", \"type\": \"string\"},
+      {\"name\": \"version\", \"type\": \"string\"}, {\"name\": \"chainId\", \"type\":
+      \"uint256\"}, {\"name\": \"verifyingContract\", \"type\": \"address\"}]}, \"domain\":
+      {\"name\": \"OetSEwjdVjxXRYnSOeIR\", \"version\": \"GKrpgqugSRSfDVJuWnWt\",
+      \"chainId\": 1, \"verifyingContract\": \"0x0000000000000000000000000000000000000000\",
+      \"salt\": null}, \"primaryType\": \"Message\", \"message\": {\"from\": \"0x5409ed021d9299bf6814279a6a1411a7e866a631\",
+      \"to\": \"0x6ecbe1db9ef729cbe972c83fb886247691f41e9e\", \"contents\": \"Hello,
+      Bob!\"}}"}, "wait_for_state": "signed", "timeout": 30}'
+    headers:
+      Content-Length:
+      - '996'
+      Content-Type:
+      - application/json
+    method: POST
+    uri: https://api.fordefi.com/api/v1/transactions/create-and-wait
+  response:
+    body:
+      string: '{"id":"21ebbd16-892b-4f72-be0c-5c8ae01d4324","created_at":"2025-03-03T15:45:35.070000Z","modified_at":"2025-03-03T15:45:36.403000Z","signatures":["VXT1or5Tub7/Mf7d8dvNFs/MYkKNtzMm67SMF2LYmvdzfHGlrzrvNYkiboJuir4Kbh+oaOh6+NRZyfeasFysHxw="],"state":"completed","has_timed_out":false}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '280'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 03 Mar 2025 15:45:36 GMT
+      Via:
+      - 1.1 191181f299c93f856cc1cdad79c1bb76.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - igSudfXX_syI8_19rVe9vYKleKVFlNE6d2okGzEIw0DQfP9yLP8R2g==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '1418'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '299'
+      x-ratelimit-reset:
+      - '25'
+      x-request-id:
+      - d180afbe-3ea7-9768-87d9-ec21300079a8
+    status:
+      code: 201
+      message: Created
+version: 1

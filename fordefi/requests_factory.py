@@ -16,6 +16,7 @@ import ecdsa.util
 import requests
 from requests import Request
 
+from .evmtypes import EIP712TypedData
 from .httptypes import Json
 
 
@@ -23,6 +24,16 @@ class Blockchain(Enum):
     APTOS = "aptos"
     ARBITRUM = "arbitrum"
     ETHEREUM = "ethereum"
+
+
+EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
+
+# As per EIP-155
+# https://chainid.network/
+EVM_BLOCKCHAIN_IDS = {
+    Blockchain.ETHEREUM: 1,
+    Blockchain.ARBITRUM: 42161,
+}
 
 
 class TokenType(Enum): ...
@@ -48,6 +59,18 @@ class TokenNotImplementedError(NotImplementedError):
     def __init__(self, asset: Asset) -> None:
         super().__init__(f"Token type not implemented: {dataclasses.asdict(asset)}")
         self.asset = asset
+
+
+class BlockchainNotImplementedError(NotImplementedError):
+    def __init__(self, blockchain: Blockchain) -> None:
+        super().__init__(f"Blockchain not implemented: {blockchain}")
+
+
+class InvalidBlockchainIdError(ValueError):
+    def __init__(self, blockchain_id: int, blockchain: Blockchain) -> None:
+        super().__init__(f"Invalid chain ID for {blockchain}: {blockchain_id}")
+        self.blockchain_id = blockchain_id
+        self.blockchain = blockchain
 
 
 class _RequestFactory:
@@ -127,8 +150,8 @@ class _AssetIdentifier(ABC):
     network: str
 
     @property
-    @abstractmethod
-    def chain(self) -> str: ...
+    def chain(self) -> str:
+        return f"{self.type}_{self.network}"
 
     @abstractmethod
     def _get_details(self) -> Json: ...
@@ -143,10 +166,6 @@ class _AssetIdentifier(ABC):
 @dataclass(frozen=True)
 class _AptosAssetIdentifier(_AssetIdentifier):
     type: ClassVar[str] = "aptos"
-
-    @property
-    def chain(self) -> str:
-        return f"{self.type}_{self.network}"
 
     def _get_details(self) -> Json:
         return {
@@ -300,14 +319,45 @@ _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
 }
 
 
+@dataclass(frozen=True)
+class _EvmSignatureRequest(_RequestFactory):
+    path: ClassVar[str] = "/transactions/create-and-wait"
+    method: ClassVar[str] = "POST"
+    vault_id: str
+    blockchain: Blockchain
+    network: str
+    message: EIP712TypedData
+    timeout: int
+
+    def _get_body(self) -> Json:
+        return {
+            "vault_id": self.vault_id,
+            "signer_type": "api_signer",
+            "type": "evm_message",
+            "details": {
+                "type": "typed_message_type",
+                "chain": f"{self.blockchain.value}_{self.network}",
+                "raw_data": self._serialize_eip712message(self.message),
+            },
+            "wait_for_state": "signed",
+            "timeout": self.timeout,
+        }
+
+    @staticmethod
+    def _serialize_eip712message(message: EIP712TypedData) -> str:
+        return json.dumps(message.model_dump(by_alias=True))
+
+
 class RequestFactory:
     def __init__(
         self,
         base_url: str,
         auth_token: str,
         signing_key: ecdsa.SigningKey,
+        timeout: int,
     ) -> None:
         self.base_url = base_url
+        self.timeout = timeout
         self.auth_token = auth_token
         self._signing_key = signing_key
 
@@ -337,3 +387,29 @@ class RequestFactory:
     def _create_asset_identifier(self, asset: Asset) -> _AssetIdentifier:
         factory = _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN[asset.blockchain]
         return factory(asset)
+
+    def create_signature_request(
+        self,
+        message: EIP712TypedData,
+        vault_id: str,
+        blockchain: Blockchain,
+        network: str = "mainnet",
+    ) -> Request:
+        if blockchain not in EVM_BLOCKCHAINS:
+            raise BlockchainNotImplementedError(blockchain)
+
+        if message.domain.chain_id != EVM_BLOCKCHAIN_IDS[blockchain]:
+            raise InvalidBlockchainIdError(message.domain.chain_id, blockchain)
+
+        return _EvmSignatureRequest(
+            message=message,
+            vault_id=vault_id,
+            blockchain=blockchain,
+            network=network,
+            timeout=self.timeout,
+        ).build(
+            base_url=self.base_url,
+            auth_token=self.auth_token,
+            idempotence_id=None,
+            signing_key=self._signing_key,
+        )
