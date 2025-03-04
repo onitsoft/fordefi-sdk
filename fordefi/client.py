@@ -5,12 +5,13 @@ import json
 import logging
 from collections.abc import Iterable
 from decimal import Decimal
-from typing import Any, Literal, overload
+from http import HTTPStatus
+from typing import Literal, TypedDict, cast, overload
 
 import ecdsa
 import ecdsa.util
 import requests
-from pydantic import UUID4, Json
+from pydantic import UUID4
 from typing_extensions import deprecated
 
 from .assets import (
@@ -18,12 +19,19 @@ from .assets import (
     AssetIdentifier,
     get_transfer_asset_identifier,
 )
+from .httptypes import Json, JsonDict, QueryParams
 from .logs import request_repr
 from .requests_factory import Asset, RequestFactory
 
 logger = logging.getLogger(__name__)
 
 PAGE_SIZE = 50  # must be <= 100
+
+
+class Page(TypedDict):
+    total: int
+    page: int
+    size: int
 
 
 class ClientError(Exception):
@@ -56,42 +64,43 @@ class Fordefi:
         self.page_size = page_size
         self.timeout = timeout
 
-    def create_vault(self, vault: Json) -> Json:
+    def create_vault(self, vault: Json) -> JsonDict:
         endpoint = "/vaults"
-        vault_data = self._request("POST", endpoint, data=vault)
-        return vault_data
+        return self._request("POST", endpoint, data=vault)
 
-    def list_vaults(self) -> Iterable[Json]:
+    def list_vaults(self) -> Iterable[JsonDict]:
         endpoint = "/vaults"
         return self._get_pages(endpoint, "vaults")
 
     def get_vault(self, vault_id: str) -> Json:
         endpoint = f"/vaults/{vault_id}"
-        vault = self._request("GET", endpoint)
-        return vault
+        return self._request("GET", endpoint)
 
-    def get_assets(self, vault_id: str) -> Iterable[Json]:
+    def get_assets(self, vault_id: str) -> Iterable[JsonDict]:
         endpoint = f"/vaults/{vault_id}/assets"
         return self._get_pages(endpoint, "owned_assets")
 
-    def list_assets(self, vault_ids: list[str] | None = None) -> Iterable[Json]:
+    def list_assets(self, vault_ids: list[str] | None = None) -> Iterable[JsonDict]:
         endpoint = "/assets/owned-assets"
-        params = {"vault_ids": vault_ids}
+        params: QueryParams | None = None
+
+        if vault_ids:
+            params = {"vault_ids": vault_ids}
+
         return self._get_pages(endpoint, "owned_assets", params=params)
 
-    def get_transaction(self, transaction_id: str) -> Json:
+    def get_transaction(self, transaction_id: str) -> JsonDict:
         endpoint = f"/transactions/{transaction_id}"
-        transaction_data = self._request("GET", endpoint)
-        return transaction_data
+        return self._request("GET", endpoint)
 
     def list_transactions(
         self,
         vault_ids: list[str] | None = None,
         direction: Literal["incoming", "outgoing"] | None = None,
-    ) -> Iterable[Json]:
+    ) -> Iterable[JsonDict]:
         path = "/transactions"
 
-        params: dict[str, str | list[str]] = {}
+        params: QueryParams = {}
 
         if vault_ids:
             params["vault_ids"] = vault_ids
@@ -115,7 +124,7 @@ class Fordefi:
         idempotence_client_id: UUID4,
         asset: None = None,
         asset_symbol: Literal["APT", "ETH", "DSOL"] = "APT",
-    ) -> Json: ...
+    ) -> JsonDict: ...
 
     @overload
     def create_transfer(
@@ -126,9 +135,9 @@ class Fordefi:
         idempotence_client_id: UUID4,
         asset: Asset,
         asset_symbol: None = None,
-    ) -> Json: ...
+    ) -> JsonDict: ...
 
-    def create_transfer(
+    def create_transfer(  # noqa: PLR0913
         self,
         vault_id: str,
         destination_address: str,
@@ -136,14 +145,15 @@ class Fordefi:
         idempotence_client_id: UUID4,
         asset: Asset | None = None,
         asset_symbol: str | None = None,
-    ) -> Json:
+    ) -> JsonDict:
         if amount % 1 != 0:
             msg = "Amount must be an integer representing the amount in smallest unit."
             raise ValueError(msg)
 
         if asset_symbol is not None and asset_symbol not in ASSET_IDENTIFIER_BY_SYMBOL:
             supported_assets = ", ".join(ASSET_IDENTIFIER_BY_SYMBOL.keys())
-            msg = f"Deprecated asset_symbol (str) argument only supports {supported_assets}."
+            msg = f"""Deprecated asset_symbol (str) argument only supports:
+                      {supported_assets}."""
             raise ValueError(msg)
 
         if asset_symbol is not None:
@@ -174,7 +184,7 @@ class Fordefi:
         amount: Decimal,
         asset: Asset,
         idempotence_client_id: UUID4,
-    ) -> Json:
+    ) -> JsonDict:
         request = self._request_factory.create_transfer_request(
             vault_id=vault_id,
             destination_address=destination_address,
@@ -182,7 +192,7 @@ class Fordefi:
             asset=asset,
             idempotence_id=idempotence_client_id,
         )
-        return self._send_request(request)
+        return cast("JsonDict", self._send_request(request))
 
     @staticmethod
     def _send_request(request: requests.Request) -> Json:
@@ -208,14 +218,15 @@ class Fordefi:
                 response.content,
             )
 
-            if response.status_code >= 400 and response.status_code < 500:
+            if (
+                response.status_code >= HTTPStatus.BAD_REQUEST
+                and response.status_code < HTTPStatus.INTERNAL_SERVER_ERROR
+            ):
                 raise ClientError(response.status_code, response.content.decode())
 
             response.raise_for_status()
 
-            json_content = response.json()
-
-            return json_content
+            return response.json()
 
     def _create_transfer_by_asset_symbol(
         self,
@@ -224,7 +235,7 @@ class Fordefi:
         amount: Decimal,
         idempotence_client_id: UUID4,
         asset_symbol: str,
-    ) -> Json:
+    ) -> JsonDict:
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
         transaction = {
             "vault_id": vault_id,
@@ -235,9 +246,12 @@ class Fordefi:
                 amount,
             ),
         }
-        return self.create_transaction(
-            transaction,
-            idempotence_client_id=idempotence_client_id,
+        return cast(
+            "JsonDict",
+            self.create_transaction(
+                transaction,
+                idempotence_client_id=idempotence_client_id,
+            ),
         )
 
     @staticmethod
@@ -278,9 +292,9 @@ class Fordefi:
 
     def create_transaction(
         self,
-        transaction: Json,
+        transaction: JsonDict,
         idempotence_client_id: UUID4,
-    ) -> Json:
+    ) -> JsonDict:
         endpoint = "/transactions"
         signer_type = transaction.get("signer_type")
 
@@ -288,23 +302,23 @@ class Fordefi:
             transaction["signer_type"] = "api_signer"
 
         if transaction["signer_type"] != "api_signer":
-            raise ValueError("signer_type must be 'api_signer'")
+            msg = "signer_type must be 'api_signer'"
+            raise ValueError(msg)
 
-        transaction_data = self._request(
+        return self._request(
             "POST",
             endpoint,
             sign=True,
             data=transaction,
             idempotence_id=idempotence_client_id,
         )
-        return transaction_data
 
     def _get_pages(
         self,
         endpoint: str,
         items_property: str,
-        params: dict[str, Any] | None = None,
-    ) -> Iterable[Json]:
+        params: QueryParams | None = None,
+    ) -> Iterable[JsonDict]:
         if not params:
             params = {}
 
@@ -314,25 +328,29 @@ class Fordefi:
         while not last_page:
             params["page"] = page
             params["size"] = self.page_size
-            page_content = self._request(
+            content = self._request(
                 method="GET",
                 endpoint=endpoint,
                 params=params,
             )
+            page_content = cast("Page", content)
             total_items = page_content["total"]
             last_page = page * self.page_size >= total_items
             yield from page_content[items_property]
             page += 1
 
-    def _request(
+    def _request(  # noqa: PLR0913
         self,
         method: str,
         endpoint: str,
-        params: dict[str, Any] | None = None,
-        data: dict[str, Any] | None = None,
-        sign: bool = False,
+        params: QueryParams | None = None,
+        data: Json | None = None,
+        sign: bool = False,  # noqa: FBT001 FBT002
         idempotence_id: UUID4 | None = None,
-    ) -> Any:
+    ) -> JsonDict:
+        if data is None:
+            data = {}
+
         url = f"{self._base_url}{endpoint}"
         headers = {
             "Authorization": f"Bearer {self._api_key}",
@@ -373,14 +391,15 @@ class Fordefi:
             response.content,
         )
 
-        if response.status_code >= 400 and response.status_code < 500:
+        if (
+            response.status_code >= HTTPStatus.BAD_REQUEST
+            and response.status_code < HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
             raise ClientError(response.status_code, response.content.decode())
 
         response.raise_for_status()
 
-        json_content = response.json()
-
-        return json_content
+        return response.json()
 
     def _signature(self, path: str, request_json: Json) -> dict[str, bytes]:
         request_body = json.dumps(request_json)

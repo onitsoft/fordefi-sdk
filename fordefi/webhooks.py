@@ -27,10 +27,12 @@ class FordefiWebooksSignatureValidator:
                 hashfunc=hashlib.sha256,
                 sigdecode=sigdecode_der,
             )
-            return True
 
         except ecdsa.keys.BadSignatureError:
             return False
+
+        else:
+            return True
 
 
 class FordefiWebhooksParser:

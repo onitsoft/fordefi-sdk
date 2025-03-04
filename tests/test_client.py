@@ -1,14 +1,19 @@
 from decimal import Decimal
-from typing import Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 from uuid import UUID
 
 import httpretty
 import pytest
+from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
+from tests.helpers import cases
+
+if TYPE_CHECKING:
+    from fordefi.httptypes import JsonDict
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
@@ -54,10 +59,10 @@ def test_list_assets__no_vault_id(
 
 @pytest.mark.vcr
 def test_create_vault(fordefi: Fordefi) -> None:
-    vault_request = dict(
-        name="creation-test-vault",
-        type="evm",
-    )
+    vault_request: JsonDict = {
+        "name": "creation-test-vault",
+        "type": "evm",
+    }
     created_vault = fordefi.create_vault(vault_request)
     assert created_vault
     assert "id" in created_vault
@@ -85,41 +90,42 @@ def test_get_transaction(fordefi: Fordefi) -> None:
     assert transaction.get("id") == fordefienv.TEST_TRANSACTION_ID
 
 
+class CreateTransferBySymbolTestCase(NamedTuple):
+    vault_id: str
+    asset_symbol: str
+    amount: Decimal
+    destination_address: str
+    idepotence_client_id: UUID
+
+
 @pytest.mark.vcr
-@pytest.mark.parametrize(
-    argnames="vault_id,asset_symbol,amount,destination_address,idepotence_client_id",
-    argvalues=[
-        (
-            fordefienv.APTOS_RELEASES_VAULT_ID,
-            "APT",
-            Decimal("1"),
-            fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
-            UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            "ETH",
-            Decimal("1"),
-            fordefienv.EVM_DEPOSITS_VAULT_ID,
-            UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
-        ),
-    ],
-    ids=["APT", "ETH"],
+@cases(
+    1,
+    CreateTransferBySymbolTestCase(
+        fordefienv.APTOS_RELEASES_VAULT_ID,
+        "APT",
+        Decimal(1),
+        fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+        UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
+    ),
+    CreateTransferBySymbolTestCase(
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        "ETH",
+        Decimal(1),
+        fordefienv.EVM_DEPOSITS_VAULT_ID,
+        UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
+    ),
 )
 def test_create_transfer(
     fordefi: Fordefi,
-    vault_id: str,
-    asset_symbol: str,
-    amount: Decimal,
-    destination_address: str,
-    idepotence_client_id: UUID,
-):
+    case: CreateTransferBySymbolTestCase,
+) -> None:
     created_transfer = fordefi.create_transfer(
-        vault_id=vault_id,
-        amount=amount,
-        destination_address=destination_address,
-        idempotence_client_id=idepotence_client_id,
-        asset_symbol=asset_symbol,  # type: ignore
+        vault_id=case.vault_id,
+        amount=case.amount,
+        destination_address=case.destination_address,
+        idempotence_client_id=case.idepotence_client_id,
+        asset_symbol=case.asset_symbol,  # pyright: ignore[reportArgumentType]
     )
 
     assert created_transfer
@@ -128,67 +134,67 @@ def test_create_transfer(
     assert state
 
 
+class CreateTransferByAssetTestCase(NamedTuple):
+    name: str
+    vault_id: str
+    amount: Decimal
+    asset: Asset
+    destination_address: str
+    idepotence_client_id: UUID
+
+
 @pytest.mark.vcr
-@pytest.mark.parametrize(
-    argnames=(
-        "vault_id",
-        "amount",
-        "asset",
-        "destination_address",
-        "idepotence_client_id",
+@cases(
+    0,
+    CreateTransferByAssetTestCase(
+        "APT",
+        fordefienv.APTOS_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.APTOS),
+        fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
+        UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
     ),
-    argvalues=[
-        (
-            fordefienv.APTOS_RELEASES_VAULT_ID,
-            Decimal("1"),
-            Asset(blockchain=Blockchain.APTOS),
-            fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
-            UUID("87dcf0b9-50f1-4841-9a3a-f928e6bff8c7"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal("1"),
-            Asset(blockchain=Blockchain.ETHEREUM),
-            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal("1"),
-            Asset(blockchain=Blockchain.ARBITRUM),
-            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),
-        ),
-        (
-            fordefienv.EVM_RELEASES_VAULT_ID,
-            Decimal("1"),
-            Asset(
-                blockchain=Blockchain.ARBITRUM,
-                token=Token(
-                    token_type=EvmTokenType.ERC20,
-                    token_id=ARBITRUM_TOKEN_CONTRACT,
-                ),
+    CreateTransferByAssetTestCase(
+        "ETH",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.ETHEREUM),
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("bc0ba65a-3c99-4f0c-918b-febf76b0e287"),
+    ),
+    CreateTransferByAssetTestCase(
+        "Arbitrum-ETH",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.ARBITRUM),
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),
+    ),
+    CreateTransferByAssetTestCase(
+        "Arbitrum-ARB",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(
+            blockchain=Blockchain.ARBITRUM,
+            token=Token(
+                token_type=EvmTokenType.ERC20,
+                token_id=ARBITRUM_TOKEN_CONTRACT,
             ),
-            fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
-            UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),
         ),
-    ],
-    ids=["APT", "ETH", "Arbitrum-ETH", "Arbitrum-ARB"],
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),
+    ),
 )
 def test_create_transfer_by_blockchain(
     fordefi: Fordefi,
-    vault_id: str,
-    amount: Decimal,
-    asset: Asset,
-    destination_address: str,
-    idepotence_client_id: UUID,
-):
+    case: CreateTransferByAssetTestCase,
+) -> None:
     created_transfer = fordefi.create_transfer(
-        vault_id=vault_id,
-        amount=amount,
-        asset=asset,
-        destination_address=destination_address,
-        idempotence_client_id=idepotence_client_id,
+        vault_id=case.vault_id,
+        amount=case.amount,
+        asset=case.asset,
+        destination_address=case.destination_address,
+        idempotence_client_id=case.idepotence_client_id,
     )
 
     assert created_transfer
@@ -199,8 +205,11 @@ def test_create_transfer_by_blockchain(
 
 def test_create_transfer__missing_asset(
     fordefi: Fordefi,
-):
-    with pytest.raises(ValueError):
+) -> None:
+    with pytest.raises(
+        ValueError,
+        match=r".*asset_symbol or blockchain must be provided.*",
+    ):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
@@ -211,12 +220,15 @@ def test_create_transfer__missing_asset(
 
 def test_create_transfer__invalid_asset_symbol(
     fordefi: Fordefi,
-):
-    with pytest.raises(ValueError):
+) -> None:
+    with pytest.raises(
+        ValueError,
+        match=re.compile(r".*asset_symbol.*argument only supports:.*", re.DOTALL),
+    ):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
-            asset_symbol="ARB",  # type: ignore
+            asset_symbol="ARB",  # pyright: ignore[reportArgumentType]
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
         )
@@ -225,8 +237,9 @@ def test_create_transfer__invalid_asset_symbol(
 def test_create_transfer__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
-):
-    error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
+) -> None:
+    error_detail = "Invalid prediction result: move abort in 0x1::coin:"
+    "einsufficient_balance(0x10006): not enough coins to complete transaction"
     httpserver.expect_oneshot_request(
         method="POST",
         uri="/transactions",
@@ -250,8 +263,9 @@ def test_create_transfer__bad_request(
 def test_create_transfer_by_asset__bad_request(
     httpserver_fordefi: Fordefi,
     httpserver: httpserver.HTTPServer,
-):
-    error_detail = "Invalid prediction result: move abort in 0x1::coin: einsufficient_balance(0x10006): not enough coins to complete transaction"
+) -> None:
+    error_detail = r".*Invalid prediction result: move abort in 0x1::coin: "
+    "einsufficient_balance(0x10006): not enough coins to complete transaction.*"
     httpserver.expect_oneshot_request(
         method="POST",
         uri="/transactions",
@@ -260,7 +274,7 @@ def test_create_transfer_by_asset__bad_request(
         status=400,
     )
 
-    with pytest.raises(ClientError) as error:
+    with pytest.raises(ClientError, match=error_detail):
         httpserver_fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             asset=Asset(blockchain=Blockchain.APTOS),
@@ -269,11 +283,12 @@ def test_create_transfer_by_asset__bad_request(
             idempotence_client_id=UUID("2b23019c-6c11-4f35-931e-b396a92f4155"),
         )
 
-    assert error_detail in str(error)
 
-
-def test_create_transfer__non_interger_amount(fordefi: Fordefi):
-    with pytest.raises(ValueError):
+def test_create_transfer__non_interger_amount(fordefi: Fordefi) -> None:
+    with pytest.raises(
+        ValueError,
+        match=r"Amount must be an integer representing the amount in smallest unit.",
+    ):
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             asset=Asset(blockchain=Blockchain.APTOS),
@@ -344,7 +359,7 @@ def test_create_invalid_signature_type_transaction(fordefi: Fordefi) -> None:
         "type": "black_box_signature",
         "details": {"format": "hash_binary", "hash_binary": "SGVsbG8="},
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="signer_type must be 'api_signer'"):
         fordefi.create_transaction(
             transaction_request,
             idempotence_client_id=UUID("34a525c3-61a2-46f4-80ec-2142320fe5b8"),

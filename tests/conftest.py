@@ -10,7 +10,7 @@ FAKE_FORDEFI_PRIVATE_KEY = helpers.generate_private_key()
 
 
 @pytest.fixture(scope="module")
-def vcr_config():
+def vcr_config() -> dict[str, bool | list[str]]:
     return {
         "filter_headers": [
             "authorization",

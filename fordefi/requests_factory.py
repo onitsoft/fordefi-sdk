@@ -16,7 +16,7 @@ import ecdsa.util
 import requests
 from requests import Request
 
-from fordefi.types import Json
+from .httptypes import Json
 
 
 class Blockchain(Enum):
@@ -291,7 +291,8 @@ def _create_evm_asset_identifier(asset: Asset) -> _AssetIdentifier:
 
 
 _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
-    Blockchain, Callable[[Asset], _AssetIdentifier]
+    Blockchain,
+    Callable[[Asset], _AssetIdentifier],
 ] = {
     Blockchain.APTOS: _create_aptos_asset_identifier,
     Blockchain.ARBITRUM: _create_evm_asset_identifier,

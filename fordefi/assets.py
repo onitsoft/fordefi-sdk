@@ -23,7 +23,7 @@ class TransactionType:
     chain_unique_id: str
 
 
-class UnknownTransactionType(Exception):
+class UnknownTransactionType(Exception):  # noqa: N818
     def __init__(self, transfer_type: TransactionType, transaction_id: str) -> None:
         super().__init__(
             f"Transaction {transaction_id} has an unknown type {transfer_type}",
@@ -97,12 +97,12 @@ def get_transfer_asset_identifier(asset_symbol: str) -> AssetIdentifier:
 
 
 def get_asset_symbol(transfer: Json) -> str:
-    id: str = transfer["id"]
-    type: str = transfer["type"]
-    subtype: str = transfer[f"{type}_type_details"]["type"]
+    transfer_id: str = transfer["id"]
+    transfer_type: str = transfer["type"]
+    subtype: str = transfer[f"{transfer_type}_type_details"]["type"]
     chain_id: str = transfer["chain"]["unique_id"]
     transaction_type = TransactionType(
-        type=type,
+        type=transfer_type,
         subtype=subtype,
         chain_unique_id=chain_id,
     )
@@ -113,5 +113,5 @@ def get_asset_symbol(transfer: Json) -> str:
     except KeyError as error:
         raise UnknownTransactionType(
             transfer_type=transaction_type,
-            transaction_id=id,
+            transaction_id=transfer_id,
         ) from error

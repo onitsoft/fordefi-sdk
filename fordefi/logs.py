@@ -1,13 +1,13 @@
-from typing import Any, Optional
+from .httptypes import Headers, Json, QueryParams
 
 
-def request_repr(
+def request_repr(  # noqa: PLR0913
     method: str,
     path: str,
-    query_params: Optional[dict[str, str]],
-    headers: dict[str, str],
-    body: Optional[dict[str, Any]],
-    sensitive_headers: Optional[set[str]] = None,
+    query_params: QueryParams | None,
+    headers: Headers,
+    body: Json | None,
+    sensitive_headers: set[str] | None = None,
 ) -> str:
     if sensitive_headers is None:
         sensitive_headers = set()
@@ -19,12 +19,13 @@ def request_repr(
             "query": query_params,
             "headers": masked_headers(headers, sensitive_headers),
             "body": body,
-        }
+        },
     )
 
 
 def masked_headers(
-    headers: dict[str, str], sensitive_headers: set[str]
+    headers: Headers,
+    sensitive_headers: set[str],
 ) -> dict[str, str]:
     return {
         header: masked_header_value(header, value, sensitive_headers)
@@ -32,7 +33,11 @@ def masked_headers(
     }
 
 
-def masked_header_value(header: str, value: str | bytes, sensitive_headers) -> str:
+def masked_header_value(
+    header: str,
+    value: str | bytes,
+    sensitive_headers: set[str],
+) -> str:
     if isinstance(value, bytes):
         value = value.decode()
 
@@ -41,5 +46,4 @@ def masked_header_value(header: str, value: str | bytes, sensitive_headers) -> s
         begin = value[:10]
         return f"{begin}*** ({length} chars)"
 
-    else:
-        return value
+    return value

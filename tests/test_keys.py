@@ -12,18 +12,18 @@ from fordefi.keys import (
 )
 
 
-def test_generate_private_key():
+def test_generate_private_key() -> None:
     private_key = generate_private_key()
     assert isinstance(private_key, SigningKey)
 
 
-def test_get_public_key():
+def test_get_public_key() -> None:
     private_key = generate_private_key()
     public_key = get_public_key(private_key)
     assert isinstance(public_key, VerifyingKey)
 
 
-def test_encode_private_key():
+def test_encode_private_key() -> None:
     private_key = generate_private_key()
     encoded_key = encode_private_key(private_key)
     assert isinstance(encoded_key, str)
@@ -32,7 +32,7 @@ def test_encode_private_key():
     assert len(decoded_key) == private_key.to_string().__len__()
 
 
-def test_decode_private_key():
+def test_decode_private_key() -> None:
     private_key = generate_private_key()
     encoded_key = encode_private_key(private_key)
 
@@ -41,12 +41,12 @@ def test_decode_private_key():
     assert decoded_key.to_string() == private_key.to_string()
 
 
-def test_strip_pem():
+def test_strip_pem() -> None:
     result = _strip_pem(
         "-----BEGIN PUBLIC KEY-----\n"
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/3fqIyzDytn3WtcWB+4ijwfHLePpmdd20rpykLFP\n"
         "gQkO1oDdDaK/f5zQB3gRb1msBmpiU0Qo6Z9GoXTWGxkW/g==\n"
-        "-----END PUBLIC KEY-----"
+        "-----END PUBLIC KEY-----",
     )
     assert result == (
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/3fqIyzDytn3WtcWB+4ijwfHLePpmdd20rpykLFP"
@@ -54,7 +54,7 @@ def test_strip_pem():
     )
 
 
-def test_encode_public_key_as_pem():
+def test_encode_public_key_as_pem() -> None:
     private_key = generate_private_key()
     public_key = get_public_key(private_key)
     pem_key = encode_public_key_as_striped_pem(public_key)

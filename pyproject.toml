@@ -20,17 +20,24 @@ build-backend = "hatchling.build"
 packages = ["fordefi"]
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "S", "ARG", "C90", "ERA"]
-# select = ["ALL"]
-ignore = ["D", "CPY001"]
+select = ["ALL"]
+ignore = [
+  "D",
+  "CPY001",
+]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "ARG", "SLF001"]
-
+"tests/*" = [
+  "S101",
+  "ARG002",
+  "SLF001",
+  "FBT001",
+  "FBT003",
+]
 
 [tool.uv]
 dev-dependencies = [
-    "pyright>=1.1.394",
+    "pyright>=1.1.395",
     "pytest>=8.3.4",
     "httpretty>=1.1.4",
     "pytest-httpserver>=1.1.1",
