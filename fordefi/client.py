@@ -14,6 +14,8 @@ import requests
 from pydantic import UUID4
 from typing_extensions import deprecated
 
+from fordefi.evmtypes import EIP712TypedData, SignedMessage
+
 from .assets import (
     ASSET_IDENTIFIER_BY_SYMBOL,
     AssetIdentifier,
@@ -21,7 +23,7 @@ from .assets import (
 )
 from .httptypes import Json, JsonDict, QueryParams
 from .logs import request_repr
-from .requests_factory import Asset, RequestFactory
+from .requests_factory import Asset, Blockchain, RequestFactory
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +62,7 @@ class Fordefi:
             base_url=base_url,
             auth_token=api_key,
             signing_key=self._signing_key,
+            timeout=timeout,
         )
         self.page_size = page_size
         self.timeout = timeout
@@ -414,3 +417,38 @@ class Fordefi:
             "x-signature": base64.b64encode(signature),
             "x-timestamp": timestamp.encode(),
         }
+
+    def create_signature(
+        self,
+        message: EIP712TypedData,
+        blockchain: Blockchain,
+        vault_id: str,
+    ) -> JsonDict:
+        request = self._request_factory.create_signature_request(
+            message=message,
+            blockchain=blockchain,
+            vault_id=vault_id,
+        )
+        return cast("JsonDict", self._send_request(request))
+
+    def sign_message(
+        self,
+        message: EIP712TypedData,
+        blockchain: Blockchain,
+        vault_id: str,
+    ) -> SignedMessage:
+        response = self.create_signature(
+            message=message,
+            blockchain=blockchain,
+            vault_id=vault_id,
+        )
+        return self._parse_signature(response)
+
+    @staticmethod
+    def _parse_signature(response: JsonDict) -> SignedMessage:
+        signatures = cast("str", response["signatures"])
+        raw_signature = base64.b64decode(signatures[0])
+        r = int.from_bytes(raw_signature[0:32], byteorder="big")
+        s = int.from_bytes(raw_signature[32:64], byteorder="big")
+        v = int(raw_signature[-1])  # 27 or 28
+        return SignedMessage(r=r, s=s, v=v)

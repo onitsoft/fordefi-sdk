@@ -1,15 +1,24 @@
+import base64
+import os
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any, NamedTuple
 from uuid import UUID
 
 import httpretty
 import pytest
+from eth_account import Account
+from eth_account.messages import encode_typed_data
 from httpretty.core import re
 from pytest_httpserver import HTTPServer, httpserver
 
 from fordefi.client import ClientError, Fordefi
+from fordefi.evmtypes import EIP712TypedData, SignedMessage
 from fordefi.requests_factory import Asset, Blockchain, EvmTokenType, Token
 from tests import fordefienv
+from tests.factories import (
+    EIP712DomainFactory,
+    EIP712TypedDataFactory,
+)
 from tests.helpers import cases
 
 if TYPE_CHECKING:
@@ -473,3 +482,81 @@ def test_get_pages_empty(httpserver: HTTPServer) -> None:
     items = fordefi._get_pages("items", "items")
 
     assert list(items) == []
+
+
+@pytest.mark.vcr
+def test_create_signature(fordefi: Fordefi) -> None:
+    domain = EIP712DomainFactory.build(chain_id=1)
+    message = EIP712TypedDataFactory.build(domain=domain)
+    response = fordefi.create_signature(
+        message=message,
+        vault_id=fordefienv.EVM_RELEASES_VAULT_ID,
+        blockchain=Blockchain.ETHEREUM,
+    )
+    signatures = response.get("signatures")
+
+    assert isinstance(signatures, list)
+    assert len(signatures) == 1
+    assert isinstance(signatures[0], str)
+    assert base64.b64decode(signatures[0])
+
+
+def assert_valid_eip712_signature(
+    message: EIP712TypedData,
+    signed_message: SignedMessage,
+    expected_signer: str,
+) -> None:
+    encoded_message = encode_typed_data(
+        full_message=message.model_dump(by_alias=True),
+    )
+    r, s, v = signed_message
+    recovered_address = Account.recover_message(encoded_message, vrs=(v, r, s))
+
+    assert recovered_address == expected_signer
+
+
+def test__parse_signature() -> None:
+    private_key = os.urandom(32)
+    account = Account.from_key(private_key)
+    message = EIP712TypedDataFactory.build(
+        domain=EIP712DomainFactory.build(
+            salt=b"\x00" * 32,
+        ),
+    ).model_dump(by_alias=True)
+    encoded_message = encode_typed_data(full_message=message)
+    signed_message = account.sign_message(encoded_message)
+    signature: bytes = signed_message.signature
+    encoded_signature = base64.b64encode(signature).decode("utf-8")
+    response: JsonDict = {"signatures": [encoded_signature]}
+    parsed_signature = Fordefi._parse_signature(response)
+
+    assert parsed_signature == SignedMessage(
+        r=signed_message.r,
+        s=signed_message.s,
+        v=signed_message.v,
+    )
+
+
+@pytest.mark.vcr
+def test_sign_message(fordefi: Fordefi) -> None:
+    contract = "0x0000000000000000000000000000000000000000"
+    domain = EIP712DomainFactory.build(
+        name="smart-contract",
+        version="1.0",
+        chain_id=1,
+        verifying_contract=contract,
+        salt=b"\x00" * 32,
+    )
+    message = EIP712TypedDataFactory.build(domain=domain)
+    message_signature = fordefi.sign_message(
+        message=message,
+        vault_id=fordefienv.EVM_RELEASES_VAULT_ID,
+        blockchain=Blockchain.ETHEREUM,
+    )
+
+    assert isinstance(message_signature, SignedMessage)
+    assert_valid_eip712_signature(
+        message=message,
+        signed_message=message_signature,
+        expected_signer=fordefienv.EVM_RELEASES_VAULT_ADDRESS,
+    )
