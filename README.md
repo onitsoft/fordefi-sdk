@@ -154,38 +154,45 @@ pytest -c pytest-cov.ini
 The tests record and replay HTTP interactions using [VCR.py](https://vcrpy.readthedocs.io/en/latest/).
 
 The [pytest-recording](https://github.com/kiwicom/pytest-recording) plugin stores,
-and loads the VCR cassettes for each test from the appropriate YAML files.
+and loads the VCR cassettes for each test decorated with `@pytest.mark.vcr`
+from the appropriate YAML files.
 
 It also provides `pytest` command-line options to control the recording behavior.
 
 To run the tests with the recorded HTTP interactions:
 
 ```bash
-pytest [tests/test_<module>.py::test_<function>]
+pytest tests/test_client.py::test_list_vaults
 ```
 
-Or
+or
 
 ```bash
-pytest --record-mode=none [tests/test_<module>.py::test_<function>]
+pytest --record-mode=none tests/test_client.py::test_list_vaults
 ```
 
-To record only new HTTP interactions, e.g. tests to added endpoints:
+To record new HTTP interactions and replay recorded ones, e.g. after adding endpoints:
 
 ```bash
-pytest --record-mode=once [tests/test_<module>.py::test_<function>]
+pytest --record-mode=once tests/test_client.py
 ```
 
-To re-record HTTP interactions, e.g. when the API change,
+To (re-)record all HTTP interactions, e.g. when the API changes,
 when you change the request, or when you change the test data:
 
 ```bash
-pytest --record-mode=rewrite [tests/test_<module>.py::test_<function>]
+pytest --record-mode=rewrite tests/test_client.py::test_list_vaults
 ```
+
+Refer to the [VCR.py documentation](https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes)
+for other modes.
 
 To run the tests without replaying the recorded HTTP interactions, i.e.,
 end-to-end with real Fordefi:
 
 ```bash
-pytest --disable-recording [tests/test_<module>.py::test_<function>]
+pytest --disable-recording tests/test_client.py::test_list_vaults
 ```
+
+Refer to [pytest-recording documentation](https://github.com/kiwicom/pytest-recording?tab=readme-ov-file#usage)
+for more options and details on how to use the plugin.
