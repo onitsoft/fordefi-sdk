@@ -198,7 +198,7 @@ class Fordefi:
         return cast("JsonDict", self._send_request(request))
 
     @staticmethod
-    def _send_request(request: requests.Request) -> Json:
+    def _send_request(request: requests.Request) -> JsonDict:
         prepared_request = request.prepare()
 
         with requests.Session() as session:
@@ -369,40 +369,19 @@ class Fordefi:
                 **self._signature(endpoint, data),
             }
 
-        response = requests.request(
-            method,
-            url,
+        kwargs = {}
+
+        if data:
+            kwargs = {"json": data}
+
+        request = requests.Request(
+            method=method,
+            url=url,
             headers=headers,
             params=params,
-            json=data,
-            timeout=self.timeout,
+            **kwargs,
         )
-        logger.info(
-            "Requested to Fordefi: %s",
-            request_repr(
-                method=method,
-                path=endpoint,
-                query_params=params,
-                headers=headers,
-                body=data,
-                sensitive_headers={"Authorization", "x-signature"},
-            ),
-        )
-        logger.info(
-            "Fordefi responded: HTTP %s %s",
-            response.status_code,
-            response.content,
-        )
-
-        if (
-            response.status_code >= HTTPStatus.BAD_REQUEST
-            and response.status_code < HTTPStatus.INTERNAL_SERVER_ERROR
-        ):
-            raise ClientError(response.status_code, response.content.decode())
-
-        response.raise_for_status()
-
-        return response.json()
+        return self._send_request(request)
 
     def _signature(self, path: str, request_json: Json) -> dict[str, bytes]:
         request_body = json.dumps(request_json)
