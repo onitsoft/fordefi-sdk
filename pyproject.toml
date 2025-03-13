@@ -56,6 +56,7 @@ dev-dependencies = [
     "eth-account>=0.13.5",
     "radon>=6.0.1",
     "xenon>=0.9.3",
+    "pre-commit>=4.1.0",
 ]
 
 [tool.pyright]
