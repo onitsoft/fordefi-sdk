@@ -115,12 +115,14 @@ r, s, v = sign_message
    uv sync
    ```
 
-1. Set the environment variables:
+1. Create an `.env` file:
 
    ```bash
    cp .env.example .env
-   # Fill the .env file with the Fordefi API key and private key
    ```
+
+1. Create an [API User](https://docs.fordefi.com/developers/getting-started/create-an-api-user)
+   and set `FORDEFI_API_KEY` in the `.env` with the corresponding API Key.
 
 1. Install the [direnv](https://direnv.net/docs/installation.html).
 
@@ -187,6 +189,8 @@ pytest --record-mode=rewrite tests/test_client.py::test_list_vaults
 Refer to the [VCR.py documentation](https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes)
 for other modes.
 
+### End-to-End Testing
+
 To run the tests without replaying the recorded HTTP interactions, i.e.,
 end-to-end with real Fordefi:
 
@@ -194,5 +198,47 @@ end-to-end with real Fordefi:
 pytest --disable-recording tests/test_client.py::test_list_vaults
 ```
 
-Refer to [pytest-recording documentation](https://github.com/kiwicom/pytest-recording?tab=readme-ov-file#usage)
-for more options and details on how to use the plugin.
+Some Fordefi write operations as _creating transfers_ or _sign messages_ only complete
+after a running [API Signer](https://docs.fordefi.com/developers/getting-started/set-up-an-api-signer)
+signs them. For testing most testing purposes, there is no need to run it.
+The operations will stay in _Pending signature_ status but you be able to ensure
+that the HTTP interactions with Fordefi API succeed.
+
+If you need to specifically test signing, like in _sign message_ operations,
+you can run a API Signer locally.
+It will pull pending signatures form Fordefi API periodically, sign and
+send the signatures to Fordefi.
+
+To run the API Signer locally:
+
+1. Request the password for the docker registry
+   [fordefi.jfrog.io](fordefi.jfrog.io).
+
+1. Pull the API Signer docker image and type the password when prompted:
+
+   ```bash
+   ./scripts/get-local-signer.sh
+   ```
+
+1. Generate an SSH key pair:
+
+   ```bash
+   ./scripts/keys.py gen-keys
+   ```
+
+1. Run the API Signer docker image:
+
+   ```bash
+   ./scripts/run-local-signer.sh
+   ```
+
+1. Select **Register API user key**
+
+1. Select API User from the list and press **Enter**
+
+1. Paste the generated SSH public key and press **Enter**
+
+1. Activate the API Signer in
+   [Fordefi dashboard](https://docs.fordefi.com/developers/getting-started/set-up-an-api-signer/activate-api-signer).
+
+Find more details in the [Fordefi documentation](https://docs.fordefi.com/developers/program-overview).
