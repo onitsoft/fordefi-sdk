@@ -115,7 +115,7 @@ r, s, v = sign_message
    uv sync
    ```
 
-1. Set the environment variables:
+1. Create an `.env` file:
 
    ```bash
    cp .env.example .env
