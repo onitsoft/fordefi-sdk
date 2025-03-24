@@ -316,6 +316,48 @@ class Fordefi:
             idempotence_id=idempotence_client_id,
         )
 
+    def set_contract_allowance(
+        self,
+        vault_id,
+        call_data,
+        asset_symbol,
+        spender,
+        idempotence_client_id: UUID4,
+    ):
+        asset_identifier = get_transfer_asset_identifier(asset_symbol)
+        transaction = {
+            "vault_id": vault_id,
+            "signer_type": "api_signer",
+            "type": "evm_transaction",
+            "details": self._serialize_token_approve_details(
+                asset_identifier, call_data, spender
+            ),
+        }
+
+        return cast(
+            "JsonDict",
+            self.create_transaction(
+                transaction,
+                idempotence_client_id=idempotence_client_id,
+            ),
+        )
+
+
+    @staticmethod
+    def _serialize_token_approve_details(
+        asset_identifier: AssetIdentifier,
+            call_data: JsonDict,
+            spender: str,
+    ) -> Json:
+        return {
+            "type": f"{asset_identifier.type}_raw_transaction",
+            "chain": asset_identifier.chain,
+            "gas": asset_identifier.default_gas,
+            "to": spender,
+            "value": "0",
+            "data": {"type": "hex", "hex_data": call_data},
+        }
+
     def _get_pages(
         self,
         endpoint: str,
