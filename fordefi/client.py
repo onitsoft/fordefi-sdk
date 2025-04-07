@@ -318,19 +318,21 @@ class Fordefi:
 
     def set_contract_allowance(
         self,
-        vault_id,
-        call_data,
-        asset_symbol,
-        spender,
+        vault_id: str,
+        call_data: JsonDict,
+        asset_symbol: str,
+        spender: str,
         idempotence_client_id: UUID4,
-    ):
+    ) -> JsonDict:
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
         transaction = {
             "vault_id": vault_id,
             "signer_type": "api_signer",
             "type": "evm_transaction",
             "details": self._serialize_token_approve_details(
-                asset_identifier, call_data, spender
+                asset_identifier,
+                call_data,
+                spender,
             ),
         }
 
@@ -342,13 +344,12 @@ class Fordefi:
             ),
         )
 
-
     @staticmethod
     def _serialize_token_approve_details(
         asset_identifier: AssetIdentifier,
-            call_data: JsonDict,
-            spender: str,
-    ) -> Json:
+        call_data: JsonDict,
+        spender: str,
+    ) -> dict:
         return {
             "type": f"{asset_identifier.type}_raw_transaction",
             "chain": asset_identifier.chain,

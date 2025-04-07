@@ -560,3 +560,24 @@ def test_sign_message(fordefi: Fordefi) -> None:
         signed_message=message_signature,
         expected_signer=fordefienv.EVM_RELEASES_VAULT_ADDRESS,
     )
+
+
+def test_set_contract_allowance(fordefi: Fordefi) -> None:
+    transaction_data = {
+        "chainId": 1,
+        "data": "transaction build data",
+        "from": "sender",
+        "gas": 21000,
+        "gasPrice": 1,
+        "nonce": 0,
+        "to": "spender",
+        "value": 0,
+    }
+    granted_allowance = fordefi.set_contract_allowance(
+        vault_id=fordefienv.BLACKBOX_VAULT_ID,
+        call_data=transaction_data,
+        asset_symbol="ETH",
+        spender="spender",
+        idempotence_client_id=UUID("56493cf2-36d9-4f37-b310-db1247941bbd"),
+    )
+    assert granted_allowance
