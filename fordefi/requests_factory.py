@@ -348,6 +348,39 @@ class _EvmSignatureRequest(_RequestFactory):
         return json.dumps(message.model_dump(by_alias=True))
 
 
+@dataclass(frozen=True)
+class _EvmRawTransactionRequest(_RequestFactory):
+    path: ClassVar[str] = "/transactions"
+    method: ClassVar[str] = "POST"
+    vault_id: str
+    blockchain: Blockchain
+    network: str
+    raw_data: str
+    timeout: int
+
+    def _get_body(self) -> Json:
+        return {
+            "vault_id": self.vault_id,
+            "signer_type": "api_signer",
+            "type": "evm_transaction",
+            "details": {
+                "type": "evm_raw_transaction",
+                "chain": f"{self.blockchain.value}_{self.network}",
+                "gas": {
+                    "type": "priority",
+                    "priority_level": "medium",
+                },
+                "value": "0",
+                "data": {"type": "base64", "raw_data": self.raw_data},
+            },
+            "timeout": self.timeout,
+        }
+
+    @staticmethod
+    def _serialize_eip712message(message: EIP712TypedData) -> str:
+        return json.dumps(message.model_dump(by_alias=True))
+
+
 class RequestFactory:
     def __init__(
         self,
@@ -403,6 +436,29 @@ class RequestFactory:
 
         return _EvmSignatureRequest(
             message=message,
+            vault_id=vault_id,
+            blockchain=blockchain,
+            network=network,
+            timeout=self.timeout,
+        ).build(
+            base_url=self.base_url,
+            auth_token=self.auth_token,
+            idempotence_id=None,
+            signing_key=self._signing_key,
+        )
+
+    def create_evm_raw_transaction_request(
+        self,
+        raw_data: str,
+        vault_id: str,
+        blockchain: Blockchain,
+        network: str = "mainnet",
+    ) -> Request:
+        if blockchain not in EVM_BLOCKCHAINS:
+            raise BlockchainNotImplementedError(blockchain)
+
+        return _EvmRawTransactionRequest(
+            raw_data=raw_data,
             vault_id=vault_id,
             blockchain=blockchain,
             network=network,

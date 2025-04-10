@@ -20,6 +20,7 @@ from fordefi.requests_factory import (
     RequestFactory,
     Token,
     TokenNotImplementedError,
+    _EvmRawTransactionRequest,
     _EvmSignatureRequest,
 )
 from tests.factories import EIP712DomainFactory, EIP712TypedDataFactory
@@ -206,3 +207,79 @@ def test_create_signature_request__invalid_blockchain_id(
             vault_id=VAULD_ID,
             blockchain=Blockchain.ARBITRUM,
         )
+
+
+def test_create_evm_raw_transaction_request(
+    request_factory: RequestFactory,
+    openapi: OpenAPI,
+) -> None:
+    raw_data = "SGVsbG8="
+    request = request_factory.create_evm_raw_transaction_request(
+        raw_data=raw_data,
+        vault_id=VAULD_ID,
+        blockchain=Blockchain.ARBITRUM,
+    )
+
+    openapi_request = RequestsOpenAPIRequest(request)
+    openapi.validate_request(openapi_request)
+
+    body = request.json
+    assert body.get("vault_id") == VAULD_ID
+    assert body.get("details", {}).get("data", {}).get("raw_data") == raw_data
+    assert Blockchain.ARBITRUM.value in body.get("details", {}).get("chain", "")
+
+
+def test_create_evm_raw_transaction_request_invalid_blockchain(
+    request_factory: RequestFactory,
+) -> None:
+    raw_data = "SGVsbG8="
+    with pytest.raises(BlockchainNotImplementedError):
+        request_factory.create_evm_raw_transaction_request(
+            raw_data=raw_data,
+            vault_id=VAULD_ID,
+            blockchain=Blockchain.APTOS,  # Invalid blockchain for EVM
+        )
+
+
+def test_evm_raw_transaction_request_serialization() -> None:
+    raw_data = "SGVsbG8="
+    request = _EvmRawTransactionRequest(
+        vault_id=VAULD_ID,
+        blockchain=Blockchain.ETHEREUM,
+        network="mainnet",
+        raw_data=raw_data,
+        timeout=15,
+    )
+
+    body = request._get_body()
+
+    assert isinstance(body, dict)
+
+    assert body.get("vault_id") == VAULD_ID
+    assert body.get("details", {}).get("data", {}).get("raw_data") == raw_data  # type: ignore[attr-defined]
+    assert Blockchain.ETHEREUM.value in body.get("details", {}).get("chain", "")  # type: ignore[attr-defined]
+
+
+def test_evm_raw_transaction_request_construction(
+    request_factory: RequestFactory,
+) -> None:
+    raw_data = "SGVsbG8="
+    request = _EvmRawTransactionRequest(
+        vault_id=VAULD_ID,
+        blockchain=Blockchain.ETHEREUM,
+        network="mainnet",
+        raw_data=raw_data,
+        timeout=15,
+    )
+
+    built_request = request.build(
+        base_url=BASE_URL,
+        auth_token=JWT,
+        idempotence_id=None,
+        signing_key=request_factory._signing_key,
+    )
+
+    assert built_request.method == "POST"
+    assert built_request.url == f"{BASE_URL}/transactions"
+    assert "Authorization" in built_request.headers
+    assert "Content-Type" in built_request.headers

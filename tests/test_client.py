@@ -560,3 +560,24 @@ def test_sign_message(fordefi: Fordefi) -> None:
         signed_message=message_signature,
         expected_signer=fordefienv.EVM_RELEASES_VAULT_ADDRESS,
     )
+
+
+@pytest.mark.vcr
+def test_send_evm_raw_transaction(fordefi: Fordefi) -> None:
+    raw_data = "SGVsbG8="
+    blockchain = Blockchain.ETHEREUM
+
+    # Call the function
+    response = fordefi.send_evm_raw_transaction(
+        raw_data=raw_data,
+        blockchain=blockchain,
+        vault_id=fordefienv.EVM_RELEASES_VAULT_ID,
+    )
+
+    # Check the response
+    assert response is not None
+    assert "id" in response
+    assert response.get("type") == "evm_transaction"
+    assert response.get("data") == raw_data  # type: ignore[attr-defined][attr-defined]
+    assert response.get("chain").get("chain_type") == "evm"  # type: ignore[attr-defined][attr-defined]
+    assert response.get("chain").get("unique_id") == f"evm_{blockchain.value}_mainnet"  # type: ignore[attr-defined][attr-defined]

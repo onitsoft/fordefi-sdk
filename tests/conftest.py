@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 import pytest_httpserver
@@ -7,6 +8,17 @@ from fordefi import Fordefi
 from tests import helpers
 
 FAKE_FORDEFI_PRIVATE_KEY = helpers.generate_private_key()
+
+
+def load_env_vars(env_file: str = ".env") -> None:
+    with Path(env_file).open() as f:
+        for line in f:
+            if line.strip() and not line.startswith("#"):
+                key, value = line.strip().split("=", 1)
+                os.environ[key] = value
+
+
+load_env_vars()
 
 
 @pytest.fixture(scope="module")
@@ -30,7 +42,7 @@ def is_live_vcr_session_fixture(request: pytest.FixtureRequest) -> bool:
     if recording_disabled:
         return True
 
-    return record_mode in {"rewrite", "new_episodes", "all"}
+    return record_mode in {"rewrite", "new_episodes", "all", "once"}
 
 
 def _get_config(env_var: str, default: str | None = None) -> str:
