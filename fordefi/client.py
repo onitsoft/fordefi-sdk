@@ -434,11 +434,13 @@ class Fordefi:
 
     def send_evm_raw_transaction(
         self,
+        destination_address: str,
         raw_data: str,
         blockchain: Blockchain,
         vault_id: str,
     ) -> JsonDict:
         request = self._request_factory.create_evm_raw_transaction_request(
+            destination_address=destination_address,
             raw_data=raw_data,
             blockchain=blockchain,
             vault_id=vault_id,

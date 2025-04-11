@@ -213,8 +213,10 @@ def test_create_evm_raw_transaction_request(
     request_factory: RequestFactory,
     openapi: OpenAPI,
 ) -> None:
+    destination_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
     raw_data = "SGVsbG8="
     request = request_factory.create_evm_raw_transaction_request(
+        destination_address=destination_address,
         raw_data=raw_data,
         vault_id=VAULD_ID,
         blockchain=Blockchain.ARBITRUM,
@@ -232,9 +234,11 @@ def test_create_evm_raw_transaction_request(
 def test_create_evm_raw_transaction_request_invalid_blockchain(
     request_factory: RequestFactory,
 ) -> None:
+    destination_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
     raw_data = "SGVsbG8="
     with pytest.raises(BlockchainNotImplementedError):
         request_factory.create_evm_raw_transaction_request(
+            destination_address=destination_address,
             raw_data=raw_data,
             vault_id=VAULD_ID,
             blockchain=Blockchain.APTOS,
@@ -242,8 +246,10 @@ def test_create_evm_raw_transaction_request_invalid_blockchain(
 
 
 def test_evm_raw_transaction_request_serialization() -> None:
+    destination_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
     raw_data = "SGVsbG8="
     request = _EvmRawTransactionRequest(
+        destination_address=destination_address,
         vault_id=VAULD_ID,
         blockchain=Blockchain.ETHEREUM,
         network="mainnet",
@@ -263,8 +269,10 @@ def test_evm_raw_transaction_request_serialization() -> None:
 def test_evm_raw_transaction_request_construction(
     request_factory: RequestFactory,
 ) -> None:
+    destination_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
     raw_data = "SGVsbG8="
     request = _EvmRawTransactionRequest(
+        destination_address=destination_address,
         vault_id=VAULD_ID,
         blockchain=Blockchain.ETHEREUM,
         network="mainnet",

@@ -355,6 +355,7 @@ class _EvmRawTransactionRequest(_RequestFactory):
     vault_id: str
     blockchain: Blockchain
     network: str
+    destination_address: str
     raw_data: str
     timeout: int
 
@@ -371,6 +372,7 @@ class _EvmRawTransactionRequest(_RequestFactory):
                     "priority_level": "medium",
                 },
                 "value": "0",
+                "to": self.destination_address,
                 "data": {"type": "base64", "raw_data": self.raw_data},
             },
             "timeout": self.timeout,
@@ -445,6 +447,7 @@ class RequestFactory:
 
     def create_evm_raw_transaction_request(
         self,
+        destination_address: str,
         raw_data: str,
         vault_id: str,
         blockchain: Blockchain,
@@ -454,6 +457,7 @@ class RequestFactory:
             raise BlockchainNotImplementedError(blockchain)
 
         return _EvmRawTransactionRequest(
+            destination_address=destination_address,
             raw_data=raw_data,
             vault_id=vault_id,
             blockchain=blockchain,
