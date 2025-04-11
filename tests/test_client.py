@@ -564,11 +564,13 @@ def test_sign_message(fordefi: Fordefi) -> None:
 
 @pytest.mark.vcr
 def test_send_evm_raw_transaction(fordefi: Fordefi) -> None:
+    destination_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
     raw_data = "SGVsbG8="
     blockchain = Blockchain.ETHEREUM
 
     # Call the function
     response = fordefi.send_evm_raw_transaction(
+        destination_address=destination_address,
         raw_data=raw_data,
         blockchain=blockchain,
         vault_id=fordefienv.EVM_RELEASES_VAULT_ID,

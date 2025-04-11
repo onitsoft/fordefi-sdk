@@ -3,34 +3,36 @@ interactions:
     body: '{"vault_id": "bdb889c8-7f39-4b1c-8973-bd0532143796", "signer_type": "api_signer",
       "type": "evm_transaction", "details": {"type": "evm_raw_transaction", "chain":
       "ethereum_mainnet", "gas": {"type": "priority", "priority_level": "medium"},
-      "value": "0", "data": {"type": "base64", "raw_data": "SGVsbG8="}}, "timeout":
-      30}'
+      "value": "0", "to": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9", "data": {"type":
+      "base64", "raw_data": "SGVsbG8="}}, "timeout": 30}'
     headers:
       Content-Length:
-      - '319'
+      - '371'
       Content-Type:
       - application/json
     method: POST
     uri: https://api.fordefi.com/api/v1/transactions
   response:
     body:
-      string: '{"id":"70620bb6-d9c9-4eaa-b8c3-d6ce2adc45ab","created_at":"2025-04-10T15:29:03.993000Z","modified_at":"2025-04-10T15:29:03.993000Z","managed_transaction_data":{"created_by":{"id":"996105f1-02f2-470f-a1e3-bb5dc5fc1b8d","user_type":"api_user","name":"testing","state":"active","role":"trader"},"device_signing_request":{"signers":[{"user":{"id":"236271ac-9195-404d-9ab1-8e80330f189f","user_type":"api_signer","name":"signer","state":"active"},"modified_at":"2025-04-10T15:29:04.034000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[],"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
-        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"has_current_user_vault_permissions":true,"push_mode":"auto","sign_mode":"auto"},"signatures":[],"spam_state":"unset","direction":"outgoing","signed_externally":false,"state":"approved","state_changes":[{"changed_at":"2025-04-10T15:29:03.993000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2025-04-10T15:29:04.033000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"}],"type":"evm_transaction","evm_transaction_type_details":{"type":"contract_deployment","contract_address":{"explorer_url":"https://etherscan.io/address/0x26715969176A44043b33a39ccDB3cE79D68b47f9","type":"evm","address":"0x26715969176A44043b33a39ccDB3cE79D68b47f9"}},"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"},"from":{"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
-        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"explorer_url":"https://etherscan.io/address/0xA031314c1bFc27b83163978DFB8549829789ae63","type":"evm","address":"0xA031314c1bFc27b83163978DFB8549829789ae63"},"to":{"explorer_url":"https://etherscan.io/address/0x0000000000000000000000000000000000000000","type":"evm","address":"0x0000000000000000000000000000000000000000"},"value":"0","data":"SGVsbG8=","hex_data":"0x48656c6c6f","parsed_data":{"method":"","method_arguments":[]},"expected_result":{"reversion":{"state":"not_reverted"},"gas_debit":{"gas_used":"53087","gas_price":"7109992583","total_fee":"377448176253721","fiat_price":{"price":"153738","price_float":"153738","fiat_currency":{"currency_symbol":"usd","decimals":2}},"priced_asset":{"type":"asset_price","asset_identifier":{"type":"evm","details":{"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"},"type":"native"}},"asset_info":{"id":"ebef1507-2916-4a42-bfb1-2c65d164f6f5","asset_identifier":{"type":"evm","details":{"type":"native","chain":"evm_ethereum_mainnet"},"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"}},"name":"Ether","symbol":"ETH","decimals":18,"verified":true,"metadata_uri":"","is_spam":false},"price":{"price":"153738","price_float":"153738","fiat_currency":{"currency_symbol":"usd","decimals":2}}}},"effects":{"balance_changes":[],"transfers":[],"allowances":[],"bridge":[],"contract_deployments":[{"address":{"explorer_url":"https://etherscan.io/address/0x26715969176A44043b33a39ccDB3cE79D68b47f9","type":"evm","address":"0x26715969176A44043b33a39ccDB3cE79D68b47f9"}}]}},"simulation_status_result":{"simulation_status":"success","details":"not
-        reverted"},"gas_submitted":{"max_priority_fee_per_gas":"63792821","max_fee_per_gas":"7109992583","priority":"medium","limit":"80821","type":"dynamic"},"is_cancelation":false,"is_acceleration":false,"use_secure_node":false}'
+      string: '{"id":"0b1e385c-d204-49e8-801a-be718b79588e","created_at":"2025-04-11T14:45:59.823000Z","modified_at":"2025-04-11T14:45:59.823000Z","managed_transaction_data":{"created_by":{"id":"996105f1-02f2-470f-a1e3-bb5dc5fc1b8d","user_type":"api_user","name":"testing","state":"active","role":"trader"},"device_signing_request":{"signers":[{"user":{"id":"236271ac-9195-404d-9ab1-8e80330f189f","user_type":"api_signer","name":"signer","state":"active"},"modified_at":"2025-04-11T14:46:00.115000Z","has_signed":false}]},"policy_match":{"is_default":true,"rule_id":"00000000-0000-0000-0000-000000000000","rule_name":"","action_type":"allow"},"signer_type":"api_signer","risks":[{"type":"organization_not_interacted_with_address","severity":"low","title":"Organization
+        Has Never Interacted With This Address","description":"You are about to interact
+        with 0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9 for the first time."}],"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
+        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"has_current_user_vault_permissions":true,"push_mode":"auto","sign_mode":"auto"},"signatures":[],"spam_state":"unset","direction":"outgoing","signed_externally":false,"state":"approved","state_changes":[{"changed_at":"2025-04-11T14:45:59.823000Z","asset_prices":[],"prices":{"token_prices":[]},"new_state":"waiting_for_approval"},{"changed_at":"2025-04-11T14:46:00.113000Z","asset_prices":[],"prices":{"token_prices":[]},"previous_state":"waiting_for_approval","new_state":"approved"}],"type":"evm_transaction","evm_transaction_type_details":{"type":"native_transfer","direction":"outgoing","is_internal":false},"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"},"from":{"vault":{"id":"bdb889c8-7f39-4b1c-8973-bd0532143796","name":"EVM
+        Releases","address":"0xA031314c1bFc27b83163978DFB8549829789ae63","state":"active","type":"evm"},"explorer_url":"https://etherscan.io/address/0xA031314c1bFc27b83163978DFB8549829789ae63","type":"evm","address":"0xA031314c1bFc27b83163978DFB8549829789ae63"},"to":{"explorer_url":"https://etherscan.io/address/0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9","type":"evm","address":"0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"},"value":"0","data":"SGVsbG8=","hex_data":"0x48656c6c6f","parsed_data":{"method":"","method_arguments":[]},"expected_result":{"reversion":{"state":"not_reverted"},"gas_debit":{"gas_used":"31869","gas_price":"2806532908","total_fee":"89441397245052","fiat_price":{"price":"155537","price_float":"155537","fiat_currency":{"currency_symbol":"usd","decimals":2}},"priced_asset":{"type":"asset_price","asset_identifier":{"type":"evm","details":{"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"},"type":"native"}},"asset_info":{"id":"ebef1507-2916-4a42-bfb1-2c65d164f6f5","asset_identifier":{"type":"evm","details":{"type":"native","chain":"evm_ethereum_mainnet"},"chain":{"chain_type":"evm","named_chain_id":"ethereum_mainnet","chain_id":1,"unique_id":"evm_ethereum_mainnet","name":"Ethereum","native_currency_symbol":"ETH","native_currency_name":"Ether","blockchain_explorer":{"transaction_url":"https://etherscan.io/tx/","address_url":"https://etherscan.io/address/","root_url":"https://etherscan.io/","transaction_format_url":"https://etherscan.io/tx/%s","address_format_url":"https://etherscan.io/address/%s","asset_format_url":"https://etherscan.io/address/%s"},"logo_url":"https://logos.fordefi.com/chains/evm/default/1.svg","is_testnet":false,"is_enabled":true,"gas_type":"dynamic","supports_secure_node":true,"source":"default"}},"name":"Ether","symbol":"ETH","decimals":18,"verified":true,"metadata_uri":"","is_spam":false},"price":{"price":"155537","price_float":"155537","fiat_currency":{"currency_symbol":"usd","decimals":2}}}},"effects":{"balance_changes":[],"transfers":[],"allowances":[],"bridge":[],"contract_deployments":[]}},"simulation_status_result":{"simulation_status":"success","details":"not
+        reverted"},"gas_submitted":{"max_priority_fee_per_gas":"84250000","max_fee_per_gas":"2806532908","priority":"medium","limit":"31869","type":"dynamic"},"is_cancelation":false,"is_acceleration":false,"use_secure_node":false}'
     headers:
       Connection:
       - keep-alive
       Content-Length:
-      - '5470'
+      - '5400'
       Content-Type:
       - application/json
       Date:
-      - Thu, 10 Apr 2025 15:29:04 GMT
+      - Fri, 11 Apr 2025 14:46:01 GMT
       Via:
-      - 1.1 645f72cdd7b73d139609aec0ade6f5f8.cloudfront.net (CloudFront)
+      - 1.1 6592b72953c66e8c26c29c332cf2edf0.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - cM-bXHo6TiJIx2DTRj6PgDrLaKveOJWOJD-Fe6aXcKndymoQs8WMew==
+      - TYOXj_LIXKQuyAorH_bhxmj59SjrZGr571RRzYBxv1XvcE4ZzWm_jg==
       X-Amz-Cf-Pop:
       - AMS58-P1
       X-Cache:
@@ -40,15 +42,15 @@ interactions:
       vary:
       - Accept-Encoding
       x-envoy-upstream-service-time:
-      - '498'
+      - '3517'
       x-ratelimit-limit:
       - 300, 300;w=60
       x-ratelimit-remaining:
       - '299'
       x-ratelimit-reset:
-      - '57'
+      - '3'
       x-request-id:
-      - cc4913d7-8501-9da9-987f-02ad6f608a0d
+      - eb649638-87f9-98b9-a097-3dea7c34923e
     status:
       code: 201
       message: Created
