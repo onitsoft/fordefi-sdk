@@ -431,3 +431,16 @@ class Fordefi:
         s = int.from_bytes(raw_signature[32:64], byteorder="big")
         v = int(raw_signature[-1])  # 27 or 28
         return SignedMessage(r=r, s=s, v=v)
+
+    def send_evm_raw_transaction(
+        self,
+        raw_data: str,
+        blockchain: Blockchain,
+        vault_id: str,
+    ) -> JsonDict:
+        request = self._request_factory.create_evm_raw_transaction_request(
+            raw_data=raw_data,
+            blockchain=blockchain,
+            vault_id=vault_id,
+        )
+        return cast("JsonDict", self._send_request(request))
