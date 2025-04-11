@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 
@@ -11,11 +12,24 @@ FAKE_FORDEFI_PRIVATE_KEY = helpers.generate_private_key()
 
 
 def load_env_vars(env_file: str = ".env") -> None:
-    with Path(env_file).open() as f:
-        for line in f:
-            if line.strip() and not line.startswith("#"):
-                key, value = line.strip().split("=", 1)
-                os.environ[key] = value
+    env_path = Path(env_file)
+
+    if not env_path.exists():
+        logging.warning("Environment file %s not found.", env_file)
+        return
+
+    try:
+        with env_path.open() as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if line and not line.startswith("#"):
+                    try:
+                        key, value = line.split("=", 1)
+                        os.environ[key] = value
+                    except ValueError:
+                        logging.warning("Invalid line format in %s: %s", env_file, line)
+    except Exception:
+        logging.exception("Error reading %s", env_file)
 
 
 load_env_vars()
