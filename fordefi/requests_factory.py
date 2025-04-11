@@ -376,10 +376,6 @@ class _EvmRawTransactionRequest(_RequestFactory):
             "timeout": self.timeout,
         }
 
-    @staticmethod
-    def _serialize_eip712message(message: EIP712TypedData) -> str:
-        return json.dumps(message.model_dump(by_alias=True))
-
 
 class RequestFactory:
     def __init__(

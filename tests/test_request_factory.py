@@ -237,7 +237,7 @@ def test_create_evm_raw_transaction_request_invalid_blockchain(
         request_factory.create_evm_raw_transaction_request(
             raw_data=raw_data,
             vault_id=VAULD_ID,
-            blockchain=Blockchain.APTOS,  # Invalid blockchain for EVM
+            blockchain=Blockchain.APTOS,
         )
 
 
