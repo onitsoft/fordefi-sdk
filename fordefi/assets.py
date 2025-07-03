@@ -63,17 +63,17 @@ ASSET_IDENTIFIER_BY_SYMBOL = {
     "ARB": AssetIdentifier(
         type="evm",
         subtype="erc20",
-        chain="evm_arbitrum_one",
+        chain="evm_arbitrum_mainnet",
     ),
     "USDCARB": AssetIdentifier(
         type="evm",
         subtype="erc20",
-        chain="evm_arbitrum_one",
+        chain="evm_arbitrum_mainnet",
     ),
     "MAGIC": AssetIdentifier(
         type="evm",
         subtype="erc20",
-        chain="evm_arbitrum_one",
+        chain="evm_arbitrum_mainnet",
     ),
     "LINK": AssetIdentifier(
         type="evm",
@@ -83,7 +83,7 @@ ASSET_IDENTIFIER_BY_SYMBOL = {
     "GMX": AssetIdentifier(
         type="evm",
         subtype="erc20",
-        chain="evm_arbitrum_one",
+        chain="evm_arbitrum_mainnet",
     ),
     "USDC": AssetIdentifier(
         type="evm",
@@ -122,17 +122,17 @@ ASSET_SYMBOL_BY_TRANSACTION_TYPE: dict[TransactionType, str] = {
     TransactionType(
         type="evm_transaction",
         subtype="native_transfer",
-        chain_unique_id="evm_arbitrum_one",
+        chain_unique_id="evm_arbitrum_mainnet",
     ): "ARB",
     TransactionType(
         type="evm_transaction",
         subtype="erc20_transfer",
-        chain_unique_id="evm_arbitrum_one",
+        chain_unique_id="evm_arbitrum_mainnet",
     ): "USDCARB",
     TransactionType(
         type="evm_transaction",
         subtype="erc20_transfer",
-        chain_unique_id="evm_arbitrum_one",
+        chain_unique_id="evm_arbitrum_mainnet",
     ): "MAGIC",
     TransactionType(
         type="evm_transaction",
@@ -142,7 +142,7 @@ ASSET_SYMBOL_BY_TRANSACTION_TYPE: dict[TransactionType, str] = {
     TransactionType(
         type="evm_transaction",
         subtype="erc20_transfer",
-        chain_unique_id="evm_arbitrum_one",
+        chain_unique_id="evm_arbitrum_mainnet",
     ): "GMX",
     TransactionType(
         type="evm_transaction",
