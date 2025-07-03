@@ -60,6 +60,36 @@ ASSET_IDENTIFIER_BY_SYMBOL = {
             "priority_level": "medium",
         },
     ),
+    "ARB": AssetIdentifier(
+        type="evm",
+        subtype="erc20",
+        chain="evm_arbitrum_one",
+    ),
+    "USDCARB": AssetIdentifier(
+        type="evm",
+        subtype="erc20",
+        chain="evm_arbitrum_one",
+    ),
+    "MAGIC": AssetIdentifier(
+        type="evm",
+        subtype="erc20",
+        chain="evm_arbitrum_one",
+    ),
+    "LINK": AssetIdentifier(
+        type="evm",
+        subtype="erc20",
+        chain="evm_ethereum_mainnet",
+    ),
+    "GMX": AssetIdentifier(
+        type="evm",
+        subtype="erc20",
+        chain="evm_arbitrum_one",
+    ),
+    "USDC": AssetIdentifier(
+        type="evm",
+        subtype="erc20",
+        chain="evm_ethereum_mainnet",
+    ),
 }
 
 
@@ -89,6 +119,36 @@ ASSET_SYMBOL_BY_TRANSACTION_TYPE: dict[TransactionType, str] = {
         subtype="native_transfer",
         chain_unique_id="evm_ethereum_mainnet",
     ): "ETH",
+    TransactionType(
+        type="evm_transaction",
+        subtype="native_transfer",
+        chain_unique_id="evm_arbitrum_one",
+    ): "ARB",
+    TransactionType(
+        type="evm_transaction",
+        subtype="erc20_transfer",
+        chain_unique_id="evm_arbitrum_one",
+    ): "USDCARB",
+    TransactionType(
+        type="evm_transaction",
+        subtype="erc20_transfer",
+        chain_unique_id="evm_arbitrum_one",
+    ): "MAGIC",
+    TransactionType(
+        type="evm_transaction",
+        subtype="erc20_transfer",
+        chain_unique_id="evm_ethereum_mainnet",
+    ): "LINK",
+    TransactionType(
+        type="evm_transaction",
+        subtype="erc20_transfer",
+        chain_unique_id="evm_arbitrum_one",
+    ): "GMX",
+    TransactionType(
+        type="evm_transaction",
+        subtype="erc20_transfer",
+        chain_unique_id="evm_ethereum_mainnet",
+    ): "USDC",
 }
 
 
