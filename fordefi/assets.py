@@ -70,6 +70,11 @@ ASSET_SYMBOL_BY_TRANSACTION_TYPE: dict[TransactionType, str] = {
         chain_unique_id="aptos_mainnet",
     ): "APT",
     TransactionType(
+        type="aptos_transaction",
+        subtype="coin_transfer",
+        chain_unique_id="aptos_mainnet",
+    ): "APT",
+    TransactionType(
         type="evm_transaction",
         subtype="native_transfer",
         chain_unique_id="evm_ethereum_sepolia",
