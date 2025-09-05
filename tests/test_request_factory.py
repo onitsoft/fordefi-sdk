@@ -68,12 +68,61 @@ def request_factory_fixture() -> RequestFactory:
 @pytest.mark.parametrize(
     argnames=("vault_id", "amount", "asset", "destination_address"),
     argvalues=[
-        (VAULD_ID, Decimal(1), Asset(blockchain=Blockchain.APTOS), APTOS_ADDRESS),
-        (VAULD_ID, Decimal(1), Asset(blockchain=Blockchain.ETHEREUM), EVM_ADDRESS),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.APTOS),
+            APTOS_ADDRESS,
+        ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.ETHEREUM),
+            EVM_ADDRESS,
+        ),
+        (VAULD_ID, Decimal(1), Asset(blockchain=Blockchain.BASE), EVM_ADDRESS),
+        (VAULD_ID, Decimal(1), Asset(blockchain=Blockchain.BSC), EVM_ADDRESS),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.POLYGON),
+            EVM_ADDRESS,
+        ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.AVALANCHE),
+            EVM_ADDRESS,
+        ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.ARBITRUM),
+            EVM_ADDRESS,
+        ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.SONIC),
+            EVM_ADDRESS,
+        ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.OPTIMISM),
+            EVM_ADDRESS,
+        ),
     ],
     ids=[
         "APT",
         "ETH",
+        "BASE",
+        "BNB",
+        "MATIC",
+        "AVAX",
+        "ARB",
+        "S",
+        "OP",
     ],
 )
 def test_create_transfer_request_body(
@@ -91,6 +140,7 @@ def test_create_transfer_request_body(
     )
 
     body = request.json
+    assert body is not None
     assert body.get("vault_id") == vault_id
     assert (
         body.get("details", {}).get("to") == destination_address
@@ -105,6 +155,12 @@ def test_create_transfer_request_body(
         (VAULD_ID, Asset(blockchain=Blockchain.APTOS), APTOS_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.ARBITRUM), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.ETHEREUM), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.BASE), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.BSC), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.POLYGON), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.AVALANCHE), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.SONIC), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.OPTIMISM), EVM_ADDRESS),
         (
             VAULD_ID,
             Asset(
@@ -117,7 +173,18 @@ def test_create_transfer_request_body(
             EVM_ADDRESS,
         ),
     ],
-    ids=["Aptos", "Arbitrum", "Ethereum", "Arbitrum-Ether"],
+    ids=[
+        "Aptos",
+        "Arbitrum",
+        "Ethereum",
+        "Base",
+        "BSC",
+        "Polygon",
+        "Avalanche",
+        "Sonic",
+        "Optimism",
+        "Arbitrum-Ether",
+    ],
 )
 def test_create_transfer_request_schema(
     vault_id: str,
@@ -166,6 +233,7 @@ def test_create_signature_request(
     openapi_request = RequestsOpenAPIRequest(request)
     openapi.validate_request(openapi_request)
     body = request.json
+    assert body is not None
     request_raw_data = glom(body, "details.raw_data", default="{}")
     request_data = json.loads(request_raw_data)
     expected_data: Json = message.model_dump(by_alias=True)
@@ -209,6 +277,100 @@ def test_create_signature_request__invalid_blockchain_id(
         )
 
 
+@pytest.mark.parametrize(
+    argnames=("blockchain", "chain_id"),
+    argvalues=[
+        (Blockchain.ETHEREUM, 1),
+        (Blockchain.BASE, 8453),
+        (Blockchain.BSC, 56),
+        (Blockchain.POLYGON, 137),
+        (Blockchain.AVALANCHE, 43114),
+        (Blockchain.ARBITRUM, 42161),
+        (Blockchain.SONIC, 146),
+        (Blockchain.OPTIMISM, 10),
+    ],
+    ids=[
+        "Ethereum",
+        "Base",
+        "BSC",
+        "Polygon",
+        "Avalanche",
+        "Arbitrum",
+        "Sonic",
+        "Optimism",
+    ],
+)
+def test_create_signature_request_all_evm_blockchains(
+    request_factory: RequestFactory,
+    blockchain: Blockchain,
+    chain_id: int,
+) -> None:
+    """Test signature request creation for all EVM blockchains."""
+    domain = EIP712DomainFactory.build(chain_id=chain_id)
+    message = EIP712TypedDataFactory.build(domain=domain)
+    request = request_factory.create_signature_request(
+        message=message,
+        vault_id=VAULD_ID,
+        blockchain=blockchain,
+    )
+
+    body = request.json
+    assert body is not None
+    assert body.get("vault_id") == VAULD_ID
+    details = body.get("details", {})
+    chain = details.get("chain", "")
+    assert blockchain.value in chain
+    assert "mainnet" in chain
+
+
+@pytest.mark.parametrize(
+    argnames=("blockchain", "chain_id"),
+    argvalues=[
+        (Blockchain.ETHEREUM, 1),
+        (Blockchain.BASE, 8453),
+        (Blockchain.BSC, 56),
+        (Blockchain.POLYGON, 137),
+        (Blockchain.AVALANCHE, 43114),
+        (Blockchain.ARBITRUM, 42161),
+        (Blockchain.SONIC, 146),
+        (Blockchain.OPTIMISM, 10),
+    ],
+    ids=[
+        "Ethereum",
+        "Base",
+        "BSC",
+        "Polygon",
+        "Avalanche",
+        "Arbitrum",
+        "Sonic",
+        "Optimism",
+    ],
+)
+def test_create_evm_raw_transaction_request_all_blockchains(
+    request_factory: RequestFactory,
+    blockchain: Blockchain,
+    chain_id: int,  # noqa: ARG001
+) -> None:
+    """Test raw transaction request creation for all EVM blockchains."""
+    destination_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
+    raw_data = "SGVsbG8="
+    request = request_factory.create_evm_raw_transaction_request(
+        destination_address=destination_address,
+        raw_data=raw_data,
+        vault_id=VAULD_ID,
+        blockchain=blockchain,
+    )
+
+    body = request.json
+    assert body is not None
+    assert body.get("vault_id") == VAULD_ID
+    details = body.get("details", {})
+    data = details.get("data", {})
+    assert data.get("raw_data") == raw_data
+    chain = details.get("chain", "")
+    assert blockchain.value in chain
+
+
 def test_create_evm_raw_transaction_request(
     request_factory: RequestFactory,
     openapi: OpenAPI,
@@ -226,6 +388,7 @@ def test_create_evm_raw_transaction_request(
     openapi.validate_request(openapi_request)
 
     body = request.json
+    assert body is not None
     assert body.get("vault_id") == VAULD_ID
     assert body.get("details", {}).get("data", {}).get("raw_data") == raw_data
     assert Blockchain.ARBITRUM.value in body.get("details", {}).get("chain", "")

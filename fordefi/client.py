@@ -17,8 +17,8 @@ from typing_extensions import deprecated
 from fordefi.evmtypes import EIP712TypedData, SignedMessage
 
 from .assets import (
-    ASSET_IDENTIFIER_BY_SYMBOL,
     AssetIdentifier,
+    asset_registry,
     get_transfer_asset_identifier,
 )
 from .httptypes import Json, JsonDict, QueryParams
@@ -153,8 +153,11 @@ class Fordefi:
             msg = "Amount must be an integer representing the amount in smallest unit."
             raise ValueError(msg)
 
-        if asset_symbol is not None and asset_symbol not in ASSET_IDENTIFIER_BY_SYMBOL:
-            supported_assets = ", ".join(ASSET_IDENTIFIER_BY_SYMBOL.keys())
+        if (
+            asset_symbol is not None
+            and asset_symbol not in asset_registry.list_available_assets()
+        ):
+            supported_assets = ", ".join(asset_registry.list_available_assets())
             msg = f"""Deprecated asset_symbol (str) argument only supports:
                       {supported_assets}."""
             raise ValueError(msg)
@@ -286,9 +289,9 @@ class Fordefi:
         asset_identifier: AssetIdentifier,
     ) -> Json:
         return {
-            "type": asset_identifier.type,
+            "type": asset_identifier.type.value,
             "details": {
-                "type": asset_identifier.subtype,
+                "type": asset_identifier.subtype.value,
                 "chain": asset_identifier.chain,
             },
         }
