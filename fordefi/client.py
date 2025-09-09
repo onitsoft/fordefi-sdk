@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 from collections.abc import Iterable
+from dataclasses import asdict
 from decimal import Decimal
 from http import HTTPStatus
 from typing import Literal, TypedDict, cast, overload
@@ -245,7 +246,7 @@ class Fordefi:
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
         transaction = {
             "vault_id": vault_id,
-            "type": f"{asset_identifier.type}_transaction",
+            "type": f"{asset_identifier.type.value}_transaction",
             "details": self._serialize_transfer_transaction_details(
                 asset_identifier,
                 destination_address,
@@ -267,7 +268,7 @@ class Fordefi:
         amount: Decimal,
     ) -> Json:
         details = {
-            "type": f"{asset_identifier.type}_transfer",
+            "type": f"{asset_identifier.type.value}_transfer",
             "to": asset_identifier.default_destination_serializer(destination_address),
             "value": {
                 "type": "value",
@@ -277,7 +278,7 @@ class Fordefi:
         }
 
         if asset_identifier.default_gas is not None:
-            details["gas"] = asset_identifier.default_gas
+            details["gas"] = asdict(asset_identifier.default_gas)
 
         if asset_identifier.default_gas_config is not None:
             details["gas_config"] = asset_identifier.default_gas_config

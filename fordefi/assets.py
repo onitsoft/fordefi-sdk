@@ -107,6 +107,34 @@ class AssetRegistry:
 
     def _initialize_assets(self) -> None:
         """Initialize asset configurations."""
+        # EVM chains
+        evm_chains = {
+            "ETH": ("ethereum", "mainnet"),
+            "BASE": ("base", "mainnet"),
+            "BNB": ("bsc", "mainnet"),
+            "MATIC": ("polygon", "mainnet"),
+            "AVAX": ("avalanche", "chain"),  # edge case 'chain'
+            "ARB": ("arbitrum", "mainnet"),
+            "OP": ("optimism", "mainnet"),
+            "S": ("sonic", "mainnet"),
+            "SETH": ("ethereum", "sepolia"),
+        }
+
+        # evm native mappings
+        for symbol, (blockchain, network) in evm_chains.items():
+            chain_id = f"evm_{blockchain}_{network}"
+            self._assets[symbol] = AssetIdentifier(
+                type=AssetType.EVM,
+                subtype=AssetSubtype.NATIVE,
+                chain=chain_id,
+                default_gas=GasConfig(
+                    type="priority",
+                    priority="medium",
+                    priority_level="medium",
+                ),
+            )
+
+        # Custom mappings
         # Solana
         self._assets["DSOL"] = AssetIdentifier(
             type=AssetType.SOLANA,
@@ -130,32 +158,6 @@ class AssetRegistry:
                 "address": address,
             },
         )
-
-        # EVM chains
-        evm_chains = {
-            "ETH": ("ethereum", "mainnet"),
-            "BASE": ("base", "mainnet"),
-            "BNB": ("bsc", "mainnet"),
-            "MATIC": ("polygon", "mainnet"),
-            "AVAX": ("avalanche", "chain"),  # edge case 'chain'
-            "ARB": ("arbitrum", "mainnet"),
-            "OP": ("optimism", "mainnet"),
-            "S": ("sonic", "mainnet"),
-            "SETH": ("ethereum", "sepolia"),
-        }
-
-        for symbol, (blockchain, network) in evm_chains.items():
-            chain_id = f"evm_{blockchain}_{network}"
-            self._assets[symbol] = AssetIdentifier(
-                type=AssetType.EVM,
-                subtype=AssetSubtype.NATIVE,
-                chain=chain_id,
-                default_gas=GasConfig(
-                    type="priority",
-                    priority="medium",
-                    priority_level="medium",
-                ),
-            )
 
     def _initialize_transaction_mappings(self) -> None:
         """Initialize transaction type to asset symbol mappings."""

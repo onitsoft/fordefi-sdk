@@ -260,7 +260,7 @@ def test_create_transfer__invalid_asset_symbol(
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
-            asset_symbol="ARB",  # pyright: ignore[reportArgumentType]
+            asset_symbol="INVALID",  # pyright: ignore[reportArgumentType]
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
         )
