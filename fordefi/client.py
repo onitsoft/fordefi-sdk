@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 from collections.abc import Iterable
+from dataclasses import asdict
 from decimal import Decimal
 from http import HTTPStatus
 from typing import Literal, TypedDict, cast, overload
@@ -17,8 +18,8 @@ from typing_extensions import deprecated
 from fordefi.evmtypes import EIP712TypedData, SignedMessage
 
 from .assets import (
-    ASSET_IDENTIFIER_BY_SYMBOL,
     AssetIdentifier,
+    asset_registry,
     get_transfer_asset_identifier,
 )
 from .httptypes import Json, JsonDict, QueryParams
@@ -153,8 +154,11 @@ class Fordefi:
             msg = "Amount must be an integer representing the amount in smallest unit."
             raise ValueError(msg)
 
-        if asset_symbol is not None and asset_symbol not in ASSET_IDENTIFIER_BY_SYMBOL:
-            supported_assets = ", ".join(ASSET_IDENTIFIER_BY_SYMBOL.keys())
+        if (
+            asset_symbol is not None
+            and asset_symbol not in asset_registry.list_available_assets()
+        ):
+            supported_assets = ", ".join(asset_registry.list_available_assets())
             msg = f"""Deprecated asset_symbol (str) argument only supports:
                       {supported_assets}."""
             raise ValueError(msg)
@@ -242,7 +246,7 @@ class Fordefi:
         asset_identifier = get_transfer_asset_identifier(asset_symbol)
         transaction = {
             "vault_id": vault_id,
-            "type": f"{asset_identifier.type}_transaction",
+            "type": f"{asset_identifier.type.value}_transaction",
             "details": self._serialize_transfer_transaction_details(
                 asset_identifier,
                 destination_address,
@@ -264,7 +268,7 @@ class Fordefi:
         amount: Decimal,
     ) -> Json:
         details = {
-            "type": f"{asset_identifier.type}_transfer",
+            "type": f"{asset_identifier.type.value}_transfer",
             "to": asset_identifier.default_destination_serializer(destination_address),
             "value": {
                 "type": "value",
@@ -274,7 +278,7 @@ class Fordefi:
         }
 
         if asset_identifier.default_gas is not None:
-            details["gas"] = asset_identifier.default_gas
+            details["gas"] = asdict(asset_identifier.default_gas)
 
         if asset_identifier.default_gas_config is not None:
             details["gas_config"] = asset_identifier.default_gas_config
@@ -286,9 +290,9 @@ class Fordefi:
         asset_identifier: AssetIdentifier,
     ) -> Json:
         return {
-            "type": asset_identifier.type,
+            "type": asset_identifier.type.value,
             "details": {
-                "type": asset_identifier.subtype,
+                "type": asset_identifier.subtype.value,
                 "chain": asset_identifier.chain,
             },
         }

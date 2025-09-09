@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: S105
+BASE_TOKEN_CONTRACT = "0x07150e919b4de5fd6a63de1f9384828396f25fdc"  # noqa: S105
 
 
 def all_items_have(items: list[dict[str, Any]], required_properties: set[str]) -> bool:
@@ -193,6 +194,28 @@ class CreateTransferByAssetTestCase(NamedTuple):
         fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
         UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),
     ),
+    CreateTransferByAssetTestCase(
+        "Base-ETH",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(blockchain=Blockchain.BASE),
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("aa4e3c61-2408-44dd-afea-1d4f93bf6e31"),  # same UUID
+    ),
+    CreateTransferByAssetTestCase(
+        "Base-BASE",
+        fordefienv.EVM_RELEASES_VAULT_ID,
+        Decimal(1),
+        Asset(
+            blockchain=Blockchain.BASE,
+            token=Token(
+                token_type=EvmTokenType.ERC20,
+                token_id=BASE_TOKEN_CONTRACT,
+            ),
+        ),
+        fordefienv.EVM_DEPOSITS_VAULT_ADDRESS,
+        UUID("0775e4a0-201a-430c-aa74-5f20e60b96c0"),  # same UUID
+    ),
 )
 def test_create_transfer_by_blockchain(
     fordefi: Fordefi,
@@ -237,7 +260,7 @@ def test_create_transfer__invalid_asset_symbol(
         fordefi.create_transfer(
             vault_id=fordefienv.APTOS_RELEASES_VAULT_ID,
             amount=Decimal(1),
-            asset_symbol="ARB",  # pyright: ignore[reportArgumentType]
+            asset_symbol="INVALID",  # pyright: ignore[reportArgumentType]
             destination_address=fordefienv.APTOS_DEPOSITS_VAULT_ADDRESS,
             idempotence_client_id=UUID("5c7bc082-b197-43c8-877d-f4cb890dd15a"),
         )

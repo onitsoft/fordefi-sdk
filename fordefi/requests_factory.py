@@ -22,18 +22,32 @@ from .httptypes import Json
 
 class Blockchain(Enum):
     APTOS = "aptos"
-    ARBITRUM = "arbitrum"
-    ETHEREUM = "ethereum"
 
+    # EVM
+    ETHEREUM = "ethereum"  # ETH
+    BASE = "base"  # Base (Coinbase L2)
+    BSC = "bsc"  # Binance Smart Chain
+    POLYGON = "polygon"  # POL (Polygon/MATIC)
+    AVALANCHE = "avalanche"  # AVAXC
+    ARBITRUM = "arbitrum"  # ARB
+    SONIC = "sonic"  # Sonic (Fantom ecosystem)
+    OPTIMISM = "optimism"  # OP
 
-EVM_BLOCKCHAINS = {Blockchain.ARBITRUM, Blockchain.ETHEREUM}
 
 # As per EIP-155
 # https://chainid.network/
 EVM_BLOCKCHAIN_IDS = {
     Blockchain.ETHEREUM: 1,
+    Blockchain.BASE: 8453,
+    Blockchain.BSC: 56,
+    Blockchain.POLYGON: 137,
+    Blockchain.AVALANCHE: 43114,
     Blockchain.ARBITRUM: 42161,
+    Blockchain.SONIC: 146,
+    Blockchain.OPTIMISM: 10,
 }
+
+EVM_BLOCKCHAINS = set(EVM_BLOCKCHAIN_IDS.keys())
 
 
 class TokenType(Enum): ...
@@ -281,8 +295,8 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
 
 _REQUEST_FACTORY_BY_BLOCKCHAIN = {
     Blockchain.APTOS: _AptosTransferRequestFactory,
-    Blockchain.ARBITRUM: _EvmTransferRequestFactory,
-    Blockchain.ETHEREUM: _EvmTransferRequestFactory,
+    # EVM blockchains
+    **{blockchain: _EvmTransferRequestFactory for blockchain in EVM_BLOCKCHAINS},
 }
 
 
@@ -295,27 +309,47 @@ def _create_aptos_asset_identifier(asset: Asset) -> _AssetIdentifier:
     )
 
 
-def _create_evm_asset_identifier(asset: Asset) -> _AssetIdentifier:
+def _create_evm_asset_identifier(
+    asset: Asset,
+    network: str = "mainnet",
+) -> _AssetIdentifier:
     if asset.token and asset.token.token_type is EvmTokenType.ERC20:
         return _EvmErc20AssetIdentifier(
             blockchain=asset.blockchain.value,
-            network="mainnet",
+            network=network,
             contract_address=asset.token.token_id,
         )
 
     return _EvmNativeAssetIdentifier(
         blockchain=asset.blockchain.value,
-        network="mainnet",
+        network=network,
     )
 
 
+def _create_evm_asset_identifier_factory(
+    network: str,
+) -> Callable[[Asset], _AssetIdentifier]:
+    """Create an EVM asset identifier factory with a specific network."""
+    return lambda asset: _create_evm_asset_identifier(
+        asset,
+        network,
+    )
+
+
+# Auto-generate asset identifier factory dictionary
 _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
     Blockchain,
     Callable[[Asset], _AssetIdentifier],
 ] = {
     Blockchain.APTOS: _create_aptos_asset_identifier,
-    Blockchain.ARBITRUM: _create_evm_asset_identifier,
-    Blockchain.ETHEREUM: _create_evm_asset_identifier,
+    # EVM factories (Avalanche uses "chain", others use "mainnet")
+    # if more edge cases appear, create a dictionary of network names
+    **{
+        blockchain: _create_evm_asset_identifier_factory(
+            "chain" if blockchain == Blockchain.AVALANCHE else "mainnet",
+        )
+        for blockchain in EVM_BLOCKCHAINS
+    },
 }
 
 
