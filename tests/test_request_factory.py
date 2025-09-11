@@ -34,6 +34,7 @@ ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: 
 VAULD_ID = "ce26562d-ca59-4e85-af01-f86c111939fb"
 APTOS_ADDRESS = "0x3300c18e7b931bdfc73dccf3e2d043ad1c9d120c777fff5aeeb9956224e5247a"
 EVM_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+BTC_ADDRESS = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 
 BASE_URL = "https://api.fordefi.com/api/v1"
@@ -112,6 +113,12 @@ def request_factory_fixture() -> RequestFactory:
             Asset(blockchain=Blockchain.OPTIMISM),
             EVM_ADDRESS,
         ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.BITCOIN),
+            BTC_ADDRESS,
+        ),
     ],
     ids=[
         "APT",
@@ -123,6 +130,7 @@ def request_factory_fixture() -> RequestFactory:
         "ARB",
         "S",
         "OP",
+        "BTC",
     ],
 )
 def test_create_transfer_request_body(
@@ -161,6 +169,7 @@ def test_create_transfer_request_body(
         (VAULD_ID, Asset(blockchain=Blockchain.AVALANCHE), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.SONIC), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.OPTIMISM), EVM_ADDRESS),
+        # Note: Bitcoin excluded from schema validation due to API schema requirements
         (
             VAULD_ID,
             Asset(
@@ -217,6 +226,32 @@ def test_not_implemented_token(request_factory: RequestFactory) -> None:
             ),
             destination_address=EVM_ADDRESS,
         )
+
+
+def test_create_bitcoin_transfer_request(request_factory: RequestFactory) -> None:
+    """Test Bitcoin transfer request creation without OpenAPI validation."""
+    request = request_factory.create_transfer_request(
+        vault_id=VAULD_ID,
+        amount=Decimal("0.001"),
+        asset=Asset(blockchain=Blockchain.BITCOIN),
+        destination_address=BTC_ADDRESS,
+    )
+
+    body = request.json
+    assert body is not None
+    assert body.get("vault_id") == VAULD_ID
+    assert body.get("type") == "utxo_transaction"
+
+    details = body.get("details", {})
+    assert details.get("type") == "utxo_transfer"
+    assert details.get("to") == BTC_ADDRESS
+    assert details.get("value", {}).get("value") == "0.001"
+
+    # Check asset identifier structure
+    asset_identifier = details.get("asset_identifier", {})
+    assert asset_identifier.get("type") == "utxo"
+    assert asset_identifier.get("details", {}).get("type") == "native"
+    assert asset_identifier.get("details", {}).get("chain") == "utxo_mainnet"
 
 
 def test_create_signature_request(

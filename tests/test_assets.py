@@ -25,6 +25,7 @@ def _create_test_transaction(
         "aptos": ("aptos", "aptos_transaction"),
         "evm": ("evm", "evm_transaction"),
         "solana": ("solana", "solana_transaction"),
+        "bitcoin": ("utxo", "utxo_transaction"),
     }
 
     # Find the matching chain type
@@ -68,6 +69,7 @@ def _create_test_transaction(
         ("evm_ethereum_sepolia", "SETH", "native_transfer", None),
         ("solana_devnet", "DSOL", "native_transfer", None),
         ("solana_devnet", "DSOL", "raw_transaction", None),
+        ("bitcoin_mainnet", "BTC", "utxo_transfer", None),
         (
             "unknown_chain",
             None,
@@ -89,6 +91,7 @@ def _create_test_transaction(
         "ethereum_sepolia_native_transfer",
         "solana_native_transfer",
         "solana_raw_transaction",
+        "bitcoin_utxo_transfer",
         "unknown_chain",
     ],
 )
@@ -131,6 +134,7 @@ def test_asset_registry_list_available_assets() -> None:
     expected_assets = {
         "DSOL",
         "APT",
+        "BTC",
         "ETH",
         "BASE",
         "BNB",
@@ -169,12 +173,35 @@ def test_asset_registry_list_assets_by_type() -> None:
     solana_assets = asset_registry.list_assets_by_type(AssetType.SOLANA)
     assert set(solana_assets) == {"DSOL"}
 
+    # Test UTXO/Bitcoin assets
+    utxo_assets = asset_registry.list_assets_by_type(AssetType.UTXO)
+    assert set(utxo_assets) == {"BTC"}
+
 
 def test_get_transfer_asset_identifier_backward_compatibility() -> None:
     """Test backward compatibility function."""
     asset = get_transfer_asset_identifier("ETH")
     assert asset.type == AssetType.EVM
     assert asset.chain == "evm_ethereum_mainnet"
+
+
+def test_btc_asset_identifier() -> None:
+    """Test BTC asset identifier."""
+    btc_asset = get_transfer_asset_identifier("BTC")
+    assert btc_asset.type == AssetType.UTXO
+    assert btc_asset.subtype == AssetSubtype.NATIVE
+    assert btc_asset.chain == "bitcoin_mainnet"
+    assert btc_asset.default_destination_serializer is not None
+
+    # Test the default destination serializer
+    result = btc_asset.default_destination_serializer(
+        "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    )
+    expected = {
+        "type": "address",
+        "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    }
+    assert result == expected
 
 
 def test_asset_identifier_validation() -> None:
@@ -448,6 +475,7 @@ def test_asset_type_enum_values() -> None:
     assert AssetType.EVM.value == "evm"
     assert AssetType.APTOS.value == "aptos"
     assert AssetType.SOLANA.value == "solana"
+    assert AssetType.UTXO.value == "utxo"
 
 
 def test_asset_subtype_enum_values() -> None:
@@ -462,6 +490,7 @@ def test_transaction_type_enum_values() -> None:
     assert TransactionType.APTOS_TRANSACTION.value == "aptos_transaction"
     assert TransactionType.EVM_TRANSACTION.value == "evm_transaction"
     assert TransactionType.SOLANA_TRANSACTION.value == "solana_transaction"
+    assert TransactionType.UTXO_TRANSACTION.value == "utxo_transaction"
 
 
 def test_transaction_subtype_enum_values() -> None:
@@ -469,3 +498,4 @@ def test_transaction_subtype_enum_values() -> None:
     assert TransactionSubtype.NATIVE_TRANSFER.value == "native_transfer"
     assert TransactionSubtype.COIN_TRANSFER.value == "coin_transfer"
     assert TransactionSubtype.RAW_TRANSACTION.value == "raw_transaction"
+    assert TransactionSubtype.UTXO_TRANSFER.value == "utxo_transfer"

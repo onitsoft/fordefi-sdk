@@ -22,6 +22,7 @@ from .httptypes import Json
 
 class Blockchain(Enum):
     APTOS = "aptos"
+    BITCOIN = "bitcoin"
 
     # EVM
     ETHEREUM = "ethereum"  # ETH
@@ -230,6 +231,18 @@ class _EvmErc20AssetIdentifier(_EvmAssetIdentifier):
 
 
 @dataclass(frozen=True)
+class _UtxoAssetIdentifier(_AssetIdentifier):
+    type: ClassVar[str] = "utxo"
+    subtype: ClassVar[str] = "native"
+
+    def _get_details(self) -> Json:
+        return {
+            "type": self.subtype,
+            "chain": self.chain,
+        }
+
+
+@dataclass(frozen=True)
 class _TranferRequestFactory(_RequestFactory):
     method: ClassVar[str] = "POST"
     path: ClassVar[str] = "/transactions"
@@ -293,8 +306,24 @@ class _EvmTransferRequestFactory(_TranferRequestFactory):
         }
 
 
+class _UtxoTransferRequestFactory(_TranferRequestFactory):
+    transaction_type: ClassVar[str] = "utxo_transaction"
+
+    def _get_transfer_details(self) -> Json:
+        return {
+            "type": "utxo_transfer",
+            "asset_identifier": self.asset_identifier.as_dict(),
+            "to": self.destination_address,
+            "value": {
+                "type": "value",
+                "value": str(self.amount),
+            },
+        }
+
+
 _REQUEST_FACTORY_BY_BLOCKCHAIN = {
     Blockchain.APTOS: _AptosTransferRequestFactory,
+    Blockchain.BITCOIN: _UtxoTransferRequestFactory,
     # EVM blockchains
     **{blockchain: _EvmTransferRequestFactory for blockchain in EVM_BLOCKCHAINS},
 }
@@ -305,6 +334,15 @@ def _create_aptos_asset_identifier(asset: Asset) -> _AssetIdentifier:
         raise TokenNotImplementedError(asset)
 
     return _AptosNativeAssetIdentifier(
+        network="mainnet",
+    )
+
+
+def _create_utxo_asset_identifier(asset: Asset) -> _AssetIdentifier:
+    if asset.token:
+        raise TokenNotImplementedError(asset)
+
+    return _UtxoAssetIdentifier(
         network="mainnet",
     )
 
@@ -342,6 +380,7 @@ _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
     Callable[[Asset], _AssetIdentifier],
 ] = {
     Blockchain.APTOS: _create_aptos_asset_identifier,
+    Blockchain.BITCOIN: _create_utxo_asset_identifier,
     # EVM factories (Avalanche uses "chain", others use "mainnet")
     # if more edge cases appear, create a dictionary of network names
     **{
