@@ -228,6 +228,23 @@ def test_not_implemented_token(request_factory: RequestFactory) -> None:
         )
 
 
+def test_not_implemented_token_bitcoin(request_factory: RequestFactory) -> None:
+    """Test that Bitcoin with token raises TokenNotImplementedError."""
+    with pytest.raises(TokenNotImplementedError):
+        request_factory.create_transfer_request(
+            vault_id=VAULD_ID,
+            amount=Decimal(1),
+            asset=Asset(
+                blockchain=Blockchain.BITCOIN,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
+                ),
+            ),
+            destination_address=BTC_ADDRESS,
+        )
+
+
 def test_create_signature_request(
     openapi: OpenAPI,
     request_factory: RequestFactory,
