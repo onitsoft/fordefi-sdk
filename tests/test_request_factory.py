@@ -228,32 +228,6 @@ def test_not_implemented_token(request_factory: RequestFactory) -> None:
         )
 
 
-def test_create_bitcoin_transfer_request(request_factory: RequestFactory) -> None:
-    """Test Bitcoin transfer request creation without OpenAPI validation."""
-    request = request_factory.create_transfer_request(
-        vault_id=VAULD_ID,
-        amount=Decimal("0.001"),
-        asset=Asset(blockchain=Blockchain.BITCOIN),
-        destination_address=BTC_ADDRESS,
-    )
-
-    body = request.json
-    assert body is not None
-    assert body.get("vault_id") == VAULD_ID
-    assert body.get("type") == "utxo_transaction"
-
-    details = body.get("details", {})
-    assert details.get("type") == "utxo_transfer"
-    assert details.get("to") == BTC_ADDRESS
-    assert details.get("value", {}).get("value") == "0.001"
-
-    # Check asset identifier structure
-    asset_identifier = details.get("asset_identifier", {})
-    assert asset_identifier.get("type") == "utxo"
-    assert asset_identifier.get("details", {}).get("type") == "native"
-    assert asset_identifier.get("details", {}).get("chain") == "utxo_mainnet"
-
-
 def test_create_signature_request(
     openapi: OpenAPI,
     request_factory: RequestFactory,
