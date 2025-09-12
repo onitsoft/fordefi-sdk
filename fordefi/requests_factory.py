@@ -24,6 +24,7 @@ class Blockchain(Enum):
     APTOS = "aptos"
     BITCOIN = "bitcoin"
     TRON = "tron"
+    COSMOS = "cosmos"
 
     # EVM
     ETHEREUM = "ethereum"  # ETH
@@ -256,6 +257,18 @@ class _TronAssetIdentifier(_AssetIdentifier):
 
 
 @dataclass(frozen=True)
+class _CosmosAssetIdentifier(_AssetIdentifier):
+    type: ClassVar[str] = "cosmos"
+    subtype: ClassVar[str] = "native"
+
+    def _get_details(self) -> Json:
+        return {
+            "type": self.subtype,
+            "chain": self.chain,
+        }
+
+
+@dataclass(frozen=True)
 class _TranferRequestFactory(_RequestFactory):
     method: ClassVar[str] = "POST"
     path: ClassVar[str] = "/transactions"
@@ -368,10 +381,46 @@ class _TronTransferRequestFactory(_TranferRequestFactory):
         }
 
 
+@dataclass(frozen=True)
+class _CosmosTransferRequestFactory(_TranferRequestFactory):
+    transaction_type: ClassVar[str] = "cosmos_transaction"
+
+    def _get_transfer_details(self) -> Json:
+        return {
+            "type": "cosmos_raw_transaction",
+            "push_mode": "auto",
+            "chain": "cosmos_agoric-3",
+            "request_data": {
+                "format": "amino",
+                "messages": [
+                    {
+                        "type": "string",
+                        "value": "string",
+                    },
+                ],
+                "memo": "",
+                "std_fee": {
+                    "amount": [
+                        {
+                            "denom": "string",
+                            "amount": "1000000000000000000",
+                        },
+                    ],
+                    "gas": "1000000000000000000",
+                    "payer": "",
+                    "granter": "",
+                    "fee_payer": "",
+                },
+                "timeout_height": 0,
+            },
+        }
+
+
 _REQUEST_FACTORY_BY_BLOCKCHAIN = {
     Blockchain.APTOS: _AptosTransferRequestFactory,
     Blockchain.BITCOIN: _UtxoTransferRequestFactory,
     Blockchain.TRON: _TronTransferRequestFactory,
+    Blockchain.COSMOS: _CosmosTransferRequestFactory,
     # EVM blockchains
     **{blockchain: _EvmTransferRequestFactory for blockchain in EVM_BLOCKCHAINS},
 }
@@ -400,6 +449,15 @@ def _create_tron_asset_identifier(asset: Asset) -> _AssetIdentifier:
         raise TokenNotImplementedError(asset)
 
     return _TronAssetIdentifier(
+        network="mainnet",
+    )
+
+
+def _create_cosmos_asset_identifier(asset: Asset) -> _AssetIdentifier:
+    if asset.token:
+        raise TokenNotImplementedError(asset)
+
+    return _CosmosAssetIdentifier(
         network="mainnet",
     )
 
@@ -439,6 +497,7 @@ _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
     Blockchain.APTOS: _create_aptos_asset_identifier,
     Blockchain.BITCOIN: _create_utxo_asset_identifier,
     Blockchain.TRON: _create_tron_asset_identifier,
+    Blockchain.COSMOS: _create_cosmos_asset_identifier,
     # EVM factories (Avalanche uses "chain", others use "mainnet")
     # if more edge cases appear, create a dictionary of network names
     **{

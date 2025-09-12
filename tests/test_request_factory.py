@@ -36,6 +36,7 @@ APTOS_ADDRESS = "0x3300c18e7b931bdfc73dccf3e2d043ad1c9d120c777fff5aeeb9956224e52
 EVM_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 BTC_ADDRESS = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
 TRX_ADDRESS = "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH"
+ATOM_ADDRESS = "cosmos1huydeevpz37sd9snkgul6070mjukukqfc0p8n0"
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 
 BASE_URL = "https://api.fordefi.com/api/v1"
@@ -126,6 +127,12 @@ def request_factory_fixture() -> RequestFactory:
             Asset(blockchain=Blockchain.TRON),
             TRX_ADDRESS,
         ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.COSMOS),
+            ATOM_ADDRESS,
+        ),
     ],
     ids=[
         "APT",
@@ -139,6 +146,7 @@ def request_factory_fixture() -> RequestFactory:
         "OP",
         "BTC",
         "TRX",
+        "ATOM",
     ],
 )
 def test_create_transfer_request_body(
@@ -189,6 +197,56 @@ def _validate_tron_fields(
     assert details.get("value", {}).get("value") == expected_value
 
 
+def _validate_cosmos_basic_fields(details: dict) -> None:
+    """Validate basic Cosmos request fields."""
+    assert details.get("type") == "cosmos_raw_transaction"
+    assert details.get("push_mode") == "auto"
+    assert details.get("chain") == "cosmos_agoric-3"
+
+
+def _validate_cosmos_request_data(request_data: dict) -> None:
+    """Validate Cosmos request_data structure."""
+    assert request_data.get("format") == "amino"
+    assert request_data.get("memo") == ""
+    assert request_data.get("timeout_height") == 0
+
+
+def _validate_cosmos_messages(messages: list) -> None:
+    """Validate Cosmos messages structure."""
+    assert len(messages) == 1
+    assert messages[0].get("type") == "string"
+    assert messages[0].get("value") == "string"
+
+
+def _validate_cosmos_fee(std_fee: dict) -> None:
+    """Validate Cosmos fee structure."""
+    assert std_fee.get("gas") == "1000000000000000000"
+    assert std_fee.get("payer") == ""
+    assert std_fee.get("granter") == ""
+    assert std_fee.get("fee_payer") == ""
+
+    amount_list = std_fee.get("amount", [])
+    assert len(amount_list) == 1
+    assert amount_list[0].get("denom") == "string"
+    assert amount_list[0].get("amount") == "1000000000000000000"
+
+
+def _validate_cosmos_fields(
+    details: dict,
+) -> None:
+    """Validate Cosmos-specific request fields."""
+    _validate_cosmos_basic_fields(details)
+
+    request_data = details.get("request_data", {})
+    _validate_cosmos_request_data(request_data)
+
+    messages = request_data.get("messages", [])
+    _validate_cosmos_messages(messages)
+
+    std_fee = request_data.get("std_fee", {})
+    _validate_cosmos_fee(std_fee)
+
+
 def _validate_standard_fields(
     details: dict,
     destination_address: str,
@@ -213,6 +271,8 @@ def _validate_blockchain_specific_fields(
         _validate_bitcoin_fields(details, destination_address, amount)
     elif asset.blockchain == Blockchain.TRON:
         _validate_tron_fields(details, destination_address, amount)
+    elif asset.blockchain == Blockchain.COSMOS:
+        _validate_cosmos_fields(details)
     else:
         _validate_standard_fields(details, destination_address, amount)
 
@@ -231,6 +291,7 @@ def _validate_blockchain_specific_fields(
         (VAULD_ID, Asset(blockchain=Blockchain.OPTIMISM), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.BITCOIN), BTC_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.TRON), TRX_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.COSMOS), ATOM_ADDRESS),
         (
             VAULD_ID,
             Asset(
@@ -255,6 +316,7 @@ def _validate_blockchain_specific_fields(
         "Optimism",
         "Bitcoin",
         "Tron",
+        "Cosmos",
         "Arbitrum-Ether",
     ],
 )
@@ -322,6 +384,23 @@ def test_not_implemented_token_tron(request_factory: RequestFactory) -> None:
                 ),
             ),
             destination_address=TRX_ADDRESS,
+        )
+
+
+def test_not_implemented_token_cosmos(request_factory: RequestFactory) -> None:
+    """Test that Cosmos with token raises TokenNotImplementedError."""
+    with pytest.raises(TokenNotImplementedError):
+        request_factory.create_transfer_request(
+            vault_id=VAULD_ID,
+            amount=Decimal(1),
+            asset=Asset(
+                blockchain=Blockchain.COSMOS,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
+                ),
+            ),
+            destination_address=ATOM_ADDRESS,
         )
 
 
