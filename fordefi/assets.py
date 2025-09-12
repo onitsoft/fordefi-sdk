@@ -13,6 +13,7 @@ class AssetType(Enum):
     APTOS = "aptos"
     SOLANA = "solana"
     UTXO = "utxo"
+    TRON = "tron"
 
 
 class AssetSubtype(Enum):
@@ -30,6 +31,7 @@ class TransactionType(Enum):
     EVM_TRANSACTION = "evm_transaction"
     SOLANA_TRANSACTION = "solana_transaction"
     UTXO_TRANSACTION = "utxo_transaction"
+    TRON_TRANSACTION = "tron_transaction"
 
 
 class TransactionSubtype(Enum):
@@ -39,6 +41,7 @@ class TransactionSubtype(Enum):
     COIN_TRANSFER = "coin_transfer"
     RAW_TRANSACTION = "raw_transaction"
     UTXO_TRANSFER = "utxo_transfer"
+    TRON_TRANSFER = "tron_transfer"
 
 
 @dataclass(frozen=True)
@@ -173,6 +176,17 @@ class AssetRegistry:
             },
         )
 
+        # Tron
+        self._assets["TRX"] = AssetIdentifier(
+            type=AssetType.TRON,
+            subtype=AssetSubtype.NATIVE,
+            chain="tron_mainnet",
+            default_destination_serializer=lambda address: {
+                "type": "address",
+                "address": address,
+            },
+        )
+
     def _initialize_transaction_mappings(self) -> None:
         """Initialize transaction type to asset symbol mappings."""
         # Non-EVM chains
@@ -206,6 +220,12 @@ class AssetRegistry:
                 TransactionSubtype.UTXO_TRANSFER,
                 "bitcoin_mainnet",
                 "BTC",
+            ),
+            (
+                TransactionType.TRON_TRANSACTION,
+                TransactionSubtype.TRON_TRANSFER,
+                "tron_mainnet",
+                "TRX",
             ),
         ]
 

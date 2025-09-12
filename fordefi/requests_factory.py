@@ -23,6 +23,7 @@ from .httptypes import Json
 class Blockchain(Enum):
     APTOS = "aptos"
     BITCOIN = "bitcoin"
+    TRON = "tron"
 
     # EVM
     ETHEREUM = "ethereum"  # ETH
@@ -243,6 +244,18 @@ class _UtxoAssetIdentifier(_AssetIdentifier):
 
 
 @dataclass(frozen=True)
+class _TronAssetIdentifier(_AssetIdentifier):
+    type: ClassVar[str] = "tron"
+    subtype: ClassVar[str] = "native"
+
+    def _get_details(self) -> Json:
+        return {
+            "type": self.subtype,
+            "chain": self.chain,
+        }
+
+
+@dataclass(frozen=True)
 class _TranferRequestFactory(_RequestFactory):
     method: ClassVar[str] = "POST"
     path: ClassVar[str] = "/transactions"
@@ -312,18 +325,53 @@ class _UtxoTransferRequestFactory(_TranferRequestFactory):
     def _get_transfer_details(self) -> Json:
         return {
             "type": "utxo_transfer",
-            "asset_identifier": self.asset_identifier.as_dict(),
-            "to": self.destination_address,
+            "outputs": [
+                {
+                    "to": {
+                        "type": "address",
+                        "address": self.destination_address,
+                    },
+                    "value": str(int(self.amount * 100000000)),  # Convert to satoshis
+                },
+            ],
+            "send_max_to": {
+                "type": "address",
+                "address": self.destination_address,
+            },
+            "fee_per_byte": {
+                "type": "priority",
+                "priority_level": "medium",
+            },
+            "push_mode": "auto",
+        }
+
+
+@dataclass(frozen=True)
+class _TronTransferRequestFactory(_TranferRequestFactory):
+    transaction_type: ClassVar[str] = "tron_transaction"
+
+    def _get_transfer_details(self) -> Json:
+        return {
+            "type": "tron_transfer",
+            "fail_on_prediction_failure": True,
+            "skip_prediction": False,
+            "push_mode": "auto",
+            "to": {
+                "type": "hex",
+                "address": self.destination_address,
+            },
             "value": {
                 "type": "value",
-                "value": str(self.amount),
+                "value": str(int(self.amount * 1000000)),  # Convert to TRX (6 decimals)
             },
+            "asset_identifier": self.asset_identifier.as_dict(),
         }
 
 
 _REQUEST_FACTORY_BY_BLOCKCHAIN = {
     Blockchain.APTOS: _AptosTransferRequestFactory,
     Blockchain.BITCOIN: _UtxoTransferRequestFactory,
+    Blockchain.TRON: _TronTransferRequestFactory,
     # EVM blockchains
     **{blockchain: _EvmTransferRequestFactory for blockchain in EVM_BLOCKCHAINS},
 }
@@ -343,6 +391,15 @@ def _create_utxo_asset_identifier(asset: Asset) -> _AssetIdentifier:
         raise TokenNotImplementedError(asset)
 
     return _UtxoAssetIdentifier(
+        network="mainnet",
+    )
+
+
+def _create_tron_asset_identifier(asset: Asset) -> _AssetIdentifier:
+    if asset.token:
+        raise TokenNotImplementedError(asset)
+
+    return _TronAssetIdentifier(
         network="mainnet",
     )
 
@@ -381,6 +438,7 @@ _ASSET_IDENTIFIER_FACTORY_BY_BLOCKCHAIN: dict[
 ] = {
     Blockchain.APTOS: _create_aptos_asset_identifier,
     Blockchain.BITCOIN: _create_utxo_asset_identifier,
+    Blockchain.TRON: _create_tron_asset_identifier,
     # EVM factories (Avalanche uses "chain", others use "mainnet")
     # if more edge cases appear, create a dictionary of network names
     **{
