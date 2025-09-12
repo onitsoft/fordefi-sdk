@@ -34,6 +34,8 @@ ARBITRUM_TOKEN_CONTRACT = "0x912CE59144191C1204E64559FE8253a0e49E6548"  # noqa: 
 VAULD_ID = "ce26562d-ca59-4e85-af01-f86c111939fb"
 APTOS_ADDRESS = "0x3300c18e7b931bdfc73dccf3e2d043ad1c9d120c777fff5aeeb9956224e5247a"
 EVM_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+BTC_ADDRESS = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+TRX_ADDRESS = "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH"
 FAKE_PRIVATE_KEY = "piWvYG3xNCU3cXvNJXnLsRZlG6Ae9O1V4aYJiyNXt7M="
 
 BASE_URL = "https://api.fordefi.com/api/v1"
@@ -112,6 +114,18 @@ def request_factory_fixture() -> RequestFactory:
             Asset(blockchain=Blockchain.OPTIMISM),
             EVM_ADDRESS,
         ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.BITCOIN),
+            BTC_ADDRESS,
+        ),
+        (
+            VAULD_ID,
+            Decimal(1),
+            Asset(blockchain=Blockchain.TRON),
+            TRX_ADDRESS,
+        ),
     ],
     ids=[
         "APT",
@@ -123,6 +137,8 @@ def request_factory_fixture() -> RequestFactory:
         "ARB",
         "S",
         "OP",
+        "BTC",
+        "TRX",
     ],
 )
 def test_create_transfer_request_body(
@@ -142,11 +158,63 @@ def test_create_transfer_request_body(
     body = request.json
     assert body is not None
     assert body.get("vault_id") == vault_id
+
+    details = body.get("details", {})
+    _validate_blockchain_specific_fields(asset, details, destination_address, amount)
+
+
+def _validate_bitcoin_fields(
+    details: dict,
+    destination_address: str,
+    amount: Decimal,
+) -> None:
+    """Validate Bitcoin-specific request fields."""
+    assert details.get("send_max_to", {}).get("address") == destination_address
     assert (
-        body.get("details", {}).get("to") == destination_address
-        or body.get("details", {}).get("to", {}).get("address") == destination_address
+        details.get("outputs", [{}])[0].get("to", {}).get("address")
+        == destination_address
     )
-    assert body.get("details", {}).get("value", {}).get("value") == str(amount)
+    expected_value = str(int(amount * 100000000))
+    assert details.get("outputs", [{}])[0].get("value") == expected_value
+
+
+def _validate_tron_fields(
+    details: dict,
+    destination_address: str,
+    amount: Decimal,
+) -> None:
+    """Validate Tron-specific request fields."""
+    assert details.get("to", {}).get("address") == destination_address
+    expected_value = str(int(amount * 1000000))
+    assert details.get("value", {}).get("value") == expected_value
+
+
+def _validate_standard_fields(
+    details: dict,
+    destination_address: str,
+    amount: Decimal,
+) -> None:
+    """Validate standard blockchain request fields."""
+    assert (
+        details.get("to") == destination_address
+        or details.get("to", {}).get("address") == destination_address
+    )
+    assert details.get("value", {}).get("value") == str(amount)
+
+
+def _validate_blockchain_specific_fields(
+    asset: Asset,
+    details: dict,
+    destination_address: str,
+    amount: Decimal,
+) -> None:
+    """Validate blockchain-specific request fields based on asset type."""
+    if asset.blockchain == Blockchain.BITCOIN:
+        _validate_bitcoin_fields(details, destination_address, amount)
+    elif asset.blockchain == Blockchain.TRON:
+        _validate_tron_fields(details, destination_address, amount)
+    else:
+        _validate_standard_fields(details, destination_address, amount)
 
 
 @pytest.mark.parametrize(
@@ -161,6 +229,8 @@ def test_create_transfer_request_body(
         (VAULD_ID, Asset(blockchain=Blockchain.AVALANCHE), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.SONIC), EVM_ADDRESS),
         (VAULD_ID, Asset(blockchain=Blockchain.OPTIMISM), EVM_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.BITCOIN), BTC_ADDRESS),
+        (VAULD_ID, Asset(blockchain=Blockchain.TRON), TRX_ADDRESS),
         (
             VAULD_ID,
             Asset(
@@ -183,6 +253,8 @@ def test_create_transfer_request_body(
         "Avalanche",
         "Sonic",
         "Optimism",
+        "Bitcoin",
+        "Tron",
         "Arbitrum-Ether",
     ],
 )
@@ -216,6 +288,40 @@ def test_not_implemented_token(request_factory: RequestFactory) -> None:
                 ),
             ),
             destination_address=EVM_ADDRESS,
+        )
+
+
+def test_not_implemented_token_bitcoin(request_factory: RequestFactory) -> None:
+    """Test that Bitcoin with token raises TokenNotImplementedError."""
+    with pytest.raises(TokenNotImplementedError):
+        request_factory.create_transfer_request(
+            vault_id=VAULD_ID,
+            amount=Decimal(1),
+            asset=Asset(
+                blockchain=Blockchain.BITCOIN,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
+                ),
+            ),
+            destination_address=BTC_ADDRESS,
+        )
+
+
+def test_not_implemented_token_tron(request_factory: RequestFactory) -> None:
+    """Test that Tron with token raises TokenNotImplementedError."""
+    with pytest.raises(TokenNotImplementedError):
+        request_factory.create_transfer_request(
+            vault_id=VAULD_ID,
+            amount=Decimal(1),
+            asset=Asset(
+                blockchain=Blockchain.TRON,
+                token=Token(
+                    token_type=EvmTokenType.ERC20,
+                    token_id=ARBITRUM_TOKEN_CONTRACT,
+                ),
+            ),
+            destination_address=TRX_ADDRESS,
         )
 
 
