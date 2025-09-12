@@ -27,6 +27,7 @@ def _create_test_transaction(
         "solana": ("solana", "solana_transaction"),
         "bitcoin": ("utxo", "utxo_transaction"),
         "tron": ("tron", "tron_transaction"),
+        "cosmos": ("cosmos", "cosmos_transaction"),
     }
 
     # Find the matching chain type
@@ -72,6 +73,7 @@ def _create_test_transaction(
         ("solana_devnet", "DSOL", "raw_transaction", None),
         ("bitcoin_mainnet", "BTC", "utxo_transfer", None),
         ("tron_mainnet", "TRX", "tron_transfer", None),
+        ("cosmos_mainnet", "ATOM", "raw_transaction", None),
         (
             "unknown_chain",
             None,
@@ -95,6 +97,7 @@ def _create_test_transaction(
         "solana_raw_transaction",
         "bitcoin_utxo_transfer",
         "tron_tron_transfer",
+        "cosmos_raw_transaction",
         "unknown_chain",
     ],
 )
