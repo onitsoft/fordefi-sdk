@@ -12,6 +12,9 @@ class AssetType(Enum):
     EVM = "evm"
     APTOS = "aptos"
     SOLANA = "solana"
+    UTXO = "utxo"
+    TRON = "tron"
+    COSMOS = "cosmos"
 
 
 class AssetSubtype(Enum):
@@ -28,6 +31,9 @@ class TransactionType(Enum):
     APTOS_TRANSACTION = "aptos_transaction"
     EVM_TRANSACTION = "evm_transaction"
     SOLANA_TRANSACTION = "solana_transaction"
+    UTXO_TRANSACTION = "utxo_transaction"
+    TRON_TRANSACTION = "tron_transaction"
+    COSMOS_TRANSACTION = "cosmos_transaction"
 
 
 class TransactionSubtype(Enum):
@@ -36,6 +42,8 @@ class TransactionSubtype(Enum):
     NATIVE_TRANSFER = "native_transfer"
     COIN_TRANSFER = "coin_transfer"
     RAW_TRANSACTION = "raw_transaction"
+    UTXO_TRANSFER = "utxo_transfer"
+    TRON_TRANSFER = "tron_transfer"
 
 
 @dataclass(frozen=True)
@@ -159,6 +167,39 @@ class AssetRegistry:
             },
         )
 
+        # Bitcoin
+        self._assets["BTC"] = AssetIdentifier(
+            type=AssetType.UTXO,
+            subtype=AssetSubtype.NATIVE,
+            chain="bitcoin_mainnet",
+            default_destination_serializer=lambda address: {
+                "type": "address",
+                "address": address,
+            },
+        )
+
+        # Tron
+        self._assets["TRX"] = AssetIdentifier(
+            type=AssetType.TRON,
+            subtype=AssetSubtype.NATIVE,
+            chain="tron_mainnet",
+            default_destination_serializer=lambda address: {
+                "type": "address",
+                "address": address,
+            },
+        )
+
+        # Cosmos
+        self._assets["ATOM"] = AssetIdentifier(
+            type=AssetType.COSMOS,
+            subtype=AssetSubtype.NATIVE,
+            chain="cosmos_mainnet",
+            default_destination_serializer=lambda address: {
+                "type": "address",
+                "address": address,
+            },
+        )
+
     def _initialize_transaction_mappings(self) -> None:
         """Initialize transaction type to asset symbol mappings."""
         # Non-EVM chains
@@ -186,6 +227,24 @@ class AssetRegistry:
                 TransactionSubtype.RAW_TRANSACTION,
                 "solana_devnet",
                 "DSOL",
+            ),
+            (
+                TransactionType.UTXO_TRANSACTION,
+                TransactionSubtype.UTXO_TRANSFER,
+                "bitcoin_mainnet",
+                "BTC",
+            ),
+            (
+                TransactionType.TRON_TRANSACTION,
+                TransactionSubtype.TRON_TRANSFER,
+                "tron_mainnet",
+                "TRX",
+            ),
+            (
+                TransactionType.COSMOS_TRANSACTION,
+                TransactionSubtype.RAW_TRANSACTION,
+                "cosmos_mainnet",
+                "ATOM",
             ),
         ]
 

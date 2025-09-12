@@ -25,6 +25,9 @@ def _create_test_transaction(
         "aptos": ("aptos", "aptos_transaction"),
         "evm": ("evm", "evm_transaction"),
         "solana": ("solana", "solana_transaction"),
+        "bitcoin": ("utxo", "utxo_transaction"),
+        "tron": ("tron", "tron_transaction"),
+        "cosmos": ("cosmos", "cosmos_transaction"),
     }
 
     # Find the matching chain type
@@ -68,6 +71,9 @@ def _create_test_transaction(
         ("evm_ethereum_sepolia", "SETH", "native_transfer", None),
         ("solana_devnet", "DSOL", "native_transfer", None),
         ("solana_devnet", "DSOL", "raw_transaction", None),
+        ("bitcoin_mainnet", "BTC", "utxo_transfer", None),
+        ("tron_mainnet", "TRX", "tron_transfer", None),
+        ("cosmos_mainnet", "ATOM", "raw_transaction", None),
         (
             "unknown_chain",
             None,
@@ -89,6 +95,9 @@ def _create_test_transaction(
         "ethereum_sepolia_native_transfer",
         "solana_native_transfer",
         "solana_raw_transaction",
+        "bitcoin_utxo_transfer",
+        "tron_tron_transfer",
+        "cosmos_raw_transaction",
         "unknown_chain",
     ],
 )
@@ -131,6 +140,9 @@ def test_asset_registry_list_available_assets() -> None:
     expected_assets = {
         "DSOL",
         "APT",
+        "BTC",
+        "TRX",
+        "ATOM",
         "ETH",
         "BASE",
         "BNB",
@@ -144,9 +156,8 @@ def test_asset_registry_list_available_assets() -> None:
     assert set(assets) == expected_assets
 
 
-def test_asset_registry_list_assets_by_type() -> None:
-    """Test listing assets by type."""
-    # Test EVM assets
+def _test_evm_assets_by_type() -> None:
+    """Test EVM assets by type."""
     evm_assets = asset_registry.list_assets_by_type(AssetType.EVM)
     expected_evm = {
         "ETH",
@@ -161,6 +172,9 @@ def test_asset_registry_list_assets_by_type() -> None:
     }
     assert set(evm_assets) == expected_evm
 
+
+def _test_non_evm_assets_by_type() -> None:
+    """Test non-EVM assets by type."""
     # Test Aptos assets
     aptos_assets = asset_registry.list_assets_by_type(AssetType.APTOS)
     assert set(aptos_assets) == {"APT"}
@@ -169,12 +183,87 @@ def test_asset_registry_list_assets_by_type() -> None:
     solana_assets = asset_registry.list_assets_by_type(AssetType.SOLANA)
     assert set(solana_assets) == {"DSOL"}
 
+    # Test UTXO/Bitcoin assets
+    utxo_assets = asset_registry.list_assets_by_type(AssetType.UTXO)
+    assert set(utxo_assets) == {"BTC"}
+
+    # Test Tron assets
+    tron_assets = asset_registry.list_assets_by_type(AssetType.TRON)
+    assert set(tron_assets) == {"TRX"}
+
+    # Test Cosmos assets
+    cosmos_assets = asset_registry.list_assets_by_type(AssetType.COSMOS)
+    assert set(cosmos_assets) == {"ATOM"}
+
+
+def test_asset_registry_list_assets_by_type() -> None:
+    """Test listing assets by type."""
+    _test_evm_assets_by_type()
+    _test_non_evm_assets_by_type()
+
 
 def test_get_transfer_asset_identifier_backward_compatibility() -> None:
     """Test backward compatibility function."""
     asset = get_transfer_asset_identifier("ETH")
     assert asset.type == AssetType.EVM
     assert asset.chain == "evm_ethereum_mainnet"
+
+
+def test_btc_asset_identifier() -> None:
+    """Test BTC asset identifier."""
+    btc_asset = get_transfer_asset_identifier("BTC")
+    assert btc_asset.type == AssetType.UTXO
+    assert btc_asset.subtype == AssetSubtype.NATIVE
+    assert btc_asset.chain == "bitcoin_mainnet"
+    assert btc_asset.default_destination_serializer is not None
+
+    # Test the default destination serializer
+    result = btc_asset.default_destination_serializer(
+        "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    )
+    expected = {
+        "type": "address",
+        "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    }
+    assert result == expected
+
+
+def test_trx_asset_identifier() -> None:
+    """Test TRX asset identifier."""
+    trx_asset = get_transfer_asset_identifier("TRX")
+    assert trx_asset.type == AssetType.TRON
+    assert trx_asset.subtype == AssetSubtype.NATIVE
+    assert trx_asset.chain == "tron_mainnet"
+    assert trx_asset.default_destination_serializer is not None
+
+    # Test the default destination serializer
+    result = trx_asset.default_destination_serializer(
+        "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+    )
+    expected = {
+        "type": "address",
+        "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+    }
+    assert result == expected
+
+
+def test_atom_asset_identifier() -> None:
+    """Test ATOM asset identifier."""
+    atom_asset = get_transfer_asset_identifier("ATOM")
+    assert atom_asset.type == AssetType.COSMOS
+    assert atom_asset.subtype == AssetSubtype.NATIVE
+    assert atom_asset.chain == "cosmos_mainnet"
+    assert atom_asset.default_destination_serializer is not None
+
+    # Test the default destination serializer
+    result = atom_asset.default_destination_serializer(
+        "cosmos1huydeevpz37sd9snkgul6070mjukukqfc0p8n0",
+    )
+    expected = {
+        "type": "address",
+        "address": "cosmos1huydeevpz37sd9snkgul6070mjukukqfc0p8n0",
+    }
+    assert result == expected
 
 
 def test_asset_identifier_validation() -> None:
@@ -191,6 +280,44 @@ def test_asset_identifier_validation() -> None:
     assert asset.type == AssetType.EVM
     assert asset.subtype == AssetSubtype.NATIVE
     assert asset.chain == "evm_test_mainnet"
+
+
+def test_utxo_asset_identifier() -> None:
+    """Test UTXO asset identifier creation and details."""
+    from fordefi.requests_factory import _UtxoAssetIdentifier
+
+    # Test UTXO asset identifier
+    utxo_asset = _UtxoAssetIdentifier(network="mainnet")
+    assert utxo_asset.type == "utxo"
+    assert utxo_asset.subtype == "native"
+    assert utxo_asset.network == "mainnet"
+    assert utxo_asset.chain == "utxo_mainnet"
+
+    # Test details method
+    details = utxo_asset._get_details()
+    assert details == {
+        "type": "native",
+        "chain": "utxo_mainnet",
+    }
+
+
+def test_cosmos_asset_identifier() -> None:
+    """Test Cosmos asset identifier creation and details."""
+    from fordefi.requests_factory import _CosmosAssetIdentifier
+
+    # Test Cosmos asset identifier
+    cosmos_asset = _CosmosAssetIdentifier(network="mainnet")
+    assert cosmos_asset.type == "cosmos"
+    assert cosmos_asset.subtype == "native"
+    assert cosmos_asset.network == "mainnet"
+    assert cosmos_asset.chain == "cosmos_mainnet"
+
+    # Test details method
+    details = cosmos_asset._get_details()
+    assert details == {
+        "type": "native",
+        "chain": "cosmos_mainnet",
+    }
 
 
 def test_unknown_transaction_type_error() -> None:
@@ -448,6 +575,9 @@ def test_asset_type_enum_values() -> None:
     assert AssetType.EVM.value == "evm"
     assert AssetType.APTOS.value == "aptos"
     assert AssetType.SOLANA.value == "solana"
+    assert AssetType.UTXO.value == "utxo"
+    assert AssetType.TRON.value == "tron"
+    assert AssetType.COSMOS.value == "cosmos"
 
 
 def test_asset_subtype_enum_values() -> None:
@@ -462,6 +592,9 @@ def test_transaction_type_enum_values() -> None:
     assert TransactionType.APTOS_TRANSACTION.value == "aptos_transaction"
     assert TransactionType.EVM_TRANSACTION.value == "evm_transaction"
     assert TransactionType.SOLANA_TRANSACTION.value == "solana_transaction"
+    assert TransactionType.UTXO_TRANSACTION.value == "utxo_transaction"
+    assert TransactionType.TRON_TRANSACTION.value == "tron_transaction"
+    assert TransactionType.COSMOS_TRANSACTION.value == "cosmos_transaction"
 
 
 def test_transaction_subtype_enum_values() -> None:
@@ -469,3 +602,5 @@ def test_transaction_subtype_enum_values() -> None:
     assert TransactionSubtype.NATIVE_TRANSFER.value == "native_transfer"
     assert TransactionSubtype.COIN_TRANSFER.value == "coin_transfer"
     assert TransactionSubtype.RAW_TRANSACTION.value == "raw_transaction"
+    assert TransactionSubtype.UTXO_TRANSFER.value == "utxo_transfer"
+    assert TransactionSubtype.TRON_TRANSFER.value == "tron_transfer"
