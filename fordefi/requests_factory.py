@@ -344,7 +344,7 @@ class _UtxoTransferRequestFactory(_TranferRequestFactory):
                         "type": "address",
                         "address": self.destination_address,
                     },
-                    "value": str(int(self.amount * 100000000)),  # Convert to satoshis
+                    "value": str(int(self.amount)),  # Assumes is already in satoshis
                 },
             ],
             "send_max_to": {
@@ -375,7 +375,9 @@ class _TronTransferRequestFactory(_TranferRequestFactory):
             },
             "value": {
                 "type": "value",
-                "value": str(int(self.amount * 1000000)),  # Convert to TRX (6 decimals)
+                "value": str(
+                    int(self.amount),
+                ),  # Assumes is already in TRX (6 decimals)
             },
             "asset_identifier": self.asset_identifier.as_dict(),
         }
