@@ -14,6 +14,7 @@ class AssetType(Enum):
     SOLANA = "solana"
     UTXO = "utxo"
     TRON = "tron"
+    COSMOS = "cosmos"
 
 
 class AssetSubtype(Enum):
@@ -32,6 +33,7 @@ class TransactionType(Enum):
     SOLANA_TRANSACTION = "solana_transaction"
     UTXO_TRANSACTION = "utxo_transaction"
     TRON_TRANSACTION = "tron_transaction"
+    COSMOS_TRANSACTION = "cosmos_transaction"
 
 
 class TransactionSubtype(Enum):
@@ -187,6 +189,17 @@ class AssetRegistry:
             },
         )
 
+        # Cosmos
+        self._assets["ATOM"] = AssetIdentifier(
+            type=AssetType.COSMOS,
+            subtype=AssetSubtype.NATIVE,
+            chain="cosmos_mainnet",
+            default_destination_serializer=lambda address: {
+                "type": "address",
+                "address": address,
+            },
+        )
+
     def _initialize_transaction_mappings(self) -> None:
         """Initialize transaction type to asset symbol mappings."""
         # Non-EVM chains
@@ -226,6 +239,12 @@ class AssetRegistry:
                 TransactionSubtype.TRON_TRANSFER,
                 "tron_mainnet",
                 "TRX",
+            ),
+            (
+                TransactionType.COSMOS_TRANSACTION,
+                TransactionSubtype.RAW_TRANSACTION,
+                "cosmos_mainnet",
+                "ATOM",
             ),
         ]
 
