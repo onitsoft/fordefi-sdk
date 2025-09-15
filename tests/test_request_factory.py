@@ -182,7 +182,7 @@ def _validate_bitcoin_fields(
         details.get("outputs", [{}])[0].get("to", {}).get("address")
         == destination_address
     )
-    expected_value = str(int(amount * 100000000))
+    expected_value = str(int(amount))  # Amount is already in satoshis
     assert details.get("outputs", [{}])[0].get("value") == expected_value
 
 
@@ -193,7 +193,7 @@ def _validate_tron_fields(
 ) -> None:
     """Validate Tron-specific request fields."""
     assert details.get("to", {}).get("address") == destination_address
-    expected_value = str(int(amount * 1000000))
+    expected_value = str(int(amount))  # Amount is already in TRX units
     assert details.get("value", {}).get("value") == expected_value
 
 
