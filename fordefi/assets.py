@@ -256,27 +256,31 @@ class AssetRegistry:
             )
             self._transaction_mappings[key] = symbol
 
-        # EVM chains
-        evm_symbols = [
-            "ETH",
-            "BASE",
-            "BNB",
-            "MATIC",
-            "AVAX",
-            "ARB",
-            "OP",
-            "S",
-            "SETH",
-        ]
-        for symbol in evm_symbols:
-            if symbol in self._assets:
-                asset = self._assets[symbol]
+        # EVM chains - map chain symbols to their native currency symbols
+        evm_chain_to_native_currency = {
+            "ETH": "ETH",  # Ethereum mainnet -> ETH
+            "BASE": "ETH",  # Base -> ETH (native currency)
+            "BNB": "BNB",  # BSC -> BNB (native currency)
+            "MATIC": "MATIC",  # Polygon -> MATIC (native currency)
+            "AVAX": "AVAX",  # Avalanche -> AVAX (native currency)
+            "ARB": "ETH",  # Arbitrum -> ETH (native currency)
+            "OP": "ETH",  # Optimism -> ETH (native currency)
+            "S": "S",  # Sonic -> S (native currency)
+            "SETH": "ETH",  # Ethereum Sepolia -> ETH (native currency)
+        }
+
+        for (
+            chain_symbol,
+            native_currency_symbol,
+        ) in evm_chain_to_native_currency.items():
+            if chain_symbol in self._assets:
+                asset = self._assets[chain_symbol]
                 key = TransactionTypeKey(
                     type=TransactionType.EVM_TRANSACTION,
                     subtype=TransactionSubtype.NATIVE_TRANSFER,
                     chain_unique_id=asset.chain,
                 )
-                self._transaction_mappings[key] = symbol
+                self._transaction_mappings[key] = native_currency_symbol
 
     def get_asset_identifier(self, symbol: str) -> AssetIdentifier:
         """Get asset identifier by symbol."""
