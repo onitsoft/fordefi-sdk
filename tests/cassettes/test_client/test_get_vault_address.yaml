@@ -1,0 +1,93 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Content-Type:
+      - application/json
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b
+  response:
+    body:
+      string: '{"id":"3c091da6-9f5a-4a2d-adb7-61217329889b","created_at":"2024-11-25T12:31:50.397000Z","modified_at":"2024-11-26T10:00:20.477000Z","name":"Aptos
+        Releases","created_by":{"id":"f0669f81-5a18-4545-baa9-c51b937399b5","user_type":"person","name":"Nuno
+        Costa","email":"nuno.costa@nexchange.co.uk","state":"deleted","role":"admin"},"vault_group":{"id":"5fffafad-bc06-422d-9ca4-73ed2b64f7c3","name":"Releases","vault_count":4,"can_current_user_create_or_edit_vaults":false},"state":"active","are_all_chains_disabled":false,"derivation_path":"m/44/637/3/0/0","public_key_compressed":"xsAndjkIS++FvSTA9+iNnC/39Dx/dhTvRQPVccG3ZTI=","derivation_info":{"derivation_path":"m/44/637/3/0/0","master_public_key":{"id":"68f66af6-811e-4687-8ee0-aba3fe13059f","xpub":"xpub661MyMwAqRbcFfuCrQbcXBFdTsTsXcphM8dThzmUeDuPrdFf4h1WsnAw7qaosNQB9kbxkbZw69EbLx6JtMQ7a2ygyZXZ3Fetxoygdy5UaMs"}},"origin_type":"native","type":"aptos","address":"0x958e2bbe42005cfc466c163c78b6c852ec454c7810f0ece04085cd44fb7f4b05"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '981'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:16:32 GMT
+      Via:
+      - 1.1 f2dd3b65381fad5aad94ac94ad7043f8.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - fYq8CkXBy7F3JM3yzp_PBl00hNIMFwPt1bg8aUWNfeCHPu8uLZdOwQ==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '169'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '298'
+      x-ratelimit-reset:
+      - '28'
+      x-request-id:
+      - 6fd6ca19-7129-9667-a240-c7510f174d9d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Content-Type:
+      - application/json
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses/test-address-id
+  response:
+    body:
+      string: '{"title":"Not found","detail":"Path /api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses/test-address-id
+        not found","request_id":"8f838a5d-ff98-9eec-b424-f517121324f3","resource":"path"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '195'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:16:33 GMT
+      Via:
+      - 1.1 ebe6a6f6a4dd1a63623021825f18f4f8.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 40mRMZ4Aa0sa7xOWQj2vC7uhsLwsxDcfTIquw543PALWZyJZ4ypYHg==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Error from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '4'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '297'
+      x-ratelimit-reset:
+      - '27'
+      x-request-id:
+      - 8f838a5d-ff98-9eec-b424-f517121324f3
+    status:
+      code: 404
+      message: Not Found
+version: 1

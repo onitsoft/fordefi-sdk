@@ -1,0 +1,190 @@
+interactions:
+- request:
+    body: '{"address_type": "legacy", "name": "Test legacy Address"}'
+    headers:
+      Content-Length:
+      - '57'
+      Content-Type:
+      - application/json
+    method: POST
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses
+  response:
+    body:
+      string: '{"title":"Invalid vault type","detail":"Invalid vault type for vault
+        creation.","request_id":"805281e8-9dd5-9008-add5-4c4a398adf70","error_type":"invalid_vault_type"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:17:20 GMT
+      Via:
+      - 1.1 a48f09960f130cb6049f12b379cf591e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - HhX4BPUSIiUaoFkS7i8Np0BaeH5-7q0C7ec7xNFwq_Xu31_fiZ3-Zw==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Error from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '24'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '299'
+      x-ratelimit-reset:
+      - '40'
+      x-request-id:
+      - 805281e8-9dd5-9008-add5-4c4a398adf70
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"address_type": "p2sh", "name": "Test p2sh Address"}'
+    headers:
+      Content-Length:
+      - '53'
+      Content-Type:
+      - application/json
+    method: POST
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses
+  response:
+    body:
+      string: '{"title":"Cannot process data due to validation error","detail":[{"loc":["body","address_type"],"msg":"Input
+        should be ''legacy'', ''segwit'' or ''taproot''","type":"enum"}],"request_id":"8f3f453e-e403-9579-af98-633c4bfcd629"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '220'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:17:21 GMT
+      Via:
+      - 1.1 f355844b811a4a5ec94df0918f0fb80c.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - -IgLY8YOYUd1SBOY6T6v6TQ_UTpks8g3E6O52lG9ZNBBF-3leoJwUw==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Error from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '14'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '298'
+      x-ratelimit-reset:
+      - '39'
+      x-request-id:
+      - 8f3f453e-e403-9579-af98-633c4bfcd629
+    status:
+      code: 422
+      message: Unprocessable Entity
+- request:
+    body: '{"address_type": "segwit", "name": "Test segwit Address"}'
+    headers:
+      Content-Length:
+      - '57'
+      Content-Type:
+      - application/json
+    method: POST
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses
+  response:
+    body:
+      string: '{"title":"Invalid vault type","detail":"Invalid vault type for vault
+        creation.","request_id":"29006c8b-c3fe-9404-81b2-b4e5709997f8","error_type":"invalid_vault_type"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:17:21 GMT
+      Via:
+      - 1.1 191181f299c93f856cc1cdad79c1bb76.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - fMICItX93erZ7rBZkg23Uqt8KOrBBO4NE4cQCSgtZErkY419fF3Afg==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Error from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '32'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '297'
+      x-ratelimit-reset:
+      - '39'
+      x-request-id:
+      - 29006c8b-c3fe-9404-81b2-b4e5709997f8
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"address_type": "taproot", "name": "Test taproot Address"}'
+    headers:
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/json
+    method: POST
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses
+  response:
+    body:
+      string: '{"title":"Invalid vault type","detail":"Invalid vault type for vault
+        creation.","request_id":"51a2c4bc-9aac-91ce-8d89-838c3bf38d5d","error_type":"invalid_vault_type"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:17:21 GMT
+      Via:
+      - 1.1 07b26b5e851ab857ec87e6df0aa7882e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - pqVxACwRKDOhoglX5g9uuiksHHenpCMqPyfmQZR3Tz4RRvtUxqaEBQ==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Error from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '35'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '296'
+      x-ratelimit-reset:
+      - '39'
+      x-request-id:
+      - 51a2c4bc-9aac-91ce-8d89-838c3bf38d5d
+    status:
+      code: 400
+      message: Bad Request
+version: 1
