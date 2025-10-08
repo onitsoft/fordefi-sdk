@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+    method: POST
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses
+  response:
+    body:
+      string: '{"title":"Cannot process data due to validation error","detail":[{"loc":["body"],"msg":"Field
+        required","type":"missing"}],"request_id":"db165e46-a004-9d6f-9b9d-e76f95eb3994"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '175'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:16:45 GMT
+      Via:
+      - 1.1 d780d90e1f6b43875e14c416b368d3b6.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - lMMQ5yJfnFo4D28rRaaZlghg2N_FsCdjjN0egldD1pt9tXStuZFaTg==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Error from cloudfront
+      server:
+      - envoy
+      vary:
+      - Accept-Encoding
+      x-envoy-upstream-service-time:
+      - '9'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '295'
+      x-ratelimit-reset:
+      - '15'
+      x-request-id:
+      - db165e46-a004-9d6f-9b9d-e76f95eb3994
+    status:
+      code: 422
+      message: Unprocessable Entity
+version: 1

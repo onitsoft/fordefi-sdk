@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Content-Type:
+      - application/json
+    method: GET
+    uri: https://api.fordefi.com/api/v1/vaults/3c091da6-9f5a-4a2d-adb7-61217329889b/addresses?sort_by=created_at_desc&search=test&addresses=1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa&address_types=legacy&address_types=segwit&page=1&size=50
+  response:
+    body:
+      string: '{"total":0,"page":1,"size":50,"addresses":[]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '45'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 08 Oct 2025 12:18:19 GMT
+      Via:
+      - 1.1 5d25c31f47a198dbf50acf297a389a00.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 2BO_ikE9ljEd5nt7wat4k1WsgXwy2jEUVi50lmVDClFowinVzgk-IA==
+      X-Amz-Cf-Pop:
+      - LIS50-P1
+      X-Cache:
+      - Miss from cloudfront
+      server:
+      - envoy
+      x-envoy-upstream-service-time:
+      - '28'
+      x-ratelimit-limit:
+      - 300, 300;w=60
+      x-ratelimit-remaining:
+      - '299'
+      x-ratelimit-reset:
+      - '41'
+      x-request-id:
+      - 3d976d7f-c3a4-9a7f-af2e-0e42bf3bc6d4
+    status:
+      code: 200
+      message: OK
+version: 1

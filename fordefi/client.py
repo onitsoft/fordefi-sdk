@@ -80,6 +80,51 @@ class Fordefi:
         endpoint = f"/vaults/{vault_id}"
         return self._request("GET", endpoint)
 
+    def list_vault_addresses(
+        self,
+        vault_id: str,
+        sort_by: list[str] | None = None,
+        search: str | None = None,
+        addresses: list[str] | None = None,
+        address_types: list[str] | None = None,
+    ) -> Iterable[JsonDict]:
+        """List all addresses associated with a specific vault."""
+        endpoint = f"/vaults/{vault_id}/addresses"
+        params: QueryParams = {}
+
+        if sort_by:
+            params["sort_by"] = sort_by
+        if search:
+            params["search"] = search
+        if addresses:
+            params["addresses"] = addresses
+        if address_types:
+            params["address_types"] = address_types
+
+        return self._get_pages(endpoint, "addresses", params=params)
+
+    def get_vault_address(self, vault_id: str, address_id: str) -> JsonDict:
+        """Get a specific address from a vault."""
+        endpoint = f"/vaults/{vault_id}/addresses/{address_id}"
+        return self._request("GET", endpoint)
+
+    def create_vault_address(
+        self,
+        vault_id: str,
+        address_type: str | None = None,
+        name: str | None = None,
+    ) -> JsonDict:
+        """Create a new address within a vault (Bitcoin vaults only)."""
+        endpoint = f"/vaults/{vault_id}/addresses"
+        address_data: dict[str, str] = {}
+
+        if address_type:
+            address_data["address_type"] = address_type
+        if name:
+            address_data["name"] = name
+
+        return self._request("POST", endpoint, data=cast("Json", address_data))
+
     def get_assets(self, vault_id: str) -> Iterable[JsonDict]:
         endpoint = f"/vaults/{vault_id}/assets"
         return self._get_pages(endpoint, "owned_assets")
